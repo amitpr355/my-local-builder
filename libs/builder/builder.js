@@ -281,6 +281,402 @@ function getElementBottomDistanceFromIframeBottom(el, iframe) {
 window.getElementBottomDistanceFromIframeBottom =
   getElementBottomDistanceFromIframeBottom;
 
+// Function to apply styles for media embeds in edit mode (disable pointer events to allow selecting the iframe instead of interacting with it)
+
+
+
+
+function enableIframeVideoResizeControls(target) {
+  if (!target || target.nodeType !== 1) return;
+
+  const isYoutubeIframe =
+    target.tagName &&
+    target.tagName.toLowerCase() === "iframe" &&
+    target.matches?.("iframe[data-media-embed='video']");
+
+  if (!isYoutubeIframe) return;
+
+  const selectBox = document.getElementById("select-box");
+
+  if (selectBox) {
+    selectBox.classList.add("resizable");
+  }
+
+  if (window.Vvveb?.Builder) {
+    Vvveb.Builder.resizeMode = "css";
+    Vvveb.Builder.selectedEl = target;
+  }
+
+  target.style.display = "inline-block";
+
+  if (!target.style.verticalAlign) {
+    target.style.verticalAlign = "top";
+  }
+
+  if (!target.style.width && !target.getAttribute("width")) {
+    target.style.width = "100%";
+  }
+}
+
+function cleanupInvalidMediaIframeOverlays(frameDoc) {
+  if (!frameDoc) return;
+
+  frameDoc
+    .querySelectorAll(".zigrow-embed-edit-overlay[data-media-overlay='video']")
+    .forEach((overlay) => {
+      const parent = overlay.parentElement;
+      const targetId = overlay.getAttribute("data-media-target-id");
+
+      let target = null;
+
+      if (targetId && window.CSS?.escape) {
+        target = frameDoc.querySelector(
+          `[data-vvveb-id="${CSS.escape(targetId)}"]`
+        );
+      }
+
+      if (!target && overlay._mediaTarget && overlay._mediaTarget.isConnected) {
+        target = overlay._mediaTarget;
+      }
+
+      const parentIframe = parent
+        ? parent.querySelector(":scope > iframe[data-media-embed='video']")
+        : null;
+
+      const isValidTarget =
+        target &&
+        target.isConnected &&
+        target.tagName &&
+        target.tagName.toLowerCase() === "iframe" &&
+        target.matches("iframe[data-media-embed='video']");
+
+      const isValidParentIframe =
+        parentIframe &&
+        parentIframe.isConnected &&
+        parentIframe.tagName.toLowerCase() === "iframe";
+
+      if (!isValidTarget && !isValidParentIframe) {
+        overlay.remove();
+        return;
+      }
+
+      if (!isValidTarget && isValidParentIframe) {
+        const mediaId =
+          parentIframe.getAttribute("data-vvveb-id") ||
+          ensureVvvebId(parentIframe);
+
+        overlay._mediaTarget = parentIframe;
+        overlay.setAttribute("data-media-target-id", mediaId);
+      }
+    });
+}
+
+function runMediaIframeOverlayCleanupSoon(frameDoc) {
+  const doc =
+    frameDoc ||
+    window.FrameDocument ||
+    Vvveb?.Builder?.iframe?.contentDocument ||
+    Vvveb?.Builder?.frameDoc ||
+    null;
+
+  if (!doc) return;
+
+  cleanupInvalidMediaIframeOverlays(doc);
+
+  setTimeout(() => cleanupInvalidMediaIframeOverlays(doc), 0);
+  setTimeout(() => cleanupInvalidMediaIframeOverlays(doc), 80);
+}
+
+
+function patchMediaOverlayCleanupAfterUndoRedo() {
+  const undo = window.Vvveb && window.Vvveb.Undo;
+
+  if (!undo || undo.__zigrowMediaOverlayCleanupPatched) return;
+
+  ["undo", "redo"].forEach((methodName) => {
+    if (typeof undo[methodName] !== "function") return;
+
+    const original = undo[methodName];
+
+    undo[methodName] = function (...args) {
+      const result = original.apply(this, args);
+
+      const doc =
+        window.FrameDocument ||
+        Vvveb?.Builder?.frameDoc ||
+        Vvveb?.Builder?.iframe?.contentDocument;
+
+      runMediaIframeOverlayCleanupSoon(doc);
+
+      // Apply edit-mode visibility CSS immediately, before the browser paints.
+      if (doc && !Vvveb?.Builder?.isPreview) {
+        try {
+          applyIframeEditModeState(doc, true);
+
+          doc.querySelectorAll("[data-aos]").forEach((el) => {
+            el.classList.add("aos-init", "aos-animate");
+          });
+        } catch (e) { }
+      }
+
+      // Secondary cleanup only. The immediate CSS above is the real fix.
+      setTimeout(() => {
+        try {
+          runMediaIframeOverlayCleanupSoon(doc);
+          applyIframeEditModeState(doc, true);
+          refreshZigrowAOSAfterDomChange();
+        } catch (e) { }
+      }, 80);
+
+      return result;
+    };
+  });
+
+  undo.__zigrowMediaOverlayCleanupPatched = true;
+}
+
+setTimeout(() => {
+  patchMediaOverlayCleanupAfterUndoRedo();
+}, 0);
+
+
+function mountMediaIframeOverlays(frameDoc) {
+  if (!frameDoc) return;
+  cleanupInvalidMediaIframeOverlays(frameDoc);
+
+  const iframes = frameDoc.querySelectorAll("iframe[data-media-embed='video']");
+
+  iframes.forEach((iframe) => {
+    const parent = iframe.parentElement;
+    if (!parent) return;
+
+    let overlay = parent.querySelector(":scope > .zigrow-embed-edit-overlay");
+    if (overlay) {
+      overlay._mediaTarget = iframe;
+
+      const mediaId = iframe.getAttribute("data-vvveb-id") || ensureVvvebId(iframe);
+      overlay.setAttribute("data-media-target-id", mediaId);
+      return;
+    }
+
+    const parentStyle = frameDoc.defaultView.getComputedStyle(parent);
+    if (parentStyle.position === "static") {
+      parent.style.position = "relative";
+    }
+
+    overlay = frameDoc.createElement("div");
+    overlay.className = "zigrow-embed-edit-overlay";
+    overlay.setAttribute("data-builder-only", "true");
+    overlay.setAttribute("data-media-overlay", "video");
+
+
+    const mediaId = iframe.getAttribute("data-vvveb-id") || ensureVvvebId(iframe);
+    overlay.setAttribute("data-media-target-id", mediaId);
+    overlay._mediaTarget = iframe;
+
+    Object.assign(overlay.style, {
+      position: "absolute",
+      top: "0",
+      left: "0",
+      right: "0",
+      bottom: "0",
+      width: "100%",
+      height: "100%",
+      zIndex: "2147483647",
+      background: "rgba(255, 0, 0, 0.08)",
+      border: "none",
+      pointerEvents: "auto",
+      cursor: "pointer",
+    });
+
+    overlay.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const target = overlay._mediaTarget || resolveVvvebTargetById(mediaId);
+
+      if (
+        !target ||
+        !target.isConnected ||
+        !target.matches?.("iframe[data-media-embed='video']")
+      ) {
+        overlay.remove();
+        return;
+      }
+
+      if (window.Vvveb?.Builder) {
+        Vvveb.Builder.selectNode(target);
+
+        if (window.Vvveb.TreeList?.selectComponent) {
+          Vvveb.TreeList.selectComponent(target);
+        }
+
+        if (typeof Vvveb.Builder.loadNodeComponent === "function") {
+          Vvveb.Builder.loadNodeComponent(target);
+        }
+
+        if (window.Vvveb.component?.resizable) {
+          document.getElementById("select-box")?.classList.add("resizable");
+          Vvveb.Builder.resizeMode = Vvveb.component.resizeMode;
+        } else {
+          document.getElementById("select-box")?.classList.remove("resizable");
+        }
+
+        enableIframeVideoResizeControls(target);
+      }
+    });
+
+    overlay.addEventListener("dblclick", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const target = overlay._mediaTarget || resolveVvvebTargetById(mediaId);
+      if (!target) return;
+
+      if (window.Vvveb?.Builder) {
+        Vvveb.Builder.selectNode(target);
+
+        if (window.Vvveb.TreeList?.selectComponent) {
+          Vvveb.TreeList.selectComponent(target);
+        }
+
+        if (typeof Vvveb.Builder.loadNodeComponent === "function") {
+          Vvveb.Builder.loadNodeComponent(target);
+        }
+
+        enableIframeVideoResizeControls(target);
+      }
+
+      if (window.Vvveb?.NewMediaModal) {
+        Vvveb.NewMediaModal.open(target, { type: "video" });
+      }
+    });
+    parent.appendChild(overlay);
+  });
+}
+
+function applyIframeEditModeState(frameDoc, isEditMode = true) {
+  if (!frameDoc) return;
+
+  let styleEl = frameDoc.getElementById("zigrow-iframe-edit-style");
+
+  if (!styleEl) {
+    styleEl = frameDoc.createElement("style");
+    styleEl.id = "zigrow-iframe-edit-style";
+    frameDoc.head.appendChild(styleEl);
+  }
+
+  styleEl.textContent = isEditMode
+    ? `
+      iframe[data-media-embed="video"] {
+        pointer-events: none !important;
+      }
+
+      /* Builder edit mode fix:
+         AOS should never hide recreated images after undo/redo */
+      [data-aos],
+      [data-aos].aos-init,
+      [data-aos].aos-animate,
+      [data-aos]:not(.aos-animate),
+      a[data-zg-image-link],
+      a[data-zg-image-link] > img,
+      a[data-zg-image-link] picture,
+      a[data-zg-image-link] picture img {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .img-wrapper-style [data-aos],
+      .img-wrapper-style img,
+      .img-wrapper-style a[data-zg-image-link],
+      .img-wrapper-style a[data-zg-image-link] img {
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+
+      .zigrow-embed-edit-overlay {
+        display: inline-block !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 2147483647 !important;
+        background: transparent !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+      }
+    `
+    : `
+      iframe[data-media-embed="video"] {
+        pointer-events: auto !important;
+      }
+
+      .zigrow-embed-edit-overlay {
+        display: none !important;
+      }
+    `;
+}
+
+
+function observeMediaIframeOverlays(frameDoc) {
+  if (!frameDoc || frameDoc.__zigrowMediaOverlayObserverBound) return;
+  frameDoc.__zigrowMediaOverlayObserverBound = true;
+
+  const observer = new MutationObserver(() => {
+    cleanupInvalidMediaIframeOverlays(frameDoc);
+    mountMediaIframeOverlays(frameDoc);
+    applyIframeEditModeState(frameDoc, !!window.__zigrowBuilderEditMode);
+  });
+
+  observer.observe(frameDoc.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["src", "data-media-embed", "data-vvveb-id", "style"],
+  });
+}
+
+function removeMediaIframeOverlays(frameDoc) {
+  if (!frameDoc) return;
+
+  cleanupInvalidMediaIframeOverlays(frameDoc);
+  frameDoc
+    .querySelectorAll(".zigrow-embed-edit-overlay")
+    .forEach((el) => el.remove());
+
+  const styleEl = frameDoc.getElementById("zigrow-iframe-edit-style");
+  if (styleEl) styleEl.remove();
+
+  frameDoc
+    .querySelectorAll('iframe[data-media-embed="video"]')
+    .forEach((iframe) => {
+      iframe.style.pointerEvents = "";
+    });
+}
+
+
+// Jayanti code to builder inserts, clones, deletes, reorders, or replaces something, this function keeps AOS stable. It should be called after any DOM change in the builder.
+function refreshZigrowAOSAfterDomChange() {
+  const doc =
+    Vvveb.Builder?.iframe?.contentDocument ||
+    Vvveb.Builder?.frameDoc ||
+    window.FrameDocument;
+
+  if (!doc || !window.ZigrowAOSManager) return;
+
+  if (Vvveb.Builder?.isPreview) {
+    window.ZigrowAOSManager.enablePreviewMode(doc);
+  } else {
+    window.ZigrowAOSManager.enableEditMode(doc);
+  }
+}
+
 // Custom Modificaion Ends Here- Jayanti - 25-09-2025
 
 // Amit's code starts from here for the addition of the Id
@@ -325,6 +721,19 @@ function resolveVvvebTargetById(id) {
 // Amit's code ends from here for the addition of the Id
 
 if (Vvveb === undefined) var Vvveb = {};
+
+
+(function markZigrowSafariBrowser() {
+  const ua = navigator.userAgent || "";
+
+  const isSafari =
+    /safari/i.test(ua) &&
+    !/chrome|chromium|crios|android|edg|opr|firefox|fxios/i.test(ua);
+
+  if (isSafari) {
+    document.documentElement.classList.add("zg-safari-browser");
+  }
+})();
 
 Vvveb.defaultComponent = "_base";
 Vvveb.preservePropertySections = true;
@@ -1661,33 +2070,58 @@ Vvveb.WysiwygEditor = {
     }
     document.getElementById("font-size").innerHTML = sizes;
 
-    document
-      .getElementById("font-family")
-      .addEventListener("change", function (e) {
-        // Amit has added this to select the text if nothing selected
-        // Amit has added this to select the text if nothing selected
+    const fontFamilySelect = document.getElementById("font-family");
+    fontFamilySelect.addEventListener("change", function (e) {
+      e.preventDefault();
 
-        let option = this.options[this.selectedIndex];
-        // console.log("This dot Selected Index: ", this.selectedIndex);
-        // console.log("Selected Index: ", selectedIndex);
-        let element = self.editorSetStyle(false, {
-          "font-family": this.value,
+      const option = this.options[this.selectedIndex];
+      const fontFamily = (this.value || "").trim();
+
+      if (!fontFamily) return false;
+
+      const target =
+        Vvveb.WysiwygEditor?.element && Vvveb.WysiwygEditor.element.nodeType === 1
+          ? Vvveb.WysiwygEditor.element
+          : self.element && self.element.nodeType === 1
+            ? self.element
+            : Vvveb.Builder?.selectedEl && Vvveb.Builder.selectedEl.nodeType === 1
+              ? Vvveb.Builder.selectedEl
+              : null;
+
+      if (!target) return false;
+
+      const oldStyle = target.getAttribute("style") || "";
+
+      target.style.setProperty("font-family", fontFamily, "important");
+
+      const newStyle = target.getAttribute("style") || "";
+
+      if (
+        oldStyle !== newStyle &&
+        Vvveb?.Undo &&
+        typeof Vvveb.Undo.addMutation === "function"
+      ) {
+        Vvveb.Undo.addMutation({
+          type: "attributes",
+          target: target,
+          attributeName: "style",
+          oldValue: oldStyle,
+          newValue: newStyle,
         });
-        console.log("element", element);
-        console.log("option.dataset.provider", option.dataset.provider);
+      }
 
-        Vvveb.FontsManager.addFont(
-          option.dataset.provider,
-          this.value,
-          element?.ownerDocument ||
-          window.FrameDocument ||
-          Vvveb.Builder?.iframe?.contentDocument ||
-          document
-        );
-        //doc.execCommand('fontName',false,this.value);
-        e.preventDefault();
-        return false;
-      });
+      Vvveb.FontsManager.addFont(
+        option?.dataset?.provider,
+        fontFamily,
+        target
+      );
+
+      if (Vvveb?.Builder?.setDirty) {
+        Vvveb.Builder.setDirty(true);
+      }
+
+      return false;
+    });
 
     // document
     //   .getElementById("justify-btn")
@@ -1994,6 +2428,7 @@ Vvveb.WysiwygEditor = {
     document.getElementById("section-edit-options").style.display = "none";
     document.getElementById("form-edit-options").style.display = "none";
     document.getElementById("hovering-options").style.display = "none";
+    document.getElementById("mask-popup").style.display = "none";
     // === custom patch end ===
     // Custom Modification Ends Here - Jayanti - 25-09-25 (Fix for issue when clicking on text element the select box is not shown properly)
   },
@@ -2266,7 +2701,7 @@ Vvveb.Builder = {
                 <li data-section="${group}" data-drag-type="section" data-type="${sectionType}" data-search="${section.name.toLowerCase()}">
 									<span class="name">${section.name}</span>
 									<div class="add-section-btn" title="Add section"><i class="la la-plus"></i></div>
-									<img class="preview" src="" loading="lazy">
+										<img class="preview" src="" loading="eager" decoding="async">
 								</li>`)[0];
 
             if (section.image) {
@@ -2314,17 +2749,41 @@ Vvveb.Builder = {
         let blocksSubList = list.querySelector(
           'li[data-section="' + group + '"]  ol'
         );
-        blocks = Vvveb.BlocksGroup[group];
+        const getBlockNumber = function (blockType) {
+          const match = blockType.match(/-(\d+)$/);
+          return match ? Number(match[1]) : 0;
+        };
 
-        for (i in blocks) {
-          const blockType = blocks[i];
+        const blocksByCategory = {};
+        const categoryOrder = [];
+
+        Vvveb.BlocksGroup[group].forEach(function (blockType) {
+          const block = Vvveb.Blocks.get(blockType);
+          const category = (block?.category || "other").toLowerCase();
+
+          if (!blocksByCategory[category]) {
+            blocksByCategory[category] = [];
+            categoryOrder.push(category);
+          }
+
+          blocksByCategory[category].push(blockType);
+        });
+
+        const blocks = categoryOrder.flatMap(function (category) {
+          return blocksByCategory[category].sort(function (a, b) {
+            return getBlockNumber(b) - getBlockNumber(a);
+          });
+        });
+
+        for (const blockType of blocks) {
+
           const block = Vvveb.Blocks.get(blockType);
 
           if (block) {
             item =
               generateElements(`<li data-section="${group}" data-drag-type="block" data-type="${blockType}" data-search="${block.name.toLowerCase()}">
 									<span class="name">${block.name}</span>
-									<img class="preview" src="" loading="lazy">
+									<img class="preview" src="" loading="eager" decoding="async">
 								</li>`)[0];
 
             if (block.image) {
@@ -2370,12 +2829,14 @@ Vvveb.Builder = {
       let hoveringOptions = document.getElementById("hovering-options");
       let formEditBox = document.getElementById("form-edit-options");
       let SelectBox = document.getElementById("select-box");
+      let imageMaskingMenu = document.getElementById("mask-popup");
 
       highlightBox.style.display = "none";
       sectionEditBox.style.display = "none";
       addSectionBox.style.display = "none";
       formEditBox.style.display = "none";
       hoveringOptions.style.display = "none";
+      imageMaskingMenu.style.display = "none";
 
       window.FrameWindow.addEventListener("beforeunload", function (event) {
         if (window.__zpInternalAction) return;
@@ -2401,7 +2862,7 @@ Vvveb.Builder = {
 
       selectBoxPosition = function (event) {
         let pos;
-        let target = self.selectedEl; // ?? self.highlightEl;
+        let target = self.selectedEl || self.selectedEl; // ?? self.highlightEl;
 
         highlightBox.style.display = "none";
         sectionEditBox.style.display = "none";
@@ -2461,6 +2922,31 @@ Vvveb.Builder = {
     self.frameDoc = window.FrameDocument;
     self.frameHtml = window.FrameDocument.querySelector("html");
     self.frameBody = window.FrameDocument.querySelector("body");
+    // Close floating editor panels when user clicks on iframe/canvas
+    if (self.frameBody && !self.frameBody.__zigrowClosePanelsOnIframeClick) {
+      self.frameBody.__zigrowClosePanelsOnIframeClick = true;
+
+      self.frameBody.addEventListener("click", function () {
+        const globalPanel = document.getElementById("global-style-panel");
+        const sectionPanel = document.getElementById("section-editor");
+
+        const globalPanelOpen =
+          globalPanel &&
+          window.getComputedStyle(globalPanel).display !== "none";
+
+        const sectionPanelOpen =
+          sectionPanel &&
+          window.getComputedStyle(sectionPanel).display !== "none";
+
+        if (globalPanelOpen) {
+          Vvveb.GlobalCustomSteps?.close?.();
+        }
+
+        if (sectionPanelOpen) {
+          document.getElementById("section-bg-close-btn")?.click();
+        }
+      });
+    }
     self.frameHead = window.FrameDocument.querySelector("head");
 
     //insert editor helpers like non editable areas
@@ -2474,6 +2960,13 @@ Vvveb.Builder = {
 
     self._initHighlight();
 
+
+    mountMediaIframeOverlays(self.frameDoc);
+    applyIframeEditModeState(self.frameDoc, true);
+    window.__zigrowBuilderEditMode = true;
+
+    observeMediaIframeOverlays(self.frameDoc);
+
     // window.dispatchEvent(
     //   new CustomEvent("vvveb.iframe.loaded", { detail: self.frameDoc })
     // );
@@ -2485,6 +2978,10 @@ Vvveb.Builder = {
     window.dispatchEvent(
       new CustomEvent("vvveb.iframe.loaded", { detail: self.frameDoc })
     );
+
+    if (window.ZigrowAOSManager && !Vvveb.Builder.isPreview) {
+      window.ZigrowAOSManager.enableEditMode(self.frameDoc);
+    }
 
     document.querySelector(".loading-message").classList.remove("active");
 
@@ -2509,6 +3006,32 @@ Vvveb.Builder = {
       "vvveb.undo.restore",
       setSaveButtonState
     );
+
+    if (
+      Vvveb.Builder.frameBody &&
+      !Vvveb.Builder.frameBody.__zigrowLogoUrlSyncBound
+    ) {
+      Vvveb.Builder.frameBody.__zigrowLogoUrlSyncBound = true;
+
+      Vvveb.Builder.frameBody.addEventListener(
+        "vvveb.undo.restore",
+        () => {
+          const panel =
+            document.getElementById("global-style-panel");
+
+          if (
+            !panel ||
+            !panel.classList.contains("is-open")
+          ) {
+            return;
+          }
+
+          Vvveb.GlobalCustomSteps
+            ?._syncLogoUIFromTemplate?.();
+        }
+      );
+    }
+
     if (Vvveb.Builder.mode === "edit" && !Vvveb.Builder.isPreview) {
       addNavbarAddLinkHelpers(window.FrameDocument);
       addButtonHelpers(window.FrameDocument);
@@ -2590,6 +3113,7 @@ Vvveb.Builder = {
       window.FrameDocument.body.addEventListener("click", function (e) {
         const btn = e.target.closest(".vvveb-add-link-btn");
         if (!btn) return;
+        if (btn.disabled) return;
 
         e.preventDefault();
 
@@ -2711,8 +3235,10 @@ Vvveb.Builder = {
             if (child.hasAttribute("data-vvveb-helpers")) return false;
             if (child.classList.contains("vvveb-add-btn")) return false;
             if (child.classList.contains("vvveb-add-link-btn")) return false;
-
-            return child.hasAttribute("data-btn");
+            return (
+              child.hasAttribute("data-btn") &&
+              child.getAttribute("data-btn-converted") !== "true"
+            );
           }
         );
 
@@ -2729,6 +3255,8 @@ Vvveb.Builder = {
         const clone = lastReal.cloneNode(true);
         clone.setAttribute("data-vvveb-cloned-btn", "true");
 
+        cloneButtonStyleState(lastReal, clone);
+
         // Insert before helper
         // container.insertBefore(clone, btn);
 
@@ -2743,6 +3271,16 @@ Vvveb.Builder = {
 
         // Insert the clone
         container.insertBefore(clone, btn);
+
+        // Rebuild button styles if LinkEditor is present, so the new button gets the correct style immediately
+        try {
+          if (
+            Vvveb.LinkEditor &&
+            typeof Vvveb.LinkEditor._rebuildButtonStyles === "function"
+          ) {
+            Vvveb.LinkEditor._rebuildButtonStyles();
+          }
+        } catch (err) { }
 
         // refresh enable/disable
         updateAddBtnState(container);
@@ -2772,6 +3310,7 @@ Vvveb.Builder = {
         // Add this inside the window.FrameDocument.body click listener in _frameLoaded
         const addSlideBtn = e.target.closest(".vvveb-add-slide-btn");
         if (addSlideBtn) {
+          if (addSlideBtn.disabled) return;
           e.preventDefault();
           const swiperContainer = addSlideBtn.closest(".swiper");
 
@@ -2850,6 +3389,7 @@ Vvveb.Builder = {
       window.FrameDocument.body.addEventListener("click", function (e) {
         const btn = e.target.closest(".add-card-btn");
         if (!btn) return;
+        if (btn.disabled) return;
 
         e.preventDefault();
         const container = btn.parentElement;
@@ -3462,6 +4002,24 @@ Vvveb.Builder = {
   // Clone editing for smooth clonningg of accordion by kasim(7-10-25) - END
 
   selectNode: function (node) {
+
+    // Jayanti changes for image link selection
+    if (
+      node &&
+      node.tagName &&
+      node.tagName.toLowerCase() === "a" &&
+      (
+        node.hasAttribute("data-zg-image-link") ||
+        node.querySelector(":scope > img")
+      )
+    ) {
+      const imageChild = node.querySelector(":scope > img");
+      if (imageChild) {
+        node = imageChild;
+      }
+    }
+
+
     let SelectBox = document.getElementById("select-box");
 
     if (!node) {
@@ -3469,6 +4027,17 @@ Vvveb.Builder = {
       return;
     }
 
+    const iconSelectionContext =
+      Vvveb.IconElementResolver?.resolve?.(
+        node
+      );
+
+    const iconSelectionBoxTarget =
+      iconSelectionContext?.iconEl === node &&
+        iconSelectionContext?.interactionEl &&
+        iconSelectionContext.interactionEl !== node
+        ? iconSelectionContext.interactionEl
+        : node;
     // Amit has added the code starts here to calculate the font size and show in the select tag of Editor Toolbar
     const selectFontSize = document.getElementById("font-size");
     const computedSize = window.getComputedStyle(node).fontSize;
@@ -3621,8 +4190,17 @@ Vvveb.Builder = {
       AddSectionBtn.style.display = "";
     }
 
+    /*
+  * Real selected element remains node.
+  * For icons, visible selection border can use wrapper.
+  */
     let target = node;
+
+    const selectionBoxTarget =
+      iconSelectionBoxTarget || target;
+
     self.selectedEl = target;
+    self.selectedBoxEl = selectionBoxTarget;
 
     // Custom Modification - Jayanti - 18-09-2025
     window.applySelectActions?.(target);
@@ -3630,21 +4208,58 @@ Vvveb.Builder = {
     // Custom Modification Ends Here - Jayanti - 18-09-2025
 
     try {
-      let pos = offset(target);
-      let top = pos.top - (self.frameDoc.scrollTop ?? 0) - self.selectPadding;
+      let pos = offset(selectionBoxTarget);
+
+      let top =
+        pos.top -
+        (self.frameDoc.scrollTop ?? 0) -
+        self.selectPadding;
 
       SelectBox.style.top = top + "px";
+
       SelectBox.style.left =
-        pos.left - (self.frameDoc.scrollLeft ?? 0) - self.selectPadding + "px";
+        pos.left -
+        (self.frameDoc.scrollLeft ?? 0) -
+        self.selectPadding +
+        "px";
+
       SelectBox.style.width =
-        (target.offsetWidth ?? target.clientWidth) +
+        (
+          selectionBoxTarget.offsetWidth ??
+          selectionBoxTarget.clientWidth
+        ) +
         self.selectPadding * 2 +
         "px";
+
       SelectBox.style.height =
-        (target.offsetHeight ?? target.clientHeight) +
+        (
+          selectionBoxTarget.offsetHeight ??
+          selectionBoxTarget.clientHeight
+        ) +
         self.selectPadding * 2 +
         "px";
+
       SelectBox.style.display = "block";
+
+      /*
+       * If icon selection border is using the wrapper,
+       * hide hover border to avoid double border.
+       */
+      if (selectionBoxTarget !== target) {
+        const highlightBox =
+          document.getElementById("highlight-box");
+
+        const highlightName =
+          document.getElementById("highlight-name");
+
+        if (highlightBox) {
+          highlightBox.style.display = "none";
+        }
+
+        if (highlightName) {
+          highlightName.style.display = "none";
+        }
+      }
 
       //move actions toolbar to bottom if there is no space on top
       if (top < 30) {
@@ -3677,6 +4292,7 @@ Vvveb.Builder = {
       P: "Paragraph",
       SPAN: "Text",
       SMALL: "Text",
+      I: "Icon",
       A: "Link",
       IMG: "Image",
       UL: "List",
@@ -3692,15 +4308,35 @@ Vvveb.Builder = {
     };
 
     // fallback to tag name if not found
-    const tagName = elementType[1].toUpperCase();
-    const readableName = friendlyNames[tagName] || tagName;
+    const tagName =
+      elementType[1].toUpperCase();
 
-    document.querySelector("#highlight-name .type").innerHTML = "";
-    // document.querySelector("#highlight-name .name").innerHTML = readableName;
+    const isSelectedIcon =
+      node?.tagName?.toUpperCase() === "I";
 
-    // Custom Modification - Jayanti - 29-10-25
-    const labelEl = document.querySelector("#highlight-name .name");
-    labelEl.textContent = getSectionIdForHIghlight(node, readableName);
+    const readableName =
+      isSelectedIcon
+        ? "Icon"
+        : friendlyNames[tagName] || tagName;
+
+    document.querySelector(
+      "#highlight-name .type"
+    ).innerHTML = "";
+
+    const labelEl =
+      document.querySelector(
+        "#highlight-name .name"
+      );
+
+    if (labelEl) {
+      labelEl.textContent =
+        isSelectedIcon
+          ? "Icon"
+          : getSectionIdForHIghlight(
+            node,
+            readableName
+          );
+    }
     // jayanti changes done here
 
     // Custom Modification - Jayanti Changes (Comment below line)
@@ -3867,6 +4503,7 @@ Vvveb.Builder = {
         document.getElementById("add-section-btn").classList.remove("d-flex");
       }
 
+
       const listOfResize = document.querySelectorAll(".top-center, .center-left, .center-right, .bottom-center");
       const resizeDiv = document.querySelector(".resize");
       const wresizeDiv = resizeDiv.offsetWidth;
@@ -3884,6 +4521,7 @@ Vvveb.Builder = {
       // Only log when section actually changes
       if (currentSection && currentSection !== hoveredSection) {
         hoveredSection = currentSection;
+        window.ZigrowSectionVisibility?.syncButton?.(hoveredSection);
       }
 
       if (currentCard && currentCard !== hoveredCard) {
@@ -3927,10 +4565,55 @@ Vvveb.Builder = {
           if (hb) hb.style.display = "none";
           return;
         }
+
+        /*
+ * Normalize icon-only wrappers into one visual icon control.
+ *
+ * hoverTarget:
+ * The complete clickable icon area used for the hover box.
+ *
+ * componentTarget:
+ * The actual <i> used for the component name and selection.
+ */
+        const iconHoverContext =
+          Vvveb.IconElementResolver
+            ?.resolveFromClickTarget?.(event.target);
+
+        const isIconControlHover =
+          Boolean(iconHoverContext?.iconEl);
+
+        const hoverTarget =
+          iconHoverContext?.interactionEl ||
+          event.target;
+
+        const componentTarget =
+          iconHoverContext?.iconEl ||
+          event.target;
         if (!self.isDragging && !self.isResize) {
-          self.updateAddBtnLabel(event.target);
+          self.updateAddBtnLabel(componentTarget);
         }
-        self.highlightEl = target = event.target;
+        const containerSelectionPolicy =
+          window.ZigrowContainerSelectionPolicy;
+
+        /*
+         * Normal structural DIV elements remain excluded.
+         * An icon-only DIV is treated as an icon control instead.
+         */
+        const suppressGenericDivHighlight =
+          !isIconControlHover &&
+          containerSelectionPolicy
+            ?.shouldSuppressGenericSelection(
+              hoverTarget
+            ) === true;
+
+        self.highlightEl =
+          suppressGenericDivHighlight
+            ? null
+            : hoverTarget;
+
+        target = hoverTarget;
+
+
         let pos = offset(target);
         let height = target.offsetHeight;
         let halfHeight = Math.max(height / 2, 5);
@@ -4125,7 +4808,15 @@ Vvveb.Builder = {
            left:${pos.left - (self.frameDoc.scrollLeft ?? 0)}px;
            width:${width}px; 
            height:${height}px;
-           display:${event.target.hasAttribute("contenteditable") ? "none" : "block"
+      display:${suppressGenericDivHighlight ||
+              (
+                !isIconControlHover &&
+                hoverTarget.hasAttribute(
+                  "contenteditable"
+                )
+              )
+              ? "none"
+              : "block"
             };
            border:${self.isDragging ? "1px dashed #0d6efd" : ""};
         `
@@ -4180,7 +4871,7 @@ Vvveb.Builder = {
               .classList.remove("outside");
           }
 
-          let elementType = self._getElementType(event.target);
+          let elementType = self._getElementType(componentTarget);
           // Custom Modification - Jayanti - (Comment below lines)
           //   document.querySelector("#highlight-name .type").innerHTML =
           //     elementType[0];
@@ -4201,6 +4892,7 @@ Vvveb.Builder = {
             SPAN: "Text",
             SMALL: "Text",
             A: "Link",
+            I: "Icon",
             IMG: "Image",
             UL: "List",
             OL: "List",
@@ -4217,7 +4909,7 @@ Vvveb.Builder = {
           // fallback to tag name if not found
           const tagName = elementType[1].toUpperCase();
 
-          if (
+          const shouldHideHoverLabel =
             event.target.closest(".swiper-button-prev") ||
             event.target.closest(".swiper-button-next") ||
             event.target.closest(".swiper-pagination") ||
@@ -4225,23 +4917,79 @@ Vvveb.Builder = {
             event.target.closest(".vvveb-add-slide-helper") ||
             event.target.closest(".hamburger, .hamburger > *") ||
             event.target.classList.contains("swiper-wrapper") ||
-            (event.target.tagName === "DIV" &&
-              event.target.closest(".clonable-card, .swiper-slide")) ||
-            event.target.closest("form")
-          ) {
-            document.getElementById("highlight-box").style.display = "none";
+            (
+              event.target.tagName === "DIV" &&
+              event.target.closest(".clonable-card, .swiper-slide")
+            ) ||
+            event.target.closest("form");
+
+          if (shouldHideHoverLabel) {
+            const highlightBox =
+              document.getElementById("highlight-box");
+
+            const highlightNameWrap =
+              document.getElementById("highlight-name");
+
+            if (highlightBox) {
+              highlightBox.style.display = "none";
+            }
+
+            if (highlightNameWrap) {
+              highlightNameWrap.style.display = "none";
+            }
+
+            return;
           }
 
-          const readableName = friendlyNames[tagName] || tagName;
-          document.querySelector("#highlight-name .type").innerHTML = "";
-          // document.querySelector("#highlight-name .name").innerHTML =
-          // readableName;
+          const readableName =
+            isIconControlHover
+              ? "Icon"
+              : friendlyNames[tagName] || tagName;
 
-          // Custom Modificaion - Jayanti
-          document.querySelector("#highlight-name .name").textContent =
-            getSectionIdForHIghlight(event.target, readableName);
+          const highlightNameWrap =
+            document.getElementById("highlight-name");
+
+          const highlightType =
+            document.querySelector("#highlight-name .type");
+
+          const highlightName =
+            document.querySelector("#highlight-name .name");
+
+          const highlightBox =
+            document.getElementById("highlight-box");
+
+          if (highlightType) {
+            highlightType.textContent = "";
+          }
+
+          if (highlightName) {
+            highlightName.textContent = readableName;
+          }
+
+          /*
+           * Important:
+           * Icon editor / icon selection may hide the hover UI.
+           * Every valid hover must restore it.
+           */
           if (!self.isDragging && !self.isResize) {
-            self.updateAddBtnLabel(event.target);
+            if (highlightBox) {
+              highlightBox.style.display = "block";
+            }
+
+            if (highlightNameWrap) {
+              highlightNameWrap.style.display = "block";
+            }
+          }
+
+
+
+          if (!self.isDragging && !self.isResize) {
+            self.updateAddBtnLabel(
+              componentTarget
+            );
+          }
+          if (!self.isDragging && !self.isResize) {
+            self.updateAddBtnLabel(componentTarget);
           }
           //Custom Modification - jayanti changes done here
         }
@@ -4368,78 +5116,14 @@ Vvveb.Builder = {
           Vvveb.Undo.addMutation(self.dragMoveMutation);
           self.dragMoveMutation = false;
         }
+        rehydrateBuilderHelpers(
+          window.FrameDocument ||
+          (Vvveb.Builder && Vvveb.Builder.frameDoc) ||
+          (Vvveb.Builder && Vvveb.Builder.iframe && Vvveb.Builder.iframe.contentDocument),
+          node
+        );
       }
     };
-    // Amit's code ends from here for the image history recording
-    //   self.isResize = false;
-    //   document
-    //     .querySelectorAll("#section-actions, #highlight-name")
-    //     .forEach((el) => (el.style.display = ""));
-    //   if (self.isDragging) {
-    //     self.isDragging = false;
-    //     Vvveb.Builder.highlightEnabled = true;
-    //     if (self.iconDrag) self.iconDrag.remove();
-    //     document.getElementById("component-clone")?.remove();
-
-    //     if (self.dragMoveMutation === false) {
-    //       if (self.component.dragHtml || Vvveb.dragHtml) {
-    //         //if dragHtml is set for dragging then set real component html
-    //         if (self.component) {
-    //           newElement = generateElements(self.component.html)[0];
-    //           self.dragElement.replaceWith(newElement);
-    //           self.dragElement = newElement;
-    //         }
-    //       }
-
-    //       if (self.component.afterDrop)
-    //         self.dragElement = self.component.afterDrop(self.dragElement);
-    //     } else {
-    //       self.selectedEl.classList.remove("is-dragged");
-    //       self.dragElement.replaceWith(self.selectedEl);
-    //       self.dragElement = self.selectedEl;
-    //     }
-
-    //     const node = self.dragElement;
-    //     self.selectNode(node);
-    //     Vvveb.TreeList.loadComponents();
-    //     Vvveb.TreeList.selectComponent(node);
-    //     self.loadNodeComponent(node);
-    //     //if component properties is loaded in left panel tab instead of right panel show tab
-    //     let propertiesTab = document.querySelector(
-    //       ".component-properties-tab a"
-    //     );
-    //     if (propertiesTab.offsetParent) {
-    //       //if properites tab is enabled/visible
-    //       propertiesTab.style.display = "";
-    //       const bsTab = bootstrap.Tab.getOrCreateInstance(propertiesTab);
-    //       bsTab.show();
-    //     }
-
-    //     if (self.dragType == "section") {
-    //       node.scrollIntoView({
-    //         behavior: "smooth",
-    //         block: "center",
-    //         inline: "center",
-    //       });
-    //     }
-
-    //     if (self.dragMoveMutation === false) {
-    //
-    // Vvveb.Undo.addMutation({
-    //         type: "childList",
-    //         target: node.parentNode,
-    //         addedNodes: [node],
-    //         nextSibling: node.nextSibling,
-    //       });
-    //     } else {
-    //       self.dragMoveMutation.newParent = node.parentNode;
-    //       self.dragMoveMutation.newNextSibling = node.nextSibling;
-
-    //       Vvveb.Undo.addMutation(self.dragMoveMutation);
-    //       self.dragMoveMutation = false;
-    //     }
-    //   }
-    // };
 
     self.frameBody.addEventListener("mouseup", highlightUp);
 
@@ -4497,6 +5181,7 @@ Vvveb.Builder = {
     let highlightClick = function (event) {
       if (Vvveb.Builder.isPreview == false) {
         if (event.target) {
+
           const listOfResize = document.querySelectorAll(".top-center, .center-left, .center-right, .bottom-center");
           const resizeDiv = document.querySelector(".resize");
           const wresizeDiv = resizeDiv.offsetWidth;
@@ -4512,8 +5197,8 @@ Vvveb.Builder = {
           }
 
           const maskPanel = document.getElementById("mask-popup");
-          if (maskPanel.classList.contains("show")) {
-            maskPanel.classList.remove("show");
+          if (maskPanel.style.display == "block") {
+            maskPanel.style.display = "none";
           }
 
           const emojipopup = document.getElementById("emoji-picker-container");
@@ -4567,10 +5252,30 @@ Vvveb.Builder = {
               event.target.closest(".clonable-card > div, .swiper-slide > div")
             )
           ) {
-            self.selectNode(event.target);
 
-            Vvveb.TreeList.selectComponent(event.target);
-            self.loadNodeComponent(event.target);
+            // Custom Modification - Jayanti changes for image selection
+            // If the clicked element is an <a> tag with a child <img> or
+            let selectionTarget = event.target;
+
+            if (
+              selectionTarget &&
+              selectionTarget.tagName &&
+              selectionTarget.tagName.toLowerCase() === "a" &&
+              (
+                selectionTarget.hasAttribute("data-zg-image-link") ||
+                selectionTarget.querySelector(":scope > img")
+              )
+            ) {
+              const imageChild = selectionTarget.querySelector(":scope > img");
+              if (imageChild) {
+                selectionTarget = imageChild;
+              }
+            }
+
+            self.selectNode(selectionTarget);
+
+            Vvveb.TreeList.selectComponent(selectionTarget);
+            self.loadNodeComponent(selectionTarget);
 
             // Writing to hide the resizing option on the logo image
             const excludingElements = ["[data-logo]"];
@@ -4603,23 +5308,6 @@ Vvveb.Builder = {
 
     self.frameBody.addEventListener("click", highlightClick);
 
-    // let pressStartTime;
-    // const CLICK_THRESHOLD = 500; // Time in milliseconds
-
-    // self.frameBody.addEventListener("pointerdown", (event) => {
-    //   pressStartTime = Date.now();
-    // });
-
-    // self.frameBody.addEventListener("pointerup", (event) => {
-    //   if (!pressStartTime) return;
-    //   const pressDuration = Date.now() - pressStartTime;
-
-    //   if (pressDuration < CLICK_THRESHOLD) {
-    //     highlightClick(event);
-    //   } else {
-    //   }
-    // });
-
     self.frameBody.addEventListener(
       "click",
       (event) => {
@@ -4643,44 +5331,6 @@ Vvveb.Builder = {
 
   _initBox: function () {
     let self = this;
-
-    // Amit;s code starts here for the drag and drop issue
-    // document
-    //   .getElementById("drag-btn")
-    //   .addEventListener("mousedown", function (event) {
-    //     //self.dragElement = self.selectedEl.setAttribute("style",Vvveb.dragElementStyle);
-    //     if (event.which == 1) {
-    //       //left click
-    //       self.isDragging = true;
-    //       document
-    //         .querySelectorAll("#section-actions, #highlight-name, #select-box")
-    //         .forEach((el) => (el.style.display = ""));
-
-    //       if (self.designerMode) {
-    //         self.dragElement = self.selectedEl;
-    //       } else {
-    //         self.selectedEl.style.position = "";
-    //         self.selectedEl.style.top = "";
-    //         self.selectedEl.style.left = "";
-
-    //         self.selectedEl.classList.add("is-dragged");
-    //         self.dragElement = generateElements(Vvveb.dragHtml)[0];
-    //       }
-
-    //       const node = self.selectedEl;
-
-    //       self.dragMoveMutation = {
-    //         type: "move",
-    //         target: node,
-    //         oldParent: node.parentNode,
-    //         oldNextSibling: node.nextSibling,
-    //       };
-
-    //       //self.selectNode(false);
-    //       event.preventDefault();
-    //       return false;
-    //     }
-    //   });
 
     const dragBtn = document.getElementById("drag-btn");
     let isMouseDown = false;
@@ -5137,6 +5787,35 @@ Vvveb.Builder = {
       const compHost = document.getElementById("components-host");
       const blockHost = document.getElementById("blocks-host");
 
+      function isZigrowSafariForInsertPanel() {
+        return document.documentElement.classList.contains("zg-safari-browser");
+      }
+
+      function applyInsertPanelLayoutMode() {
+        const isSafari = isZigrowSafariForInsertPanel();
+
+        const host = document.querySelector("#insert-modal #blocks-host");
+        const lists = document.querySelectorAll(
+          "#insert-modal #blocks-host .blocks-list > li > ol"
+        );
+
+        if (!host || !lists.length) return;
+
+        host.classList.toggle("zg-safari-grid-mode", isSafari);
+
+        lists.forEach(function (ol) {
+          if (isSafari) {
+            ol.classList.remove("masonry-columns");
+            ol.classList.add("zg-safari-grid-list");
+          } else {
+            ol.classList.remove("zg-safari-grid-list");
+            ol.classList.add("masonry-columns");
+          }
+        });
+      }
+
+      window.zgApplyInsertPanelLayoutMode = applyInsertPanelLayoutMode;
+
       function onOutsidePointerDown(e) {
         // modal close
         if (modal.classList.contains("is-hidden")) return;
@@ -5185,14 +5864,9 @@ Vvveb.Builder = {
           }, 0);
         }
         // ✅ Auto enable masonry layout for block list when insert modal opens
-        setTimeout(() => {
-          const lists = document.querySelectorAll(
-            "#blocks-host .blocks-list>li>ol"
-          );
-          lists.forEach((ol) => {
-            ol.classList.add("masonry-columns");
-          });
-        }, 50);
+        // Chrome uses masonry. Safari uses stable grid.
+        setTimeout(applyInsertPanelLayoutMode, 50);
+        setTimeout(applyInsertPanelLayoutMode, 250);
       }
 
       function close() {
@@ -5249,7 +5923,25 @@ Vvveb.Builder = {
             }
           } catch (err) { }
 
+          const previousVisibility =
+            window.ZigrowSectionVisibility
+              ?.read(oldEl);
+
           oldEl.replaceWith(newNode);
+          if (
+            previousVisibility &&
+            window.ZigrowSectionVisibility
+          ) {
+
+            window.ZigrowSectionVisibility.apply(
+              newNode,
+              previousVisibility,
+              {
+                recordUndo: false
+              }
+            );
+
+          }
 
           // keep your usual selection/undo pipeline
           Vvveb.Builder.selectNode(newNode);
@@ -5571,6 +6263,17 @@ Vvveb.Builder = {
         addedNodes: [node],
         nextSibling: node.nextSibling,
       });
+
+      rehydrateBuilderHelpers(
+        window.FrameDocument ||
+        (Vvveb.Builder && Vvveb.Builder.frameDoc) ||
+        (Vvveb.Builder && Vvveb.Builder.iframe && Vvveb.Builder.iframe.contentDocument),
+        node
+      );
+
+      if (typeof refreshZigrowAOSAfterDomChange === "function") {
+        refreshZigrowAOSAfterDomChange();
+      }
     }
 
     addSectionBox.addEventListener("click", function (event) {
@@ -5890,6 +6593,26 @@ Vvveb.Builder = {
     // 🔹 Work on a cloned document so we don't mutate the live canvas
     const doc = liveDoc.cloneNode(true);
 
+    // Jayanti added code for swipers
+    // Remove runtime initialization markers before saving.
+    // These components must initialize again when the live page loads.
+    const runtimeStateAttributes = [
+      "data-swiper-initialized",
+      "data-swiper-ready",
+      "data-filter-ready",
+      "data-tabs-ready",
+      "data-tab-ready",
+      "data-accordion-ready",
+    ];
+
+    runtimeStateAttributes.forEach(function (attributeName) {
+      doc
+        .querySelectorAll("[" + attributeName + "]")
+        .forEach(function (element) {
+          element.removeAttribute(attributeName);
+        });
+    });
+
     // 🔹 remove runtime-only Add link helpers from the clone only
     if (this.cleanupAddLinkHelpersDom) {
       this.cleanupAddLinkHelpersDom(doc);
@@ -5977,6 +6700,10 @@ Vvveb.Builder = {
     let headHtml = getTag(html, "head");
     if (window.FrameDocument.head.innerHTML != headHtml) {
       window.FrameDocument.head.innerHTML = headHtml;
+    }
+
+    if (typeof refreshZigrowAOSAfterDomChange === "function") {
+      refreshZigrowAOSAfterDomChange();
     }
   },
 
@@ -6305,6 +7032,15 @@ function addSliderHelpers(frameDoc) {
     const swiperContainer = wrapper.closest(".swiper");
     if (swiperContainer) {
       swiperContainer.appendChild(helperBtn);
+
+      // Set initial disable state (same pattern as add-btn / watchAddBtnContainer)
+      updateAddSlideBtnState(swiperContainer);
+
+      // Watch for slide additions/removals and keep button state in sync
+      const slideObs = new MutationObserver(() => {
+        updateAddSlideBtnState(swiperContainer);
+      });
+      slideObs.observe(wrapper, { childList: true });
     }
   });
 }
@@ -6314,6 +7050,20 @@ function removeSliderHelpers(frameDoc) {
   frameDoc
     .querySelectorAll(".vvveb-add-slide-helper")
     .forEach((el) => el.remove());
+}
+
+/**
+ * Shared helper: apply the standard enabled / disabled visual state to any
+ * in-canvas helper button (Add Button, Add Link, Add Icon, Add Slide, Add Card).
+ * All five helper buttons use this one function so the lock UI is identical.
+ */
+function setHelperButtonState(btn, enabled, enabledTitle, disabledTitle) {
+  if (!btn) return;
+  btn.disabled = !enabled;
+  btn.style.opacity = enabled ? "1" : "0.5";
+  btn.style.cursor = enabled ? "pointer" : "not-allowed";
+  btn.style.borderColor = enabled ? "" : "#ccc";
+  btn.title = enabled ? enabledTitle : disabledTitle;
 }
 
 function updateAddSlideBtnState(swiperContainer) {
@@ -6329,18 +7079,13 @@ function updateAddSlideBtnState(swiperContainer) {
       !el.hasAttribute("data-vvveb-helpers")
   );
 
-  // Disable if 10 or more, enable if less than 10
-  if (slides.length >= 10) {
-    addBtn.disabled = true;
-    addBtn.style.opacity = "0.5";
-    addBtn.style.cursor = "not-allowed";
-    addBtn.title = "Maximum 10 slides allowed";
-  } else {
-    addBtn.disabled = false;
-    addBtn.style.opacity = "1";
-    addBtn.style.cursor = "pointer";
-    addBtn.title = "Add Slide";
-  }
+  const enabled = slides.length > 0 && slides.length < 10;
+  setHelperButtonState(
+    addBtn,
+    enabled,
+    "Add Slide",
+    slides.length === 0 ? "No slides to clone" : "Maximum 10 slides allowed"
+  );
   document.getElementById("select-box").style.display = "none";
 }
 
@@ -6372,6 +7117,24 @@ function addClonableCardHelpers(frameDoc) {
 
     // Append to the end of the container
     container.appendChild(btn);
+
+    // Lock the button when all cards are removed (nothing left to clone)
+    (function (cardContainer, cardBtn) {
+      function _updateCardBtnState() {
+        const remaining = Array.from(
+          cardContainer.querySelectorAll(".clonable-card")
+        ).filter((c) => !c.hasAttribute("data-vvveb-helpers"));
+        setHelperButtonState(
+          cardBtn,
+          remaining.length > 0,
+          "Add Card",
+          "No cards to clone"
+        );
+      }
+      _updateCardBtnState();
+      const obs = new MutationObserver(_updateCardBtnState);
+      obs.observe(cardContainer, { childList: true, subtree: true });
+    })(container, btn);
   });
 }
 
@@ -6393,6 +7156,7 @@ function addNavbarAddLinkHelpers(frameDoc) {
         /* .vvveb-add-link-btn.vvv-enhanced-btn:hover{border-color:rgba(38,93,115,0.6);transform:translateY(-1px);background:rgba(246,251,255,0.6);box-shadow:0 6px 18px rgba(16,40,56,0.05)} */
         .vvveb-add-link-btn.vvv-enhanced-btn:active{transform:translateY(0);box-shadow:0 3px 8px rgba(16,40,56,0.04)}
         .vvveb-add-link-btn.vvv-enhanced-btn:focus{outline:none;box-shadow:0 0 0 4px rgba(38,93,115,0.08)}
+        .vvveb-add-link-btn.vvv-enhanced-btn:disabled{opacity:0.5;cursor:not-allowed;border-color:#ccc}
         .vvveb-add-btn.vvv-enhanced-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 10px;height: fit-content;border:1px dashed #5b3df2;border-radius:10px;background:linear-gradient(rgb(255, 255, 255) 0%, rgb(255, 255, 255) 0%, rgb(245, 250, 254) 100%) 0% 0% no-repeat border-box border-box;color:#595c5f;font-weight:600;font-size:13px;line-height:1;cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .08s ease,box-shadow .16s ease}
         .vvveb-add-btn.vvv-enhanced-btn .btn-icon{display:inline-flex;align-items:center;justify-content:center;height:18px;border-radius:6px;background:rgba(38,93,115,0.04);color:#595c5f;font-size:13px}
         .vvveb-add-btn.vvv-enhanced-btn:active{transform:translateY(0);box-shadow:0 3px 8px rgba(16,40,56,0.04)}
@@ -6416,17 +7180,20 @@ function addNavbarAddLinkHelpers(frameDoc) {
     position: relative;
     z-index: 10;
   }
-    .vvveb-add-slide-btn.vvv-enhanced-btn:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
+    // .vvveb-add-slide-btn.vvv-enhanced-btn:disabled {
+    //   cursor: not-allowed;
+    //   opacity: 0.6;
+    // }
+    .vvveb-add-slide-btn.vvv-enhanced-btn:disabled{opacity:0.5;cursor:not-allowed;border-color:#ccc}
       .add-card-btn.vvv-enhanced-btn {
     margin-block: auto;
     margin-left: 20px;
     height: fit-content;
     width: fit-content;
     padding: 30px;
+    margin: 16px;
 }
+        .add-card-btn.vvv-enhanced-btn:disabled{opacity:0.5;cursor:not-allowed;border-color:#ccc}
         /* editor-only: stabilize the helper <li> inside Bootstrap navbar-nav */
         li.vvveb-add-link-helper {
           display: inline-flex !important;
@@ -6476,6 +7243,31 @@ function addNavbarAddLinkHelpers(frameDoc) {
     `;
 
     ul.appendChild(li);
+
+    // Lock the button when all nav items are removed (nothing left to clone)
+    (function (linkList, helperLi) {
+      const addLinkBtn = helperLi.querySelector(".vvveb-add-link-btn");
+      if (!addLinkBtn) return;
+      function _updateNavLinkBtnState() {
+        const realItems = Array.from(linkList.children).filter((child) => {
+          if (child === helperLi) return false;
+          if (child.hasAttribute("data-vvveb-helpers")) return false;
+          const hasContent =
+            child.textContent.trim() ||
+            child.querySelector("a,button,span,img,svg,i");
+          return !!hasContent;
+        });
+        setHelperButtonState(
+          addLinkBtn,
+          realItems.length > 0,
+          "Add link",
+          "No links to clone"
+        );
+      }
+      _updateNavLinkBtnState();
+      const obs = new MutationObserver(_updateNavLinkBtnState);
+      obs.observe(linkList, { childList: true, subtree: true });
+    })(ul, li);
   });
   // Detect icon groups using ONLY direct-child <i> elements.
   // This avoids matching anchors that use <svg> or <img> (e.g., brand logos).
@@ -6528,6 +7320,35 @@ function addNavbarAddLinkHelpers(frameDoc) {
     `;
 
     container.appendChild(btn);
+
+
+    // Lock the button when all icons are removed (nothing left to clone)
+    (function (iconContainer, iconBtn) {
+      function _updateIconBtnState() {
+        let links = [];
+        try {
+          links = Array.from(iconContainer.querySelectorAll(":scope > a"));
+          if (!links.length) {
+            links = Array.from(iconContainer.querySelectorAll(":scope > * a"));
+          }
+        } catch (e) {
+          links = [];
+        }
+        links = links.filter((a) => !a.hasAttribute("data-vvveb-helpers"));
+        const realItems = links.filter(
+          (a) => a.querySelector("i,svg,img") || a.textContent.trim()
+        );
+        setHelperButtonState(
+          iconBtn,
+          realItems.length > 0,
+          "Add Icon",
+          "No icons to clone"
+        );
+      }
+      _updateIconBtnState();
+      const obs = new MutationObserver(_updateIconBtnState);
+      obs.observe(iconContainer, { childList: true, subtree: true });
+    })(container, btn);
   });
 
   // ensure frameDoc knows helpers are allowed (used by protector guard)
@@ -6687,7 +7508,10 @@ function addButtonHelpers(frameDoc) {
       if (child.classList.contains("vvveb-add-btn")) return false;
       if (child.classList.contains("vvveb-add-link-btn")) return false;
 
-      return child.hasAttribute("data-btn");
+      return (
+        child.hasAttribute("data-btn") &&
+        child.getAttribute("data-btn-converted") !== "true"
+      );
     });
 
     if (directBtnElements.length < 1) return;
@@ -6720,7 +7544,10 @@ function addButtonHelpers(frameDoc) {
         if (child.classList.contains("vvveb-add-btn")) return false;
         if (child.classList.contains("vvveb-add-link-btn")) return false;
 
-        return child.hasAttribute("data-btn");
+        return (
+          child.hasAttribute("data-btn") &&
+          child.getAttribute("data-btn-converted") !== "true"
+        );
       }
     );
 
@@ -6789,6 +7616,75 @@ function addButtonHelpers(frameDoc) {
   } catch (e) { }
 }
 
+// =====================================================
+// REHYDRATE HELPERS - Re-run helper injection after new section/block is inserted
+// =====================================================
+function rehydrateBuilderHelpers(frameDoc) {
+  if (!frameDoc) return;
+  try {
+    if (typeof Vvveb !== "undefined" && Vvveb.Builder && Vvveb.Builder.isPreview) return;
+  } catch (e) { }
+
+  try {
+    frameDoc.documentElement?.setAttribute("data-vvveb-helpers-allowed", "true");
+  } catch (e) { }
+
+  try {
+    if (typeof addNavbarAddLinkHelpers === "function") addNavbarAddLinkHelpers(frameDoc);
+  } catch (e) { }
+
+  try {
+    if (typeof addButtonHelpers === "function") addButtonHelpers(frameDoc);
+  } catch (e) { }
+
+  try {
+    if (typeof addSliderHelpers === "function") addSliderHelpers(frameDoc);
+  } catch (e) { }
+
+  try {
+    if (typeof addClonableCardHelpers === "function") addClonableCardHelpers(frameDoc);
+  } catch (e) { }
+}
+
+window.rehydrateBuilderHelpers = rehydrateBuilderHelpers;
+
+
+// When cloning a button, we want to preserve all the relevant data attributes that define its style and behavior.
+function cloneButtonStyleState(sourceEl, cloneEl) {
+  if (!sourceEl || !cloneEl) return;
+
+  const attrsToCopy = [
+    "data-btn",
+    "data-btn-converted",
+    "data-btn-bg",
+    "data-btn-color",
+    "data-btn-hover-bg",
+    "data-btn-hover-color",
+    "data-btn-size",
+    "data-btn-radius",
+    "data-btn-border",
+    "data-btn-border-color",
+    "data-btn-bg-original",
+    "data-btn-color-original",
+  ];
+
+  attrsToCopy.forEach((attr) => {
+    if (sourceEl.hasAttribute(attr)) {
+      cloneEl.setAttribute(attr, sourceEl.getAttribute(attr));
+    } else {
+      cloneEl.removeAttribute(attr);
+    }
+  });
+
+  const newStyleId =
+    "link-" +
+    Date.now().toString(36) +
+    "-" +
+    Math.floor(Math.random() * 9999).toString(36);
+
+  cloneEl.setAttribute("data-link-style-id", newStyleId);
+}
+
 const _vvvBtnObservers = new WeakMap();
 
 // track frame documents where we installed a protector observer
@@ -6851,14 +7747,20 @@ function updateAddBtnState(container) {
     if (child.hasAttribute("data-vvveb-helpers")) return false;
     if (child.classList.contains("vvveb-add-btn")) return false;
     if (child.classList.contains("vvveb-add-link-btn")) return false;
-    return child.hasAttribute("data-btn");
+    return (
+      child.hasAttribute("data-btn") &&
+      child.getAttribute("data-btn-converted") !== "true"
+    );
   });
 
-  // Disable helper when total number of buttons (originals + clones)
-  // reaches the configured limit (2)
   const totalCount = realBtnElements.length;
-
-  helper.disabled = totalCount >= 2;
+  const enabled = totalCount > 0 && totalCount < 2;
+  setHelperButtonState(
+    helper,
+    enabled,
+    "Add Button",
+    totalCount === 0 ? "No buttons to clone" : "Maximum 2 buttons allowed"
+  );
 }
 
 function getBtnSeparator(container) {
@@ -7207,6 +8109,14 @@ Vvveb.Gui = {
     if (iframe) {
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
+      if (window.ZigrowAOSManager) {
+        if (isPreview) {
+          window.ZigrowAOSManager.enablePreviewMode(iframeDoc);
+        } else {
+          window.ZigrowAOSManager.disablePreviewMode(iframeDoc);
+        }
+      }
+
       if (isPreview) {
         // Use centralized cleanup if available, otherwise fallback
         if (typeof window._zpApplyPreviewCleanup === 'function') {
@@ -7217,6 +8127,9 @@ Vvveb.Gui = {
             el.style.setProperty("display", "none", "important");
           });
         }
+        // Hide YouTube overlays in preview mode
+        window.__zigrowBuilderEditMode = false;
+        applyIframeEditModeState(iframeDoc, false);
       } else {
         // Exiting preview — restore editor helpers
         if (typeof window._zpRestoreEditorHelpers === 'function') {
@@ -7226,6 +8139,9 @@ Vvveb.Gui = {
             el.style.setProperty("display", "inline-flex", "important");
           });
         }
+        // Show YouTube overlays in edit mode
+        window.__zigrowBuilderEditMode = true;
+        applyIframeEditModeState(iframeDoc, true);
       }
     }
 
@@ -8075,6 +8991,13 @@ Vvveb.SectionList = {
             nextSibling: node.nextSibling,
           });
 
+          rehydrateBuilderHelpers(
+            window.FrameDocument ||
+            (Vvveb.Builder && Vvveb.Builder.frameDoc) ||
+            (Vvveb.Builder && Vvveb.Builder.iframe && Vvveb.Builder.iframe.contentDocument),
+            node
+          );
+
           self.loadSections();
           Vvveb.TreeList.loadComponents();
           Vvveb.TreeList.selectComponent(node);
@@ -8910,40 +9833,131 @@ Vvveb.FontsManager = {
   },
 
   //add also element so we can keep track of the used fonts to remove unused ones
+  // addFont: function (provider, fontFamily, element = false) {
+  //   if (!provider) return;
+  //   // console.log("element: ", element);
+  //   let providerObj = this.providers[provider];
+  //   if (providerObj) {
+  //     providerObj.addFont(fontFamily);
+  //     this.activeFonts.push({ provider, fontFamily, element });
+  //   }
+  // },
+
   addFont: function (provider, fontFamily, element = false) {
-    if (!provider) return;
-    // console.log("element: ", element);
+    if (!provider || !fontFamily) return;
+
+    const targetElement =
+      element && element.nodeType === 1
+        ? element
+        : false;
+
+    const targetDoc =
+      targetElement?.ownerDocument ||
+      window.FrameDocument ||
+      Vvveb.Builder?.iframe?.contentDocument ||
+      document;
+
     let providerObj = this.providers[provider];
+
     if (providerObj) {
-      providerObj.addFont(fontFamily);
-      this.activeFonts.push({ provider, fontFamily, element });
+      providerObj.addFont(fontFamily, targetDoc);
+
+      if (targetElement) {
+        const alreadyTracked = this.activeFonts.some((font) => {
+          return (
+            font.provider === provider &&
+            font.fontFamily === fontFamily &&
+            font.element === targetElement
+          );
+        });
+
+        if (!alreadyTracked) {
+          this.activeFonts.push({
+            provider,
+            fontFamily,
+            element: targetElement,
+          });
+        }
+      }
     }
   },
 
-  removeFont: function (provider, fontFamily) {
+  // removeFont: function (provider, fontFamily) {
+  //   if (!provider) return;
+
+  //   let providerObj = this.providers[provider];
+  //   if (provider != "default" && providerObj) {
+  //     providerObj.removeFont(fontFamily);
+  //   }
+  // },
+
+  removeFont: function (provider, fontFamily, targetDoc) {
     if (!provider) return;
 
     let providerObj = this.providers[provider];
+
     if (provider != "default" && providerObj) {
-      providerObj.removeFont(fontFamily);
+      providerObj.removeFont(fontFamily, targetDoc);
     }
   },
 
   //check if the added fonts are still used for the elements they were set and remove unused ones
+  // cleanUnusedFonts: function () {
+  //   for (i in this.activeFonts) {
+  //     let elementFont = this.activeFonts[i];
+  //     if (elementFont.element) {
+  //       if (
+  //         Vvveb.StyleManager.getStyle(
+  //           elementFont.element,
+  //           "font-family"
+  //         ).replaceAll('"', "") != elementFont.fontFamily
+  //       ) {
+  //         this.removeFont(elementFont.provider, elementFont.fontFamily);
+  //       }
+  //     }
+  //   }
+  // },
+
   cleanUnusedFonts: function () {
-    for (i in this.activeFonts) {
-      let elementFont = this.activeFonts[i];
-      if (elementFont.element) {
-        if (
-          Vvveb.StyleManager.getStyle(
-            elementFont.element,
-            "font-family"
-          ).replaceAll('"', "") != elementFont.fontFamily
-        ) {
-          this.removeFont(elementFont.provider, elementFont.fontFamily);
-        }
+    this.activeFonts = this.activeFonts.filter((elementFont) => {
+      const element = elementFont?.element;
+
+      // Remove invalid old records, for example Document objects saved earlier
+      if (!element || element.nodeType !== 1) {
+        return false;
       }
-    }
+
+      try {
+        const currentFont = (
+          Vvveb.StyleManager.getStyle(element, "font-family") || ""
+        )
+          .replaceAll('"', "")
+          .replaceAll("'", "")
+          .trim();
+
+        const savedFont = (elementFont.fontFamily || "").trim();
+
+        const currentPrimaryFont = currentFont.split(",")[0]?.trim();
+
+        if (
+          currentPrimaryFont !== savedFont &&
+          !currentFont.includes(savedFont)
+        ) {
+          this.removeFont(
+            elementFont.provider,
+            elementFont.fontFamily,
+            element.ownerDocument
+          );
+
+          return false;
+        }
+
+        return true;
+      } catch (err) {
+        console.warn("[zigrow] Skipped invalid font tracker entry:", err);
+        return false;
+      }
+    });
   },
 };
 
@@ -9636,89 +10650,2307 @@ document
     }
   });
 
+// Section editor code and function start from here. 
+
+function _sectionGetLinearGradientContent(bgImage) {
+  if (!bgImage || typeof bgImage !== "string") return null;
+
+  const start = bgImage.indexOf("linear-gradient(");
+  if (start === -1) return null;
+
+  let i = start + "linear-gradient(".length;
+  let depth = 1;
+  let content = "";
+
+  for (; i < bgImage.length; i++) {
+    const ch = bgImage[i];
+
+    if (ch === "(") {
+      depth++;
+      content += ch;
+      continue;
+    }
+
+    if (ch === ")") {
+      depth--;
+
+      if (depth === 0) break;
+
+      content += ch;
+      continue;
+    }
+
+    content += ch;
+  }
+
+  return content.trim();
+}
+
+function _sectionSplitTopLevelCommas(str) {
+  const parts = [];
+  let current = "";
+  let depth = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+
+    if (ch === "(") {
+      depth++;
+      current += ch;
+      continue;
+    }
+
+    if (ch === ")") {
+      depth--;
+      current += ch;
+      continue;
+    }
+
+    if (ch === "," && depth === 0) {
+      parts.push(current.trim());
+      current = "";
+      continue;
+    }
+
+    current += ch;
+  }
+
+  if (current.trim()) {
+    parts.push(current.trim());
+  }
+
+  return parts;
+}
+
+function _sectionCssColorToHexAlpha(colorValue) {
+  if (!colorValue) {
+    return { hex: "#000000", alpha: 100 };
+  }
+
+  const value = String(colorValue).trim();
+
+  if (/^#[0-9a-fA-F]{3}$/.test(value)) {
+    return {
+      hex:
+        "#" +
+        value[1] +
+        value[1] +
+        value[2] +
+        value[2] +
+        value[3] +
+        value[3],
+      alpha: 100,
+    };
+  }
+
+  if (/^#[0-9a-fA-F]{6}$/.test(value)) {
+    return {
+      hex: value.toLowerCase(),
+      alpha: 100,
+    };
+  }
+
+  return _rgbaToHexAlpha(value);
+}
+
+function _sectionParseLinearGradient(bgImage) {
+  const content = _sectionGetLinearGradientContent(bgImage);
+  if (!content) return null;
+
+  let parts = _sectionSplitTopLevelCommas(content);
+  if (!parts.length) return null;
+
+  let angle = 180;
+
+  const first = parts[0];
+
+  if (/deg/i.test(first)) {
+    angle = parseInt(first, 10) || 180;
+    parts = parts.slice(1);
+  } else if (/to\s+right/i.test(first)) {
+    angle = 90;
+    parts = parts.slice(1);
+  } else if (/to\s+left/i.test(first)) {
+    angle = 270;
+    parts = parts.slice(1);
+  } else if (/to\s+bottom/i.test(first)) {
+    angle = 180;
+    parts = parts.slice(1);
+  } else if (/to\s+top/i.test(first)) {
+    angle = 0;
+    parts = parts.slice(1);
+  }
+
+  if (parts.length < 2) return null;
+
+  const colorRegex = /(rgba?\([^)]+\)|#[0-9a-fA-F]{3,8})/;
+
+  const color1Match = parts[0].match(colorRegex);
+  const color2Match = parts[1].match(colorRegex);
+
+  if (!color1Match || !color2Match) return null;
+
+  return {
+    angle: angle,
+    c1: _sectionCssColorToHexAlpha(color1Match[1]),
+    c2: _sectionCssColorToHexAlpha(color2Match[1]),
+    originalCss: bgImage,
+  };
+}
+
+function clearSectionGradientPresetActive() {
+  document
+    .querySelectorAll("#section-editor .zg-se-preset.active")
+    .forEach(function (item) {
+      item.classList.remove("active");
+    });
+}
+
+// Jayanti added this for smart contrast check
+const ZigrowSectionSmartContrast = {
+  contrastThreshold: 4.5,
+
+  textSelector: [
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "p",
+    "span",
+    "strong",
+    "em",
+    "small",
+    "li",
+    "blockquote",
+    "label",
+    'a:not(.btn):not([data-btn]):not([role="button"])',
+  ].join(","),
+
+  isolatedSelector: [
+    "button",
+    ".btn",
+    "[data-btn]",
+    '[role="button"]',
+    "input",
+    "select",
+    "textarea",
+    "option",
+    ".badge",
+    '[class*="badge"]',
+    ".chip",
+    '[class*="chip"]',
+    ".swiper-button-next",
+    ".swiper-button-prev",
+    ".swiper-pagination",
+    ".swiper-pagination-bullet",
+    ".carousel-control-prev",
+    ".carousel-control-next",
+    ".carousel-indicators",
+    "[data-zg-contrast-scope='isolated']",
+    "[data-zg-text-contrast='off']",
+  ].join(","),
+
+  imageCache: new Map(),
+  buttonSelector: [
+    "[data-btn]",
+    "a[data-link-style-id]",
+    "a.btn",
+    "button.btn",
+  ].join(","),
+
+  buttonExcludedSelector: [
+    ".back-to-top",
+    "[data-back-to-top]",
+    ".scroll-top",
+    ".navbar-toggler",
+    ".swiper-button-next",
+    ".swiper-button-prev",
+    ".swiper-pagination",
+    ".carousel-control-next",
+    ".carousel-control-prev",
+    ".vvveb-add-btn",
+    ".add-card-btn",
+    ".vvveb-add-slide-btn",
+    "[data-vvveb-helpers]",
+  ].join(","),
+
+  buttonStyleAttributes: [
+    "data-btn",
+    "data-link-style-id",
+
+    "data-btn-bg",
+    "data-btn-color",
+    "data-btn-hover-bg",
+    "data-btn-hover-color",
+    "data-btn-border-color",
+  ],
+
+  hasDirectText: function (element) {
+    if (!element) return false;
+
+    return Array.from(element.childNodes).some(function (node) {
+      return (
+        node.nodeType === Node.TEXT_NODE &&
+        String(node.textContent || "").trim() !== ""
+      );
+    });
+  },
+
+  parseColor: function (value) {
+    if (!value) return null;
+
+    value = String(value).trim().toLowerCase();
+
+    if (!value || value === "transparent") {
+      return {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0,
+      };
+    }
+
+    let match = value.match(
+      /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)$/,
+    );
+
+    if (match) {
+      return {
+        r: Math.max(0, Math.min(255, parseFloat(match[1]))),
+        g: Math.max(0, Math.min(255, parseFloat(match[2]))),
+        b: Math.max(0, Math.min(255, parseFloat(match[3]))),
+        a:
+          match[4] === undefined
+            ? 1
+            : Math.max(0, Math.min(1, parseFloat(match[4]))),
+      };
+    }
+
+    if (/^#[0-9a-f]{3}$/i.test(value)) {
+      return {
+        r: parseInt(value[1] + value[1], 16),
+        g: parseInt(value[2] + value[2], 16),
+        b: parseInt(value[3] + value[3], 16),
+        a: 1,
+      };
+    }
+
+    if (/^#[0-9a-f]{4}$/i.test(value)) {
+      return {
+        r: parseInt(value[1] + value[1], 16),
+        g: parseInt(value[2] + value[2], 16),
+        b: parseInt(value[3] + value[3], 16),
+        a: parseInt(value[4] + value[4], 16) / 255,
+      };
+    }
+
+    if (/^#[0-9a-f]{6}$/i.test(value)) {
+      return {
+        r: parseInt(value.slice(1, 3), 16),
+        g: parseInt(value.slice(3, 5), 16),
+        b: parseInt(value.slice(5, 7), 16),
+        a: 1,
+      };
+    }
+
+    if (/^#[0-9a-f]{8}$/i.test(value)) {
+      return {
+        r: parseInt(value.slice(1, 3), 16),
+        g: parseInt(value.slice(3, 5), 16),
+        b: parseInt(value.slice(5, 7), 16),
+        a: parseInt(value.slice(7, 9), 16) / 255,
+      };
+    }
+
+    return null;
+  },
+
+  compositeColor: function (foreground, background) {
+    foreground = foreground || {
+      r: 0,
+      g: 0,
+      b: 0,
+      a: 0,
+    };
+
+    background = background || {
+      r: 255,
+      g: 255,
+      b: 255,
+      a: 1,
+    };
+
+    const foregroundAlpha = Math.max(
+      0,
+      Math.min(1, foreground.a === undefined ? 1 : foreground.a),
+    );
+
+    const backgroundAlpha = Math.max(
+      0,
+      Math.min(1, background.a === undefined ? 1 : background.a),
+    );
+
+    const finalAlpha =
+      foregroundAlpha + backgroundAlpha * (1 - foregroundAlpha);
+
+    if (finalAlpha <= 0) {
+      return {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 1,
+      };
+    }
+
+    return {
+      r:
+        (foreground.r * foregroundAlpha +
+          background.r * backgroundAlpha * (1 - foregroundAlpha)) /
+        finalAlpha,
+
+      g:
+        (foreground.g * foregroundAlpha +
+          background.g * backgroundAlpha * (1 - foregroundAlpha)) /
+        finalAlpha,
+
+      b:
+        (foreground.b * foregroundAlpha +
+          background.b * backgroundAlpha * (1 - foregroundAlpha)) /
+        finalAlpha,
+
+      a: finalAlpha,
+    };
+  },
+
+  getLuminance: function (color) {
+    function normalizeChannel(channel) {
+      channel = channel / 255;
+
+      return channel <= 0.03928
+        ? channel / 12.92
+        : Math.pow((channel + 0.055) / 1.055, 2.4);
+    }
+
+    return (
+      0.2126 * normalizeChannel(color.r) +
+      0.7152 * normalizeChannel(color.g) +
+      0.0722 * normalizeChannel(color.b)
+    );
+  },
+
+  getContrastRatio: function (foreground, background) {
+    const foregroundLuminance = this.getLuminance(foreground);
+    const backgroundLuminance = this.getLuminance(background);
+
+    const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+
+    const darker = Math.min(foregroundLuminance, backgroundLuminance);
+
+    return (lighter + 0.05) / (darker + 0.05);
+  },
+
+  getMinimumContrast: function (foreground, samples) {
+    if (!samples || !samples.length) return 0;
+
+    return Math.min.apply(
+      null,
+      samples.map((background) => {
+        return this.getContrastRatio(foreground, background);
+      }),
+    );
+  },
+
+  chooseReadableTextColor: function (samples) {
+    const white = {
+      r: 255,
+      g: 255,
+      b: 255,
+      a: 1,
+    };
+
+    const dark = {
+      r: 17,
+      g: 24,
+      b: 39,
+      a: 1,
+    };
+
+    const whiteContrast = this.getMinimumContrast(white, samples);
+
+    const darkContrast = this.getMinimumContrast(dark, samples);
+
+    return whiteContrast >= darkContrast ? "#FFFFFF" : "#111827";
+  },
+
+  hasVisibleBackground: function (element) {
+    if (!element || !element.ownerDocument) return false;
+
+    const frameWindow = element.ownerDocument.defaultView || window;
+
+    const computed = frameWindow.getComputedStyle(element);
+
+    const backgroundImage = computed.backgroundImage || "";
+
+    if (backgroundImage && backgroundImage !== "none") {
+      return true;
+    }
+
+    const backgroundColor = this.parseColor(computed.backgroundColor);
+
+    return Boolean(backgroundColor && backgroundColor.a > 0.02);
+  },
+
+  isProtectedElement: function (element, section) {
+    let current = element;
+
+    while (current && current !== section) {
+      if (current.matches && current.matches(this.isolatedSelector)) {
+        return true;
+      }
+
+      const textMode =
+        current.getAttribute &&
+        current.getAttribute("data-zg-text-contrast");
+
+      if (textMode === "manual" || textMode === "off") {
+        return true;
+      }
+
+      const contrastScope =
+        current.getAttribute &&
+        current.getAttribute("data-zg-contrast-scope");
+
+      if (contrastScope === "local" || contrastScope === "isolated") {
+        return true;
+      }
+
+      if (
+        current !== element &&
+        current.matches &&
+        current.matches("section, footer")
+      ) {
+        return true;
+      }
+
+      /*
+       * A card, container, column, slide, or other nested
+       * component with its own visible background owns
+       * its own text contrast.
+       *
+       * Transparent components continue inheriting the
+       * section contrast.
+       */
+      if (this.hasVisibleBackground(current)) {
+        return true;
+      }
+
+      current = current.parentElement;
+    }
+
+    return false;
+  },
+
+  collectTextElements: function (section) {
+    if (!section) return [];
+
+    return Array.from(section.querySelectorAll(this.textSelector)).filter(
+      (element) => {
+        if (!this.hasDirectText(element)) {
+          return false;
+        }
+
+        if (
+          element.closest(
+            "[data-vvveb-helpers], .vvveb-helper, #select-box",
+          )
+        ) {
+          return false;
+        }
+
+        if (this.isProtectedElement(element, section)) {
+          return false;
+        }
+
+        return true;
+      },
+    );
+  },
+
+  capture: function (section) {
+    if (!section) return [];
+
+    const frameWindow =
+      section.ownerDocument?.defaultView ||
+      window;
+
+    /*
+     * Existing text snapshots.
+     */
+    const snapshots =
+      this.collectTextElements(
+        section,
+      ).map(function (element) {
+        return {
+          target: element,
+          oldStyle:
+            element.getAttribute(
+              "style",
+            ),
+          originalColor:
+            frameWindow
+              .getComputedStyle(
+                element,
+              )
+              .color,
+        };
+      });
+
+    /*
+     * Standalone icons use the same smart
+     * contrast transaction as text.
+     *
+     * Icons inside buttons are excluded because
+     * button contrast already controls them.
+     */
+    section
+      .querySelectorAll("i")
+      .forEach((icon) => {
+        if (
+          icon.closest(
+            [
+              "[data-vvveb-helpers]",
+              ".vvveb-helper",
+              "#select-box",
+            ].join(","),
+          )
+        ) {
+          return;
+        }
+
+        if (
+          icon.closest(
+            this.buttonSelector,
+          )
+        ) {
+          return;
+        }
+
+        if (
+          this.buttonExcludedSelector &&
+          icon.closest(
+            this.buttonExcludedSelector,
+          )
+        ) {
+          return;
+        }
+
+        const ownerSection =
+          icon.closest(
+            "section, footer",
+          );
+
+        if (
+          ownerSection &&
+          ownerSection !== section
+        ) {
+          return;
+        }
+
+        snapshots.push({
+          target: icon,
+
+          oldStyle:
+            icon.getAttribute(
+              "style",
+            ),
+
+          originalColor:
+            frameWindow
+              .getComputedStyle(icon)
+              .color,
+
+          isIcon: true,
+        });
+      });
+
+    return snapshots;
+  },
+
+  setStyleAttribute: function (element, styleValue) {
+    if (!element) return;
+
+    if (
+      styleValue === null ||
+      styleValue === undefined ||
+      styleValue === ""
+    ) {
+      element.removeAttribute("style");
+      return;
+    }
+
+    element.setAttribute("style", styleValue);
+  },
+
+  restore: function (snapshots) {
+    if (!Array.isArray(snapshots)) return;
+
+    snapshots.forEach((snapshot) => {
+      if (!snapshot.target || !snapshot.target.isConnected) {
+        return;
+      }
+
+      this.setStyleAttribute(snapshot.target, snapshot.oldStyle);
+    });
+  },
+
+  getParentBackground: function (section) {
+    const layers = [];
+
+    let current = section?.parentElement || null;
+
+    while (current) {
+      const frameWindow = current.ownerDocument?.defaultView || window;
+
+      const computed = frameWindow.getComputedStyle(current);
+
+      const color = this.parseColor(computed.backgroundColor);
+
+      if (color && color.a > 0) {
+        layers.push(color);
+
+        if (color.a >= 0.999) {
+          break;
+        }
+      }
+
+      current = current.parentElement;
+    }
+
+    let result = {
+      r: 255,
+      g: 255,
+      b: 255,
+      a: 1,
+    };
+
+    for (let i = layers.length - 1; i >= 0; i--) {
+      result = this.compositeColor(layers[i], result);
+    }
+
+    return result;
+  },
+
+  extractGradientColors: function (backgroundImage) {
+    const matches = String(backgroundImage || "").match(
+      /rgba?\([^)]+\)|#[0-9a-fA-F]{3,8}/g,
+    );
+
+    if (!matches) return [];
+
+    return matches.map((color) => this.parseColor(color)).filter(Boolean);
+  },
+
+  extractImageUrl: function (backgroundImage) {
+    const match = String(backgroundImage || "").match(
+      /url\(\s*["']?([^"')]+)["']?\s*\)/,
+    );
+
+    return match && match[1] ? match[1] : "";
+  },
+
+  describeBackground: function (section) {
+    if (!section) {
+      return {
+        samples: [],
+        imageUrl: "",
+      };
+    }
+
+    const frameWindow = section.ownerDocument?.defaultView || window;
+
+    const computed = frameWindow.getComputedStyle(section);
+
+    const backgroundImage = computed.backgroundImage || "";
+
+    const backgroundColor = this.parseColor(computed.backgroundColor);
+
+    const parentBackground = this.getParentBackground(section);
+
+    const sectionBase =
+      backgroundColor && backgroundColor.a > 0
+        ? this.compositeColor(backgroundColor, parentBackground)
+        : parentBackground;
+
+    const imageUrl = this.extractImageUrl(backgroundImage);
+
+    if (imageUrl) {
+      const beforeImage = backgroundImage.split(/url\(/i)[0];
+
+      const overlayColors = this.extractGradientColors(beforeImage);
+
+      const overlayColor =
+        overlayColors.length > 0 ? overlayColors[0] : null;
+
+      const neutralImageColor = {
+        r: 128,
+        g: 128,
+        b: 128,
+        a: 1,
+      };
+
+      const immediateSample = overlayColor
+        ? this.compositeColor(overlayColor, neutralImageColor)
+        : neutralImageColor;
+
+      return {
+        samples: [immediateSample],
+        imageUrl: imageUrl,
+        overlayColor: overlayColor,
+        sectionBase: sectionBase,
+      };
+    }
+
+    if (
+      backgroundImage &&
+      backgroundImage !== "none" &&
+      backgroundImage.indexOf("gradient(") !== -1
+    ) {
+      const gradientColors = this.extractGradientColors(backgroundImage);
+
+      return {
+        samples: gradientColors.map((color) => {
+          return this.compositeColor(color, sectionBase);
+        }),
+        imageUrl: "",
+      };
+    }
+
+    if (backgroundColor && backgroundColor.a > 0) {
+      return {
+        samples: [sectionBase],
+        imageUrl: "",
+      };
+    }
+
+    return {
+      samples: [],
+      imageUrl: "",
+    };
+  },
+
+  sampleImage: function (imageUrl, ownerDocument) {
+    if (!imageUrl) {
+      return Promise.resolve(null);
+    }
+
+    if (this.imageCache.has(imageUrl)) {
+      return this.imageCache.get(imageUrl);
+    }
+
+    const promise = new Promise((resolve) => {
+      let completed = false;
+
+      const finish = function (result) {
+        if (completed) return;
+
+        completed = true;
+        clearTimeout(timeoutId);
+        resolve(result);
+      };
+
+      const timeoutId = setTimeout(function () {
+        finish(null);
+      }, 1500);
+
+      try {
+        const frameWindow = ownerDocument?.defaultView || window;
+
+        const ImageConstructor = frameWindow.Image || Image;
+
+        const image = new ImageConstructor();
+
+        if (
+          !String(imageUrl).startsWith("data:") &&
+          !String(imageUrl).startsWith("blob:")
+        ) {
+          image.crossOrigin = "anonymous";
+        }
+
+        image.onload = function () {
+          try {
+            const canvas = ownerDocument.createElement("canvas");
+
+            const size = 24;
+
+            canvas.width = size;
+            canvas.height = size;
+
+            const context = canvas.getContext("2d", {
+              willReadFrequently: true,
+            });
+
+            if (!context) {
+              finish(null);
+              return;
+            }
+
+            context.clearRect(0, 0, size, size);
+            context.drawImage(image, 0, 0, size, size);
+
+            const pixels = context.getImageData(
+              0,
+              0,
+              size,
+              size,
+            ).data;
+
+            let red = 0;
+            let green = 0;
+            let blue = 0;
+            let alpha = 0;
+            let count = 0;
+
+            for (let index = 0; index < pixels.length; index += 4) {
+              const pixelAlpha = pixels[index + 3] / 255;
+
+              red += pixels[index] * pixelAlpha;
+              green += pixels[index + 1] * pixelAlpha;
+              blue += pixels[index + 2] * pixelAlpha;
+              alpha += pixelAlpha;
+              count++;
+            }
+
+            if (!count || alpha <= 0) {
+              finish(null);
+              return;
+            }
+
+            finish({
+              r: red / alpha,
+              g: green / alpha,
+              b: blue / alpha,
+              a: Math.min(1, alpha / count),
+            });
+          } catch (error) {
+            finish(null);
+          }
+        };
+
+        image.onerror = function () {
+          finish(null);
+        };
+
+        image.src = imageUrl;
+      } catch (error) {
+        finish(null);
+      }
+    });
+
+    this.imageCache.set(imageUrl, promise);
+
+    promise.then((result) => {
+      if (!result) {
+        this.imageCache.delete(imageUrl);
+      }
+    });
+
+    return promise;
+  },
+
+  setAttributeValue: function (
+    element,
+    attributeName,
+    value,
+  ) {
+    if (!element || !attributeName) return;
+
+    if (value === null || value === undefined) {
+      element.removeAttribute(attributeName);
+    } else {
+      element.setAttribute(attributeName, value);
+    }
+  },
+
+  rebuildButtonStyles: function () {
+    try {
+      if (
+        window.Vvveb?.LinkEditor &&
+        typeof Vvveb.LinkEditor
+          ._rebuildButtonStyles === "function"
+      ) {
+        Vvveb.LinkEditor._rebuildButtonStyles();
+      }
+    } catch (error) {
+      console.warn(
+        "[SectionEditor] Button CSS rebuild failed",
+        error,
+      );
+    }
+  },
+
+  captureButtons: function (section) {
+    if (!section) return [];
+
+    const snapshots = [];
+
+    const buttons = Array.from(
+      section.querySelectorAll(
+        this.buttonSelector,
+      ),
+    ).filter((button) => {
+      if (
+        button.matches(
+          this.buttonExcludedSelector,
+        ) ||
+        button.closest(
+          "[data-vvveb-helpers]",
+        )
+      ) {
+        return false;
+      }
+
+      const ownerSection =
+        button.closest("section, footer");
+
+      return (
+        !ownerSection ||
+        ownerSection === section
+      );
+    });
+
+    buttons.forEach((button) => {
+      const oldAttributes = {};
+
+      this.buttonStyleAttributes.forEach(
+        (attributeName) => {
+          oldAttributes[attributeName] =
+            button.getAttribute(
+              attributeName,
+            );
+        },
+      );
+
+      snapshots.push({
+        target: button,
+        oldStyle:
+          button.getAttribute("style"),
+        oldAttributes: oldAttributes,
+        isButton: true,
+      });
+
+      /*
+       * Some template buttons have a span or icon
+       * with its own color. Capture these so their
+       * text can follow the repaired button color.
+       */
+      button
+        .querySelectorAll(
+          "span, strong, em, small, i",
+        )
+        .forEach((child) => {
+          snapshots.push({
+            target: child,
+            oldStyle:
+              child.getAttribute("style"),
+            oldAttributes: {},
+            ownerButton: button,
+          });
+        });
+    });
+
+    return snapshots;
+  },
+
+  restoreButtons: function (snapshots) {
+    if (!Array.isArray(snapshots)) return;
+
+    snapshots.forEach((snapshot) => {
+      const target = snapshot.target;
+
+      if (!target || !target.isConnected) {
+        return;
+      }
+
+      this.setStyleAttribute(
+        target,
+        snapshot.oldStyle,
+      );
+
+      Object.keys(
+        snapshot.oldAttributes || {},
+      ).forEach((attributeName) => {
+        this.setAttributeValue(
+          target,
+          attributeName,
+          snapshot.oldAttributes[
+          attributeName
+          ],
+        );
+      });
+    });
+
+    this.rebuildButtonStyles();
+  },
+
+  getButtonSurfaceSamples: function (
+    button,
+    section,
+    sectionSamples,
+  ) {
+    const win =
+      button.ownerDocument?.defaultView ||
+      window;
+
+    const fallbackSamples =
+      Array.isArray(sectionSamples) &&
+        sectionSamples.length
+        ? sectionSamples
+        : this.describeBackground(section)
+          .samples;
+
+    let current = button.parentElement;
+
+    while (
+      current &&
+      section.contains(current)
+    ) {
+      if (current !== section) {
+        const computed =
+          win.getComputedStyle(current);
+
+        const backgroundColor =
+          this.parseColor(
+            computed.backgroundColor,
+          );
+
+        /*
+         * A real card/container background
+         * becomes the button's local surface.
+         */
+        if (
+          backgroundColor &&
+          backgroundColor.a > 0.05
+        ) {
+          return fallbackSamples.map(
+            (baseColor) => {
+              return this.compositeColor(
+                backgroundColor,
+                baseColor,
+              );
+            },
+          );
+        }
+      }
+
+      if (current === section) break;
+
+      current = current.parentElement;
+    }
+
+    return fallbackSamples;
+  },
+
+  applyButtons: function (
+    section,
+    snapshots,
+    finalSectionSamples,
+  ) {
+    if (
+      !section ||
+      !Array.isArray(snapshots)
+    ) {
+      return;
+    }
+
+    /*
+     * Always begin from the captured state.
+     * This prevents repeated previews from
+     * stacking different button styles.
+     */
+    this.restoreButtons(snapshots);
+
+    const buttonSnapshots =
+      snapshots.filter(
+        (snapshot) => snapshot.isButton,
+      );
+
+    if (!buttonSnapshots.length) {
+      return;
+    }
+
+    const doc = section.ownerDocument;
+    const win = doc?.defaultView || window;
+
+    /*
+     * Resolve the template primary color.
+     */
+    let primaryColor = "";
+
+    const primaryVariables = [
+      "--primary-colors",
+      "--zigrow-primary-color",
+      "--zigrow-primary-500",
+    ];
+
+    const primarySources = [
+      section,
+      doc?.body,
+      doc?.documentElement,
+    ].filter(Boolean);
+
+    for (const source of primarySources) {
+      const computed =
+        win.getComputedStyle(source);
+
+      for (
+        const variableName
+        of primaryVariables
+      ) {
+        const value = computed
+          .getPropertyValue(variableName)
+          .trim();
+
+        if (
+          value &&
+          this.parseColor(value)
+        ) {
+          primaryColor = value;
+          break;
+        }
+      }
+
+      if (primaryColor) break;
+    }
+
+    if (!primaryColor) {
+      primaryColor = "#5B3DF2";
+    }
+
+    const candidateColors = [
+      primaryColor,
+      "#FFFFFF",
+      "#000000",
+    ].filter((color, index, values) => {
+      if (!this.parseColor(color)) {
+        return false;
+      }
+
+      return (
+        values.findIndex((value) => {
+          return (
+            String(value)
+              .trim()
+              .toLowerCase() ===
+            String(color)
+              .trim()
+              .toLowerCase()
+          );
+        }) === index
+      );
+    });
+
+    const getPairContrast = (
+      firstSamples,
+      secondSamples,
+    ) => {
+      let minimum = Infinity;
+
+      firstSamples.forEach(
+        (firstColor) => {
+          secondSamples.forEach(
+            (secondColor) => {
+              minimum = Math.min(
+                minimum,
+                this.getContrastRatio(
+                  firstColor,
+                  secondColor,
+                ),
+              );
+            },
+          );
+        },
+      );
+
+      return minimum === Infinity
+        ? 0
+        : minimum;
+    };
+
+    buttonSnapshots.forEach(
+      (snapshot) => {
+        const button = snapshot.target;
+
+        if (
+          !button ||
+          !button.isConnected ||
+          !section.contains(button)
+        ) {
+          return;
+        }
+
+        const surfaceSamples =
+          this.getButtonSurfaceSamples(
+            button,
+            section,
+            finalSectionSamples,
+          );
+
+        if (!surfaceSamples.length) {
+          return;
+        }
+
+        const computed =
+          win.getComputedStyle(button);
+
+        const currentBackground =
+          this.parseColor(
+            computed.backgroundColor,
+          );
+
+        const currentText =
+          this.parseColor(
+            computed.color,
+          );
+
+        const borderColor =
+          this.parseColor(
+            computed.borderTopColor,
+          );
+
+        const borderWidth =
+          parseFloat(
+            computed.borderTopWidth,
+          ) || 0;
+
+        let buttonSamples = [];
+
+        if (
+          currentBackground &&
+          currentBackground.a > 0.02
+        ) {
+          buttonSamples =
+            surfaceSamples.map(
+              (surfaceColor) => {
+                return this
+                  .compositeColor(
+                    currentBackground,
+                    surfaceColor,
+                  );
+              },
+            );
+        }
+
+        let buttonVisibility = 0;
+        let textVisibility = 0;
+
+        if (buttonSamples.length) {
+          buttonVisibility =
+            getPairContrast(
+              buttonSamples,
+              surfaceSamples,
+            );
+
+          textVisibility =
+            currentText
+              ? this.getMinimumContrast(
+                currentText,
+                buttonSamples,
+              )
+              : 0;
+        } else {
+          /*
+           * Transparent or outline button.
+           */
+          buttonVisibility =
+            borderColor &&
+              borderWidth > 0
+              ? this.getMinimumContrast(
+                borderColor,
+                surfaceSamples,
+              )
+              : 0;
+
+          textVisibility =
+            currentText
+              ? this.getMinimumContrast(
+                currentText,
+                surfaceSamples,
+              )
+              : 0;
+        }
+
+        /*
+         * Preserve the original button when
+         * both the button and its text are
+         * already visible.
+         */
+        if (
+          buttonVisibility >= 3 &&
+          textVisibility >= 4.5
+        ) {
+          return;
+        }
+
+        let newBackground =
+          candidateColors.find(
+            (candidate) => {
+              return (
+                this.getMinimumContrast(
+                  this.parseColor(
+                    candidate,
+                  ),
+                  surfaceSamples,
+                ) >= 3
+              );
+            },
+          );
+
+        if (!newBackground) {
+          newBackground =
+            candidateColors
+              .map((candidate) => {
+                return {
+                  color: candidate,
+                  contrast:
+                    this.getMinimumContrast(
+                      this.parseColor(
+                        candidate,
+                      ),
+                      surfaceSamples,
+                    ),
+                };
+              })
+              .sort(
+                (
+                  first,
+                  second,
+                ) => {
+                  return (
+                    second.contrast -
+                    first.contrast
+                  );
+                },
+              )[0]?.color ||
+            "#000000";
+        }
+
+        const newText =
+          this.chooseReadableTextColor([
+            this.parseColor(
+              newBackground,
+            ),
+          ]);
+
+        const isAnchorButton =
+          button.tagName?.toLowerCase() === "a" &&
+          (
+            button.hasAttribute("data-btn") ||
+            button.hasAttribute(
+              "data-link-style-id",
+            ) ||
+            button.classList.contains("btn")
+          );
+
+        /*
+         * Anchor buttons must always use the same data-btn
+         * system as Link Editor. Never give them permanent
+         * inline color overrides.
+         */
+        if (
+          isAnchorButton &&
+          !button.hasAttribute(
+            "data-link-style-id",
+          )
+        ) {
+          const styleId =
+            "link-" +
+            Date.now().toString(36) +
+            "-" +
+            Math.random()
+              .toString(36)
+              .slice(2, 8);
+
+          button.setAttribute(
+            "data-link-style-id",
+            styleId,
+          );
+        }
+
+        if (
+          isAnchorButton &&
+          !button.hasAttribute("data-btn")
+        ) {
+          button.setAttribute(
+            "data-btn",
+            "true",
+          );
+        }
+
+        const managedButton =
+          isAnchorButton;
+
+        if (managedButton) {
+          /*
+           * Reuse the existing Zigrow Button
+           * Editor attribute system.
+           */
+          button.setAttribute(
+            "data-btn-bg",
+            newBackground,
+          );
+
+          button.setAttribute(
+            "data-btn-color",
+            newText,
+          );
+
+          button.setAttribute(
+            "data-btn-border-color",
+
+            newBackground,
+          );
+
+          button.style.removeProperty(
+            "background",
+          );
+
+          button.style.removeProperty(
+            "background-color",
+          );
+
+          button.style.removeProperty(
+            "background-image",
+          );
+
+          button.style.removeProperty(
+            "color",
+          );
+
+          button.style.removeProperty(
+            "border-color",
+          );
+
+          const storedHover =
+            button.getAttribute(
+              "data-btn-hover-bg",
+            ) ||
+            button.getAttribute(
+              "data-btn-hover-bg-original",
+            ) ||
+            button.getAttribute(
+              "data-btn-bg-original",
+            );
+
+          const parsedHover =
+            this.parseColor(
+              storedHover,
+            );
+
+          const hoverIsVisible =
+            parsedHover &&
+            this.getMinimumContrast(
+              parsedHover,
+              surfaceSamples,
+            ) >= 3;
+
+          let hoverBackground =
+            hoverIsVisible
+              ? storedHover
+              : candidateColors.find(
+                (candidate) => {
+                  return (
+                    String(
+                      candidate,
+                    ).toLowerCase() !==
+                    String(
+                      newBackground,
+                    ).toLowerCase() &&
+                    this.getMinimumContrast(
+                      this.parseColor(
+                        candidate,
+                      ),
+                      surfaceSamples,
+                    ) >= 3
+                  );
+                },
+              );
+
+          hoverBackground =
+            hoverBackground ||
+            newBackground;
+
+          button.setAttribute(
+            "data-btn-hover-bg",
+            hoverBackground,
+          );
+
+          button.setAttribute(
+            "data-btn-hover-color",
+            this.chooseReadableTextColor(
+              [
+                this.parseColor(
+                  hoverBackground,
+                ),
+              ],
+            ),
+          );
+        } else {
+          /*
+           * Normal template button not managed
+           * through the Zigrow Button Editor.
+           */
+          button.style.setProperty(
+            "background",
+            newBackground,
+            "important",
+          );
+
+          button.style.setProperty(
+            "background-color",
+            newBackground,
+            "important",
+          );
+
+          button.style.setProperty(
+            "color",
+            newText,
+            "important",
+          );
+
+          button.style.setProperty(
+            "border-color",
+            newBackground,
+            "important",
+          );
+        }
+
+        /*
+         * Force nested span/icon text to inherit
+         * the newly readable button text color.
+         */
+        snapshots
+          .filter((childSnapshot) => {
+            return (
+              childSnapshot
+                .ownerButton ===
+              button
+            );
+          })
+          .forEach(
+            (childSnapshot) => {
+              childSnapshot.target
+                ?.style
+                ?.setProperty(
+                  "color",
+                  "inherit",
+                  "important",
+                );
+            },
+          );
+      },
+    );
+
+    this.rebuildButtonStyles();
+  },
+
+  applyColors: function (
+    section,
+    snapshots,
+    samples,
+  ) {
+    this.restore(snapshots);
+
+    if (!samples || !samples.length) {
+      return;
+    }
+
+    const sectionFallbackColor =
+      this.chooseReadableTextColor(
+        samples,
+      );
+
+    const frameWindow =
+      section.ownerDocument
+        ?.defaultView ||
+      window;
+
+    snapshots.forEach(
+      (snapshot) => {
+        const element =
+          snapshot.target;
+
+        if (
+          !element ||
+          !element.isConnected ||
+          !section.contains(element)
+        ) {
+          return;
+        }
+
+        const textMode =
+          element.getAttribute(
+            "data-zg-text-contrast",
+          );
+
+        if (
+          textMode === "manual" ||
+          textMode === "off"
+        ) {
+          return;
+        }
+
+        /*
+         * Normal text continues using the
+         * section samples.
+         *
+         * Icons inspect their nearest visible
+         * parent surface first.
+         */
+        let elementSamples =
+          samples;
+
+        if (snapshot.isIcon) {
+          elementSamples =
+            this.getButtonSurfaceSamples(
+              element,
+              section,
+              samples,
+            );
+
+          /*
+           * Icon Editor can put a background
+           * directly on the <i> itself.
+           * Respect that surface too.
+           */
+          const iconComputed =
+            frameWindow
+              .getComputedStyle(
+                element,
+              );
+
+          const iconBackground =
+            this.parseColor(
+              iconComputed
+                .backgroundColor,
+            );
+
+          if (
+            iconBackground &&
+            iconBackground.a > 0.05
+          ) {
+            elementSamples =
+              elementSamples.map(
+                (baseColor) =>
+                  this.compositeColor(
+                    iconBackground,
+                    baseColor,
+                  ),
+              );
+          }
+        }
+
+        const originalColor =
+          this.parseColor(
+            snapshot.originalColor,
+          );
+
+        const originalContrast =
+          originalColor
+            ? this.getMinimumContrast(
+              originalColor,
+              elementSamples,
+            )
+            : 0;
+
+        /*
+         * Preserve an icon/text brand color
+         * when it is already readable.
+         */
+        if (
+          originalContrast >=
+          this.contrastThreshold
+        ) {
+          return;
+        }
+
+        const readableColor =
+          snapshot.isIcon
+            ? this.chooseReadableTextColor(
+              elementSamples,
+            )
+            : sectionFallbackColor;
+
+        element.style.setProperty(
+          "color",
+          readableColor,
+          "important",
+        );
+      },
+    );
+  },
+
+  apply: function (section, snapshots, requestIsCurrent) {
+    if (!section || !Array.isArray(snapshots)) {
+      return Promise.resolve();
+    }
+
+    const description = this.describeBackground(section);
+
+    /*
+     * Apply an immediate safe result.
+     * For images, this uses neutral gray until
+     * actual image sampling finishes.
+     */
+    this.applyColors(section, snapshots, description.samples);
+
+    if (!description.imageUrl) {
+      return Promise.resolve(description.samples);
+    }
+
+    return this.sampleImage(
+      description.imageUrl,
+      section.ownerDocument,
+    ).then((sampledImageColor) => {
+      if (typeof requestIsCurrent === "function" && !requestIsCurrent()) {
+        return;
+      }
+
+      if (!sampledImageColor) {
+        return description.samples;
+      }
+
+      let finalImageColor = this.compositeColor(
+        sampledImageColor,
+        description.sectionBase,
+      );
+
+      if (description.overlayColor) {
+        finalImageColor = this.compositeColor(
+          description.overlayColor,
+          finalImageColor,
+        );
+      }
+
+      const finalSamples = [
+        finalImageColor,
+      ];
+
+      this.applyColors(
+        section,
+        snapshots,
+        finalSamples,
+      );
+
+      return finalSamples;
+    });
+  },
+
+  bindUndoRestore: function (ownerDocument) {
+    if (
+      !ownerDocument ||
+      !ownerDocument.body ||
+      ownerDocument.__zigrowSectionContrastUndoBound
+    ) {
+      return;
+    }
+
+    ownerDocument.__zigrowSectionContrastUndoBound = true;
+
+    ownerDocument.body.addEventListener(
+      "vvveb.undo.restore",
+      function (event) {
+        const mutation = event.detail;
+
+        if (
+          !mutation ||
+          !Array.isArray(mutation.zgSectionStyleChanges)
+        ) {
+          return;
+        }
+
+        const markerValue = mutation.target?.getAttribute(
+          mutation.attributeName,
+        );
+
+        const useNewValues = markerValue === mutation.newValue;
+
+        mutation.zgSectionStyleChanges.forEach(
+          function (change) {
+            let target =
+              change.target;
+
+            /*
+             * Icon Editor Undo can recreate the
+             * <i>. Resolve its new live instance
+             * using the existing builder ID.
+             */
+            if (
+              (
+                !target ||
+                !target.isConnected
+              ) &&
+              change.isIcon &&
+              change.vvvebId
+            ) {
+              target =
+                resolveVvvebTargetById(
+                  change.vvvebId,
+                );
+
+              if (target) {
+                change.target =
+                  target;
+              }
+            }
+
+            if (
+              !target ||
+              !target.isConnected
+            ) {
+              return;
+            }
+
+            const attributeValue =
+              useNewValues
+                ? change.newValue
+                : change.oldValue;
+
+            if (
+              !change.attributeName ||
+              change.attributeName === "style"
+            ) {
+              ZigrowSectionSmartContrast.setStyleAttribute(
+                target,
+                attributeValue
+              );
+            } else {
+              ZigrowSectionSmartContrast.setAttributeValue(
+                target,
+                change.attributeName,
+                attributeValue
+              );
+            }
+          });
+
+        ZigrowSectionSmartContrast.rebuildButtonStyles();
+
+        /*
+         * Remove the temporary history marker so it
+         * is never saved in the template HTML.
+         */
+        if (
+          mutation.zgSectionOldMarkerValue !== null &&
+          mutation.zgSectionOldMarkerValue !== undefined
+        ) {
+          mutation.target.setAttribute(
+            mutation.attributeName,
+            mutation.zgSectionOldMarkerValue,
+          );
+        } else {
+          mutation.target.removeAttribute(mutation.attributeName);
+        }
+      },
+    );
+  },
+
+  addUndoMutation: function (section, originalSectionStyle, snapshots) {
+    if (
+      !section ||
+      !window.Vvveb ||
+      !Vvveb.Undo ||
+      typeof Vvveb.Undo.addMutation !== "function"
+    ) {
+      return false;
+    }
+
+    const changes = [];
+
+    const oldSectionStyle = originalSectionStyle || null;
+
+    const newSectionStyle = section.getAttribute("style");
+
+    if ((oldSectionStyle || "") !== (newSectionStyle || "")) {
+      changes.push({
+        target: section,
+        attributeName: "style",
+        oldValue: oldSectionStyle,
+        newValue: newSectionStyle,
+      });
+    }
+
+    snapshots.forEach(function (snapshot) {
+      if (
+        !snapshot.target ||
+        !snapshot.target.isConnected
+      ) {
+        return;
+      }
+
+      const newStyle =
+        snapshot.target.getAttribute(
+          "style",
+        );
+
+      if (
+        (snapshot.oldStyle || "") !==
+        (newStyle || "")
+      ) {
+        /*
+         * Add stable identity only when an
+         * icon actually becomes part of the
+         * committed Section transaction.
+         *
+         * Cancel therefore adds no metadata.
+         */
+        const vvvebId =
+          snapshot.isIcon
+            ? ensureVvvebId(
+              snapshot.target,
+            )
+            : null;
+
+        changes.push({
+          target: snapshot.target,
+          attributeName: "style",
+          oldValue:
+            snapshot.oldStyle,
+          newValue: newStyle,
+
+          vvvebId: vvvebId,
+          isIcon:
+            snapshot.isIcon === true,
+        });
+      }
+
+      Object.keys(
+        snapshot.oldAttributes || {}
+      ).forEach((attributeName) => {
+        const oldValue =
+          snapshot.oldAttributes[attributeName];
+
+        const newValue =
+          snapshot.target.getAttribute(
+            attributeName
+          );
+
+        if (oldValue === newValue) {
+          return;
+        }
+
+        changes.push({
+          target: snapshot.target,
+          attributeName: attributeName,
+          oldValue: oldValue,
+          newValue: newValue,
+        });
+      });
+    });
+
+    if (!changes.length) {
+      return false;
+    }
+
+    const ownerDocument = section.ownerDocument;
+
+    this.bindUndoRestore(ownerDocument);
+
+    const markerAttribute = "data-vvveb-section-history";
+
+    const oldMarkerValue = section.getAttribute(markerAttribute);
+
+    const newMarkerValue =
+      "section-" +
+      Date.now() +
+      "-" +
+      Math.random().toString(36).slice(2, 8);
+
+    let mutationAdded = false;
+
+    try {
+      section.setAttribute(markerAttribute, newMarkerValue);
+
+      Vvveb.Undo.addMutation({
+        type: "attributes",
+        target: section,
+        attributeName: markerAttribute,
+        oldValue: oldMarkerValue,
+        newValue: newMarkerValue,
+
+        zgSectionStyleChanges: changes,
+        zgSectionOldMarkerValue: oldMarkerValue,
+      });
+
+      mutationAdded = true;
+    } catch (error) {
+      console.warn("[SectionEditor] Smart contrast undo failed", error);
+    } finally {
+      if (oldMarkerValue !== null) {
+        section.setAttribute(markerAttribute, oldMarkerValue);
+      } else {
+        section.removeAttribute(markerAttribute);
+      }
+    }
+
+    return mutationAdded;
+  },
+};
+
+
 Vvveb.SectionEditor = {
   isActive: false,
   element: null,
   oldStyles: {},
+  _originalStyle: "",
+  _lastImageUrl: "",
   _gradientPreviewOriginalStyle: null,
+  _previewCommitted: false,
+  _allowDestroyWithoutRestore: false,
+  _resetObserver: null,
+
+  _outsideCloseDoc: null,
+  _outsideCloseHandler: null,
+
+
+  bindIframeOutsideClose: function () {
+    const frameDoc =
+      Vvveb.Builder?.frameDoc ||
+      Vvveb.Builder?.iframe?.contentDocument ||
+      window.FrameDocument;
+
+    if (!frameDoc) return;
+
+    if (this._outsideCloseDoc === frameDoc && this._outsideCloseHandler) {
+      return;
+    }
+
+    this.unbindIframeOutsideClose();
+
+    this._outsideCloseHandler = () => {
+      if (!this.isActive) return;
+
+      this.destroy();
+    };
+
+    frameDoc.addEventListener("pointerdown", this._outsideCloseHandler, true);
+    this._outsideCloseDoc = frameDoc;
+  },
+
+  unbindIframeOutsideClose: function () {
+    if (this._outsideCloseDoc && this._outsideCloseHandler) {
+      this._outsideCloseDoc.removeEventListener(
+        "pointerdown",
+        this._outsideCloseHandler,
+        true
+      );
+    }
+
+    this._outsideCloseDoc = null;
+    this._outsideCloseHandler = null;
+  },
 
   edit: function (element) {
-    if (!["section", "footer"].includes(element.tagName.toLowerCase())) return;
+    if (!element || !["section", "footer"].includes(element.tagName.toLowerCase())) {
+      return;
+    }
 
     this.element = element;
     this.isActive = true;
+    this._originalStyle = element.getAttribute("style") || "";
+    clearSectionGradientPresetActive();
 
-    // Save old values for undo
+    this.bindIframeOutsideClose();
+
+
+    const sectionEditorPanel = document.getElementById("section-editor");
+    if (sectionEditorPanel) {
+      sectionEditorPanel.classList.add("zg-se-open");
+      sectionEditorPanel.style.removeProperty("display");
+    }
+
+    this._gradientPreviewOriginalStyle = null;
+    this._lastImageUrl = "";
+
+    if (this._resetObserver) {
+      this._resetObserver.disconnect();
+      this._resetObserver = null;
+    }
+
+    const resetBtn = document.getElementById("section-bg-reset");
+
+    if (resetBtn) {
+      resetBtn.disabled = true;
+      resetBtn.setAttribute("aria-disabled", "true");
+    }
+
+    this._resetObserver = new MutationObserver(() => {
+      const btn = document.getElementById("section-bg-reset");
+      const el = this.element;
+
+      if (!btn || !el) return;
+
+      const changed =
+        (el.getAttribute("style") || "") !== (this._originalStyle || "");
+
+      btn.disabled = !changed;
+      btn.setAttribute("aria-disabled", String(!changed));
+    });
+
+    this._resetObserver.observe(element, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+
+    this._previewCommitted = false;
+    this._allowDestroyWithoutRestore = false;
+
     this.oldStyles = {
       backgroundColor: element.style.backgroundColor,
       backgroundImage: element.style.backgroundImage,
     };
 
-    this._gradientPreviewOriginalStyle = null;
-    this.updatePreview();
+    const computed = window.getComputedStyle(element);
+    const bgImage = computed.backgroundImage || "";
+    const bgColor = computed.backgroundColor || "";
 
-    //  Jayanti updates here 12-12-25
-    this._gradientPreviewOriginalStyle = null;
-    this.updatePreview();
+    const modeLabel = document.getElementById("section-bg-mode-label");
+    const imgInfo = document.getElementById("section-bg-selected-info");
+    const imagePreview = document.getElementById("section-image-preview");
+    const colorInput = document.getElementById("section-bg-color");
+    const colorHexInput = document.getElementById("section-color-hex");
 
-    var computed = window.getComputedStyle(element);
-    var bgImage = computed.backgroundImage || "";
-    var bgColor = computed.backgroundColor || "";
+    const colorOpacity = document.getElementById("section-color-opacity");
+    const colorOpacityVal = document.getElementById("section-color-opacity-val");
 
-    var modeLabel = document.getElementById("section-bg-mode-label");
-    var imgInfo = document.getElementById("section-bg-selected-info");
-    var colorInput = document.getElementById("section-bg-color");
+    /*
+      Default editor color should be white.
+      If section has no explicit background, do not show old/default blue.
+    */
+    if (colorInput) colorInput.value = "#FFFFFF";
+    if (colorHexInput) colorHexInput.value = "#FFFFFF";
+    if (colorOpacity) colorOpacity.value = 100;
+    if (colorOpacityVal) colorOpacityVal.textContent = "100%";
 
-    // default state
+    const gradC1 = document.getElementById("section-grad-c1");
+    const gradC1Hex = document.getElementById("section-grad-c1-hex");
+    const gradC1Alpha = document.getElementById("section-grad-c1a");
+    const gradC1AlphaVal = document.getElementById("section-grad-c1a-val");
+
+    const gradC2 = document.getElementById("section-grad-c2");
+    const gradC2Hex = document.getElementById("section-grad-c2-hex");
+    const gradC2Alpha = document.getElementById("section-grad-c2a");
+    const gradC2AlphaVal = document.getElementById("section-grad-c2a-val");
+
+    const gradAngle = document.getElementById("section-grad-angle");
+    const gradAngleVal = document.getElementById("section-grad-angle-val");
+
     if (modeLabel) modeLabel.textContent = "None";
     if (imgInfo) imgInfo.textContent = "No image selected.";
 
-    // 1️⃣  GRADIENT ACTIVE?
-    if (
-      bgImage &&
-      bgImage !== "none" &&
-      bgImage.indexOf("linear-gradient(") !== -1
-    ) {
-      if (modeLabel) modeLabel.textContent = "Gradient";
+    if (imagePreview) {
+      imagePreview.style.backgroundImage = "";
+      imagePreview.innerHTML = "<span>No image</span>";
+    }
 
-      // Expect string like:
-      // linear-gradient(180deg, rgba(...), rgba(...))
-      var match = bgImage.match(
-        /linear-gradient\(\s*([-\d.]+)deg\s*,\s*(rgba?\([^)]*\))[^,]*,\s*(rgba?\([^)]*\))/
-      );
+    const hasBgImage = bgImage && bgImage !== "none";
+    const hasGradient = hasBgImage && bgImage.indexOf("linear-gradient(") !== -1;
+    const hasUrl = hasBgImage && bgImage.indexOf("url(") !== -1;
 
-      if (match) {
-        var angleVal = parseInt(match[1], 10) || 180;
-        var rgba1 = match[2];
-        var rgba2 = match[3];
-
-        var c1 = _rgbaToHexAlpha(rgba1);
-        var c2 = _rgbaToHexAlpha(rgba2);
-
-        var c1Input = document.getElementById("section-grad-c1");
-        var c1Alpha = document.getElementById("section-grad-c1a");
-        var c2Input = document.getElementById("section-grad-c2");
-        var c2Alpha = document.getElementById("section-grad-c2a");
-        var ang = document.getElementById("section-grad-angle");
-
-        if (c1Input && c1.hex) c1Input.value = c1.hex;
-        if (c1Alpha) c1Alpha.value = c1.alpha;
-        if (c2Input && c2.hex) c2Input.value = c2.hex;
-        if (c2Alpha) c2Alpha.value = c2.alpha;
-        if (ang) ang.value = angleVal;
-
-        var evt = new Event("input", { bubbles: true });
-        c1Alpha && c1Alpha.dispatchEvent(evt);
-        c2Alpha && c2Alpha.dispatchEvent(evt);
-        ang && ang.dispatchEvent(evt);
-      }
-
-      // 2️⃣  IMAGE ACTIVE?
-    } else if (bgImage && bgImage !== "none") {
+    if (hasGradient && hasUrl) {
       if (modeLabel) modeLabel.textContent = "Image";
       if (imgInfo) imgInfo.textContent = "Image selected";
 
-      // 3️⃣  SOLID COLOR ACTIVE?
+      const urlMatch = bgImage.match(/url\(["']?(.*?)["']?\)/);
+      if (urlMatch && urlMatch[1]) {
+        this._lastImageUrl = urlMatch[1];
+
+        const parsedOverlay = _sectionParseImageOverlay(bgImage);
+
+        const overlayColorInput = document.getElementById("section-image-overlay-color");
+        const overlayHexInput = document.getElementById("section-image-overlay-hex");
+        const overlayOpacityInput = document.getElementById("section-image-overlay-opacity");
+        const overlayOpacityVal = document.getElementById("section-image-overlay-opacity-val");
+
+        if (parsedOverlay) {
+          if (overlayColorInput) overlayColorInput.value = parsedOverlay.hex;
+
+          // Do not auto-fill visible hex field.
+          if (overlayHexInput) overlayHexInput.value = "";
+
+          if (overlayOpacityInput) overlayOpacityInput.value = parsedOverlay.opacity;
+          if (overlayOpacityVal) overlayOpacityVal.textContent = parsedOverlay.opacity + "%";
+        }
+
+        if (imagePreview) {
+          imagePreview.innerHTML = "";
+          imagePreview.style.backgroundImage = 'url("' + urlMatch[1] + '")';
+          imagePreview.style.backgroundSize = "cover";
+          imagePreview.style.backgroundPosition = "center";
+        }
+
+        try {
+          if (imgInfo) imgInfo.textContent = urlMatch[1].split("/").pop() || "Image selected";
+        } catch (e) {
+          if (imgInfo) imgInfo.textContent = "Image selected";
+        }
+      }
+    } else if (hasGradient) {
+      if (modeLabel) modeLabel.textContent = "Gradient";
+
+      const parsedGradient = _sectionParseLinearGradient(bgImage);
+
+      if (parsedGradient) {
+        const angleVal = parsedGradient.angle;
+        const c1 = parsedGradient.c1;
+        const c2 = parsedGradient.c2;
+
+        if (gradC1 && c1.hex) gradC1.value = c1.hex;
+        if (gradC1Hex && c1.hex) gradC1Hex.value = c1.hex.toUpperCase();
+        if (gradC1Alpha) gradC1Alpha.value = c1.alpha;
+        if (gradC1AlphaVal) gradC1AlphaVal.textContent = c1.alpha + "%";
+
+        if (gradC2 && c2.hex) gradC2.value = c2.hex;
+        if (gradC2Hex && c2.hex) gradC2Hex.value = c2.hex.toUpperCase();
+        if (gradC2Alpha) gradC2Alpha.value = c2.alpha;
+        if (gradC2AlphaVal) gradC2AlphaVal.textContent = c2.alpha + "%";
+
+        if (gradAngle) gradAngle.value = angleVal;
+        if (gradAngleVal) gradAngleVal.textContent = angleVal + "°";
+
+        const gradPreview = document.getElementById("section-grad-preview");
+        const gradPreviewMini = document.getElementById("section-grad-preview-mini");
+
+        if (gradPreview) {
+          gradPreview.style.backgroundImage = bgImage;
+          gradPreview.setAttribute("data-label", angleVal + "°");
+        }
+
+        if (gradPreviewMini) {
+          gradPreviewMini.style.backgroundImage = bgImage;
+        }
+      }
+    } else if (hasUrl) {
+      if (modeLabel) modeLabel.textContent = "Image";
+      if (imgInfo) imgInfo.textContent = "Image selected";
+
+      const urlMatch = bgImage.match(/url\(["']?(.*?)["']?\)/);
+      if (urlMatch && urlMatch[1]) {
+        this._lastImageUrl = urlMatch[1];
+
+        if (imagePreview) {
+          imagePreview.innerHTML = "";
+          imagePreview.style.backgroundImage = 'url("' + urlMatch[1] + '")';
+          imagePreview.style.backgroundSize = "cover";
+          imagePreview.style.backgroundPosition = "center";
+        }
+
+        try {
+          if (imgInfo) imgInfo.textContent = urlMatch[1].split("/").pop() || "Image selected";
+        } catch (e) {
+          if (imgInfo) imgInfo.textContent = "Image selected";
+        }
+      }
     } else if (
       bgColor &&
       bgColor !== "rgba(0, 0, 0, 0)" &&
@@ -9726,117 +12958,59 @@ Vvveb.SectionEditor = {
     ) {
       if (modeLabel) modeLabel.textContent = "Color";
 
-      var hex = _rgbToHex(bgColor);
-      if (colorInput && hex) {
-        colorInput.value = hex;
+      const hex = _rgbToHex(bgColor);
+      if (colorInput && hex) colorInput.value = hex;
+      if (colorHexInput && hex) colorHexInput.value = hex.toUpperCase();
+
+
+      let alphaPercent = 100;
+      const colorParts = bgColor.match(/[\d.]+/g);
+
+      if (colorParts && colorParts.length >= 4) {
+        alphaPercent = Math.round(parseFloat(colorParts[3]) * 100);
       }
+
+      if (colorOpacity) colorOpacity.value = alphaPercent;
+      if (colorOpacityVal) colorOpacityVal.textContent = alphaPercent + "%";
     } else {
       if (modeLabel) modeLabel.textContent = "None";
-    }
-    //  Jayanti updates Ends here 12-12-25
-    // Set UI values
-    // Amit's code changes are here for the rgb issue hex color changing
-    // Convert int 0..255 to two-digit hex
-    function toHex(byte) {
-      const v = Math.max(0, Math.min(255, Math.round(byte)));
-      return ("0" + v.toString(16)).slice(-2);
+
+      if (colorInput) colorInput.value = "#FFFFFF";
+      if (colorHexInput) colorHexInput.value = "#FFFFFF";
+      if (colorOpacity) colorOpacity.value = 100;
+      if (colorOpacityVal) colorOpacityVal.textContent = "100%";
     }
 
-    // Blend rgba color over a white background and return {r,g,b}
-    function compositeOverWhite(r, g, b, a) {
-      // a in 0..1
-      const invA = 1 - a;
-      return {
-        r: Math.round(r * a + 255 * invA),
-        g: Math.round(g * a + 255 * invA),
-        b: Math.round(b * a + 255 * invA),
-      };
-    }
-
-    // Parse rgb(...) or rgba(...) or return null
-    function parseRgbString(str) {
-      if (!str || typeof str !== "string") return null;
-      const m = str.match(
-        /rgba?\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})(?:\s*,\s*([0-9]*\.?[0-9]+))?\s*\)/i
-      );
-      if (!m) return null;
-      const r = parseInt(m[1], 10);
-      const g = parseInt(m[2], 10);
-      const b = parseInt(m[3], 10);
-      const a = m[4] !== undefined ? parseFloat(m[4]) : 1;
-      return { r, g, b, a };
-    }
-
-    // Convert various color inputs to #rrggbb (best-effort)
-    function colorValueToHex(value) {
-      if (!value) return "#ffffff";
-      value = value.trim();
-
-      // already hex #rgb or #rrggbb -> normalize to #rrggbb
-      if (/^#([0-9a-f]{3}){1,2}$/i.test(value)) {
-        if (value.length === 4) {
-          // expand #rgb -> #rrggbb
-          const r = value[1],
-            g = value[2],
-            b = value[3];
-          return `#${r}${r}${g}${g}${b}${b}`.toLowerCase();
-        }
-        return value.toLowerCase();
-      }
-
-      // rgb / rgba
-      const parsed = parseRgbString(value);
-      if (parsed) {
-        let { r, g, b, a } = parsed;
-        if (a === undefined || a === null) a = 1;
-        if (a < 1) {
-          const comp = compositeOverWhite(r, g, b, a);
-          r = comp.r;
-          g = comp.g;
-          b = comp.b;
-        }
-        return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toLowerCase();
-      }
-
-      // named colors (basic fallback): set on an offscreen element and compute
-      try {
-        const tmp = document.createElement("div");
-        tmp.style.color = value;
-        document.body.appendChild(tmp);
-        const cs = getComputedStyle(tmp).color;
-        document.body.removeChild(tmp);
-        const p = parseRgbString(cs);
-        if (p) return `#${toHex(p.r)}${toHex(p.g)}${toHex(p.b)}`.toLowerCase();
-      } catch (e) {
-        /* ignore */
-      }
-
-      // last resort
-      return "#ffffff";
-    }
-    const backRawForUI = Vvveb.StyleManager.getStyle(element, "background");
-    document.getElementById("section-bg-color").value =
-      colorValueToHex(backRawForUI);
-    // document.getElementById("section-bg-color").value =
-    //   Vvveb.StyleManager.getStyle(element, "background") || "#ffffff";
-    // Amit's code changes are here for the rgb issue hex color changing
-
-    // document.getElementById("section-edit-pencil").style.display = "block";
-    // document.getElementById("section-editor").style.display = "none";
-    // document.getElementById("section-replace-btn").style.display = "block";
+    this.updatePreview();
+    this.syncAccordionWithCurrentBackground();
   },
 
-  applyColor: function (color) {
+  applyColor: function (color, opts) {
     if (!this.element) return;
 
-    var el = this.element;
-    var oldStyle = el.getAttribute("style") || "";
+    opts = opts || {};
+    const recordUndo = opts.recordUndo !== false;
+
+    const el = this.element;
+    const oldStyle = el.getAttribute("style") || "";
+
+    const opacityInput = document.getElementById("section-color-opacity");
+    const opacityVal = document.getElementById("section-color-opacity-val");
+    const opacity = Math.max(0, Math.min(100, parseInt(opacityInput?.value || "100", 10)));
+
+    if (opacityVal) opacityVal.textContent = opacity + "%";
+
+    let finalColor = color || "#ffffff";
+    if (finalColor.indexOf("#") === 0 && opacity < 100) {
+      finalColor = _hexToRgba(finalColor, opacity / 100);
+    }
 
     el.style.backgroundImage = "";
     el.style.background = "";
-    el.style.background = color;
+    el.style.backgroundColor = "";
+    el.style.background = finalColor;
 
-    if (Vvveb.Undo && Vvveb.Undo.addMutation) {
+    if (recordUndo && Vvveb.Undo && Vvveb.Undo.addMutation) {
       Vvveb.Undo.addMutation({
         type: "attributes",
         target: el,
@@ -9846,58 +13020,77 @@ Vvveb.SectionEditor = {
       });
     }
 
+    if (recordUndo && Vvveb?.Builder?.setDirty) {
+      Vvveb.Builder.setDirty(true);
+    }
+
     this.updatePreview();
   },
 
-  applyImage: function (file) {
-    if (!this.element) return;
+  buildImageBackground: function (imgUrl) {
+    const overlayColorInput = document.getElementById("section-image-overlay-color");
+    const overlayHexInput = document.getElementById("section-image-overlay-hex");
+    const overlayOpacityInput = document.getElementById("section-image-overlay-opacity");
+    const overlayOpacityVal = document.getElementById("section-image-overlay-opacity-val");
 
-    let reader = new FileReader();
+    let overlayColor =
+      overlayColorInput?.value ||
+      overlayHexInput?.value ||
+      "#000000";
+
+    overlayColor = normalizeSectionOverlayColor(overlayColor);
+
+    const overlayOpacity = Math.max(
+      0,
+      Math.min(100, parseInt(overlayOpacityInput?.value || "0", 10))
+    );
+
+    if (overlayColorInput) overlayColorInput.value = overlayColor;
+    // Do not auto-fill overlay hex input. It should be filled only by user typing.
+
+    if (overlayOpacityVal) {
+      overlayOpacityVal.textContent = overlayOpacity + "%";
+    }
+
+
+    const safeUrl = String(imgUrl || "").replace(/"/g, "%22");
+    const imageLayer = 'url("' + safeUrl + '")';
+
+    if (overlayOpacity <= 0) {
+      return imageLayer;
+    }
+
+    const overlayLayer = _hexToRgba(overlayColor, overlayOpacity / 100);
+
+    return (
+      "linear-gradient(" +
+      overlayLayer +
+      ", " +
+      overlayLayer +
+      "), " +
+      imageLayer
+    );
+  },
+
+  applyImage: function (file, opts) {
+    if (!this.element || !file) return;
+
+    opts = opts || {};
+
+    const reader = new FileReader();
+
     reader.onload = (e) => {
-      const el = this.element;
-      const doc = el.ownerDocument;
-      _ensureSectionOverlayCSS(doc);
-      const oldStyle = el.getAttribute("style") || "";
-      const oldClass = el.className;
-
-      // 🔴 purana gradient / color / image hatao
-      el.style.backgroundImage = "";
-      el.style.background = "";
-      el.style.backgroundColor = "";
-
-      // ✅ ab sirf image lagao
-      el.style.backgroundImage = "url('" + e.target.result + "')";
-      el.style.backgroundSize = "cover";
-      el.style.backgroundPosition = "center";
-
-      //   if (!el.classList.contains("vvv-section-has-bg")) {
-      //     el.classList.add("vvv-section-has-bg");
-      //   }
-
-      // Undo snapshot (same as pehle)
-      if (Vvveb.Undo && Vvveb.Undo.addMutation) {
-        Vvveb.Undo.addMutation({
-          type: "attributes",
-          target: el,
-          attributeName: "style",
-          oldValue: oldStyle,
-          newValue: el.getAttribute("style") || "",
-        });
-
-        Vvveb.Undo.addMutation({
-          type: "attributes",
-          target: el,
-          attributeName: "class",
-          oldValue: oldClass,
-          newValue: el.className,
-        });
-      }
+      this.applyImageFromMedia(e.target.result, opts);
     };
+
     reader.readAsDataURL(file);
   },
 
-  applyImageFromMedia: function (imgUrl) {
+  applyImageFromMedia: function (imgUrl, opts) {
     if (!this.element || !imgUrl) return;
+
+    opts = opts || {};
+    const recordUndo = opts.recordUndo !== false;
 
     if (typeof imgUrl === "object" && imgUrl.url) {
       imgUrl = imgUrl.url;
@@ -9907,21 +13100,38 @@ Vvveb.SectionEditor = {
     const oldStyle = el.getAttribute("style") || "";
     const oldClass = el.className;
 
-    el.style.backgroundImage = "";
-    el.style.background = "";
-    el.style.backgroundColor = "";
+    this._lastImageUrl = imgUrl;
 
-    el.style.backgroundImage = "url('" + imgUrl + "')";
+    el.style.removeProperty("background");
+    el.style.removeProperty("background-color");
+    el.style.removeProperty("background-image");
+
+    el.style.backgroundImage = this.buildImageBackground(imgUrl);
     el.style.backgroundSize = "cover";
     el.style.backgroundPosition = "center";
     el.style.backgroundRepeat = "no-repeat";
 
-    // if (el.classList.contains("vvv-section-has-bg") === false) {
-    //   el.classList.add("vvv-section-has-bg");
-    // }
+    const imagePreview = document.getElementById("section-image-preview");
+    const imgInfo = document.getElementById("section-bg-selected-info");
 
-    if (Vvveb.Undo && Vvveb.Undo.addMutation) {
-      if (oldStyle != (el.getAttribute("style") || "")) {
+    if (imagePreview) {
+      imagePreview.innerHTML = "";
+      imagePreview.style.backgroundImage =
+        'url("' + String(imgUrl).replace(/"/g, "%22") + '")';
+      imagePreview.style.backgroundSize = "cover";
+      imagePreview.style.backgroundPosition = "center";
+    }
+
+    if (imgInfo) {
+      try {
+        imgInfo.textContent = String(imgUrl).split("/").pop() || "Image selected";
+      } catch (e) {
+        imgInfo.textContent = "Image selected";
+      }
+    }
+
+    if (recordUndo && Vvveb.Undo && Vvveb.Undo.addMutation) {
+      if (oldStyle !== (el.getAttribute("style") || "")) {
         Vvveb.Undo.addMutation({
           type: "attributes",
           target: el,
@@ -9930,7 +13140,8 @@ Vvveb.SectionEditor = {
           newValue: el.getAttribute("style") || "",
         });
       }
-      if (oldClass != el.className) {
+
+      if (oldClass !== el.className) {
         Vvveb.Undo.addMutation({
           type: "attributes",
           target: el,
@@ -9941,69 +13152,60 @@ Vvveb.SectionEditor = {
       }
     }
 
-    Vvveb.SectionEditor.updatePreview();
-    if (Vvveb?.Builder?.setDirty) Vvveb.Builder.setDirty(true);
+    if (recordUndo && Vvveb?.Builder?.setDirty) {
+      Vvveb.Builder.setDirty(true);
+    }
+
+    this.updatePreview();
   },
 
   applyGradient: function (opts) {
     if (!this.element) return;
 
     opts = opts || {};
-    var recordUndo = opts.recordUndo === true;
+    const recordUndo = opts.recordUndo === true;
 
-    var el = this.element;
+    const el = this.element;
 
-    if (!recordUndo) {
-      if (this._gradientPreviewOriginalStyle == null) {
-        this._gradientPreviewOriginalStyle = el.getAttribute("style") || "";
-      }
+    if (!recordUndo && this._gradientPreviewOriginalStyle == null) {
+      this._gradientPreviewOriginalStyle = el.getAttribute("style") || "";
     }
-    var oldStyle;
-    if (recordUndo) {
-      if (this._gradientPreviewOriginalStyle != null) {
-        oldStyle = this._gradientPreviewOriginalStyle;
-      } else {
-        oldStyle = el.getAttribute("style") || "";
-      }
-    } else {
-      oldStyle = el.getAttribute("style") || "";
+
+    let oldStyle = el.getAttribute("style") || "";
+    if (recordUndo && this._gradientPreviewOriginalStyle != null) {
+      oldStyle = this._gradientPreviewOriginalStyle;
     }
 
     el.style.backgroundImage = "";
     el.style.background = "";
     el.style.backgroundColor = "";
 
-    var c1 =
-      (document.getElementById("section-grad-c1") || {}).value || "#000000";
-    var a1 =
-      parseInt(
-        (document.getElementById("section-grad-c1a") || {}).value || "60",
-        10
-      ) / 100;
-    var c2 =
-      (document.getElementById("section-grad-c2") || {}).value || "#000000";
-    var a2 =
-      parseInt(
-        (document.getElementById("section-grad-c2a") || {}).value || "0",
-        10
-      ) / 100;
-    var angle = parseInt(
-      (document.getElementById("section-grad-angle") || {}).value || "180",
-      10
-    );
+    const c1 = document.getElementById("section-grad-c1")?.value || "#000000";
+    const a1 = parseInt(document.getElementById("section-grad-c1a")?.value || "100", 10) / 100;
 
-    var rgba1 = _hexToRgba(c1, a1);
-    var rgba2 = _hexToRgba(c2, a2);
+    const c2 = document.getElementById("section-grad-c2")?.value || "#000000";
+    const a2 = parseInt(document.getElementById("section-grad-c2a")?.value || "100", 10) / 100;
 
-    var grad =
-      "linear-gradient(" + angle + "deg, " + rgba1 + " 0%, " + rgba2 + " 100%)";
+    const angle = parseInt(document.getElementById("section-grad-angle")?.value || "180", 10);
+
+    const rgba1 = _hexToRgba(c1, a1);
+    const rgba2 = _hexToRgba(c2, a2);
+
+    const grad =
+      "linear-gradient(" +
+      angle +
+      "deg, " +
+      rgba1 +
+      " 0%, " +
+      rgba2 +
+      " 100%)";
 
     el.style.backgroundImage = grad;
     el.style.backgroundSize = "cover";
     el.style.backgroundPosition = "center";
 
-    if (Vvveb.Undo && Vvveb.Undo.addMutation && recordUndo) {
-      if (oldStyle != (el.getAttribute("style") || "")) {
+    if (recordUndo && Vvveb.Undo && Vvveb.Undo.addMutation) {
+      if (oldStyle !== (el.getAttribute("style") || "")) {
         Vvveb.Undo.addMutation({
           type: "attributes",
           target: el,
@@ -10012,25 +13214,25 @@ Vvveb.SectionEditor = {
           newValue: el.getAttribute("style") || "",
         });
       }
+
       this._gradientPreviewOriginalStyle = null;
     }
+
     this.updatePreview();
   },
 
   clearGradient: function () {
     if (!this.element) return;
 
-    var el = this.element;
-    var oldStyle = el.getAttribute("style") || "";
+    const el = this.element;
+    const oldStyle = el.getAttribute("style") || "";
 
-    // agar backgroundImage hai tabhi clear karo
     if (!el.style.backgroundImage) return;
 
-    // ✅ sirf gradient/background image hata do
     el.style.backgroundImage = "";
 
     if (Vvveb.Undo && Vvveb.Undo.addMutation) {
-      if (oldStyle != (el.getAttribute("style") || "")) {
+      if (oldStyle !== (el.getAttribute("style") || "")) {
         Vvveb.Undo.addMutation({
           type: "attributes",
           target: el,
@@ -10040,40 +13242,50 @@ Vvveb.SectionEditor = {
         });
       }
     }
+
+    this.updatePreview();
   },
 
   updatePreview: function () {
     if (!this.element) return;
 
-    var el = this.element;
-    var computed = window.getComputedStyle(el);
-    var bgImage = computed.backgroundImage || "";
-    var bgColor = computed.backgroundColor || "";
+    const el = this.element;
+    const computed = window.getComputedStyle(el);
+    const bgImage = computed.backgroundImage || "";
+    const bgColor = computed.backgroundColor || "";
 
-    var modeLabel = document.getElementById("section-bg-mode-label");
-    var preview = document.getElementById("section-bg-preview");
-    var details = document.getElementById("section-bg-details");
+    const modeLabel = document.getElementById("section-bg-mode-label");
+    const preview = document.getElementById("section-bg-preview");
+    const details = document.getElementById("section-bg-details");
 
-    function resetPreview() {
-      if (modeLabel) modeLabel.textContent = "None";
-      if (preview) {
-        preview.style.backgroundImage = "none";
-        preview.style.backgroundColor = "transparent";
-      }
-      if (details) details.textContent = "None";
+    const hasBgImage = bgImage && bgImage !== "none";
+    const hasGradient = hasBgImage && bgImage.indexOf("linear-gradient(") !== -1;
+    const hasUrl = hasBgImage && bgImage.indexOf("url(") !== -1;
+
+    if (modeLabel) modeLabel.textContent = "None";
+
+    if (preview) {
+      preview.style.backgroundImage = "none";
+      preview.style.backgroundColor = "transparent";
     }
 
-    if (!modeLabel && !preview && !details) return;
+    if (details) details.textContent = "None";
 
-    // default
-    resetPreview();
+    if (hasGradient && hasUrl) {
+      if (modeLabel) modeLabel.textContent = "Image";
 
-    // 1) GRADIENT?
-    if (
-      bgImage &&
-      bgImage !== "none" &&
-      bgImage.indexOf("linear-gradient(") !== -1
-    ) {
+      const urlMatch = bgImage.match(/url\(["']?(.*?)["']?\)/);
+
+      if (preview && urlMatch && urlMatch[1]) {
+        preview.style.backgroundImage = 'url("' + urlMatch[1] + '")';
+        preview.style.backgroundColor = "#f5f5f5";
+      }
+
+      if (details) details.textContent = "Image with overlay";
+      return;
+    }
+
+    if (hasGradient) {
       if (modeLabel) modeLabel.textContent = "Gradient";
 
       if (preview) {
@@ -10081,20 +13293,16 @@ Vvveb.SectionEditor = {
         preview.style.backgroundColor = "transparent";
       }
 
-      // Gradient details (angle + colors)
-      var info = "Gradient";
+      let info = "Gradient";
 
-      var match = bgImage.match(
+      const match = bgImage.match(
         /linear-gradient\(\s*([-\d.]+)deg\s*,\s*(rgba?\([^)]*\))[^,]*,\s*(rgba?\([^)]*\))/
       );
 
       if (match) {
-        var angleVal = parseInt(match[1], 10) || 180;
-        var rgba1 = match[2];
-        var rgba2 = match[3];
-
-        var c1 = _rgbaToHexAlpha(rgba1);
-        var c2 = _rgbaToHexAlpha(rgba2);
+        const angleVal = parseInt(match[1], 10) || 180;
+        const c1 = _rgbaToHexAlpha(match[2]);
+        const c2 = _rgbaToHexAlpha(match[3]);
 
         info =
           angleVal +
@@ -10108,81 +13316,1506 @@ Vvveb.SectionEditor = {
       return;
     }
 
-    // 2) IMAGE?
-    if (bgImage && bgImage !== "none") {
+    if (hasUrl) {
       if (modeLabel) modeLabel.textContent = "Image";
 
-      var urlMatch = bgImage.match(/url\(["']?(.*?)["']?\)/);
-      if (preview) {
-        if (urlMatch && urlMatch[1]) {
-          preview.style.backgroundImage = 'url("' + urlMatch[1] + '")';
-          preview.style.backgroundColor = "#f5f5f5";
-        } else {
-          preview.style.backgroundImage = "none";
-          preview.style.backgroundColor = "#f5f5f5";
-        }
+      const urlMatch = bgImage.match(/url\(["']?(.*?)["']?\)/);
+
+      if (preview && urlMatch && urlMatch[1]) {
+        preview.style.backgroundImage = 'url("' + urlMatch[1] + '")';
+        preview.style.backgroundColor = "#f5f5f5";
       }
 
       if (details) details.textContent = "Background image";
       return;
     }
 
-    // 3) SOLID COLOR?
     if (
       bgColor &&
       bgColor !== "rgba(0, 0, 0, 0)" &&
       bgColor !== "transparent"
     ) {
-      var hex = _rgbToHex(bgColor) || bgColor;
+      const hex = _rgbToHex(bgColor) || bgColor;
 
       if (modeLabel) modeLabel.textContent = "Color";
+
       if (preview) {
         preview.style.backgroundImage = "none";
         preview.style.backgroundColor = hex;
       }
-      if (details) details.textContent = hex.toUpperCase();
+
+      if (details) details.textContent = String(hex).toUpperCase();
+      return;
+    }
+  },
+
+  detectBackgroundMode: function (element) {
+    if (!element) return "none";
+
+    const computed = window.getComputedStyle(element);
+    const bgImage = computed.backgroundImage || "";
+    const bgColor = computed.backgroundColor || "";
+
+    const hasBgImage = bgImage && bgImage !== "none";
+    const hasGradient = hasBgImage && bgImage.indexOf("linear-gradient(") !== -1;
+    const hasUrl = hasBgImage && bgImage.indexOf("url(") !== -1;
+
+    if (hasGradient && hasUrl) return "imageWithOverlay";
+    if (hasGradient) return "gradient";
+    if (hasUrl || hasBgImage) return "image";
+
+    if (
+      bgColor &&
+      bgColor !== "rgba(0, 0, 0, 0)" &&
+      bgColor !== "transparent"
+    ) {
+      return "color";
+    }
+
+    return "none";
+  },
+
+  openAccordionByMode: function (mode) {
+    const colorAccordion = document.getElementById("section-accordion-color");
+    const imageAccordion = document.getElementById("section-accordion-image");
+    const gradientAccordion = document.getElementById("section-accordion-gradient");
+
+    if (!colorAccordion || !imageAccordion || !gradientAccordion) return;
+
+    colorAccordion.open = false;
+    imageAccordion.open = false;
+    gradientAccordion.open = false;
+
+    if (mode === "image" || mode === "imageWithOverlay") {
+      imageAccordion.open = true;
       return;
     }
 
-    resetPreview();
+    if (mode === "gradient") {
+      gradientAccordion.open = true;
+      return;
+    }
+
+    colorAccordion.open = true;
   },
 
-  // destroy: function () {
-  //   document.getElementById("section-edit-pencil").style.display = "none";
-  //   document.getElementById("section-editor").style.display = "none";
-  //   document.getElementById("section-replace-btn").style.display = "none";
-  //   this.isActive = false;
-  //   this.element = null;
-  // },
-  destroy: function () {
-    // Amit has added this and commented upper
-    // Hide/remove all pencils inside the iframe
-    // try {
-    //   const iframe = document.getElementById("iframe1");
-    //   if (iframe && iframe.contentDocument) {
-    //     const doc = iframe.contentDocument;
-    //     doc
-    //       .querySelectorAll("#section-edit-pencil")
-    //       .forEach((btn) => btn.remove());
-    //   }
-    // } catch (e) {
-    //   console.warn("SectionEditor.destroy: could not clean iframe pencils", e);
-    // }
+  syncAccordionWithCurrentBackground: function () {
+    if (!this.element) return;
 
-    // Hide Section Editor panel UI
+    const mode = this.detectBackgroundMode(this.element);
+    this.openAccordionByMode(mode);
+  },
+
+  destroy: function () {
     const editorPanel = document.getElementById("section-editor");
     const sectionEditOptions = document.getElementById("section-edit-options");
 
+    const el = this.element;
+
+    clearSectionGradientPresetActive();
+
+    /*
+      Important:
+      If editor is closed by outside click, hover change, selection change,
+      escape, or any direct destroy call, preview must be cancelled.
+      Only Apply Background can keep the preview.
+    */
+    if (
+      el &&
+      !this._previewCommitted &&
+      !this._allowDestroyWithoutRestore
+    ) {
+      const originalStyle = this._originalStyle || "";
+
+      if (originalStyle) {
+        el.setAttribute("style", originalStyle);
+      } else {
+        el.removeAttribute("style");
+      }
+
+      this.updatePreview();
+    }
+
     if (editorPanel) {
-      editorPanel.style.display = "none";
-      sectionEditOptions.style.display = "block";
+      editorPanel.classList.remove("is-open");
+
+      clearTimeout(editorPanel._zgSectionEditorHideTimer);
+
+      editorPanel._zgSectionEditorHideTimer = setTimeout(function () {
+        if (!editorPanel.classList.contains("is-open")) {
+          editorPanel.style.setProperty("display", "none", "important");
+        }
+
+        if (sectionEditOptions) {
+          sectionEditOptions.style.setProperty("display", "block", "important");
+        }
+      }, 220);
+    } else if (sectionEditOptions) {
+      sectionEditOptions.style.setProperty("display", "block", "important");
+    }
+
+    if (this._resetObserver) {
+      this._resetObserver.disconnect();
+      this._resetObserver = null;
+    }
+
+    const resetBtn = document.getElementById("section-bg-reset");
+
+    if (resetBtn) {
+      resetBtn.disabled = true;
+      resetBtn.setAttribute("aria-disabled", "true");
     }
 
     this.isActive = false;
     this.element = null;
+    this._lastImageUrl = "";
     this._gradientPreviewOriginalStyle = null;
+    this._previewCommitted = false;
+    this._allowDestroyWithoutRestore = false;
   },
 };
+
+function normalizeSectionOverlayColor(value) {
+  if (!value) return "#000000";
+
+  value = String(value).trim();
+
+  if (/^#[0-9a-fA-F]{6}$/.test(value)) {
+    return value.toUpperCase();
+  }
+
+  if (/^#[0-9a-fA-F]{3}$/.test(value)) {
+    return (
+      "#" +
+      value[1] +
+      value[1] +
+      value[2] +
+      value[2] +
+      value[3] +
+      value[3]
+    ).toUpperCase();
+  }
+
+  const rgbHex = _rgbToHex(value);
+
+  if (rgbHex) {
+    return rgbHex.toUpperCase();
+  }
+
+  return "#000000";
+}
+
+// Recent Section Bg Colors
+window.SectionRecentColors = window.SectionRecentColors || {
+  key: "zigrow-section-bg-recent-colors",
+  legacyKey: "zigrow.sectionRecentBgColors",
+
+  get: function () {
+    try {
+      const currentRaw = localStorage.getItem(this.key);
+      const legacyRaw = localStorage.getItem(this.legacyKey);
+
+      const current = currentRaw ? JSON.parse(currentRaw) : [];
+      const legacy = legacyRaw ? JSON.parse(legacyRaw) : [];
+
+      const merged = []
+        .concat(Array.isArray(current) ? current : [])
+        .concat(Array.isArray(legacy) ? legacy : [])
+        .map(function (color) {
+          return String(color || "").trim().toUpperCase();
+        })
+        .filter(function (color) {
+          return /^#[0-9A-F]{6}$/.test(color);
+        });
+
+      return Array.from(new Set(merged)).slice(0, 8);
+    } catch (e) {
+      return [];
+    }
+  },
+
+  set: function (arr) {
+    try {
+      localStorage.setItem(this.key, JSON.stringify(arr));
+    } catch (e) { }
+  },
+
+  add: function (color) {
+    if (!color) return;
+
+    color = String(color).trim().toUpperCase();
+
+    if (!/^#[0-9A-F]{6}$/.test(color)) return;
+
+    let colors = this.get();
+
+    colors = colors.filter(function (item) {
+      return String(item).toUpperCase() !== color;
+    });
+
+    colors.unshift(color);
+    colors = colors.slice(0, 8);
+
+    this.set(colors);
+  },
+};
+
+function renderSectionRecentColors() {
+  const wrap = document.getElementById("section-recent-colors");
+  const store = window.SectionRecentColors;
+
+  if (!wrap || !store || typeof store.get !== "function") return;
+
+  wrap.innerHTML = "";
+
+  const colors = store.get().filter(Boolean).slice(0, 8);
+
+  if (!colors.length) {
+    const empty = document.createElement("span");
+    empty.className = "zg-se-help-text";
+    empty.textContent = "No recent colors yet.";
+    wrap.appendChild(empty);
+    return;
+  }
+
+  colors.forEach(function (color) {
+    const colorBtn = document.createElement("button");
+
+    colorBtn.type = "button";
+    colorBtn.className = "se-swatch";
+    colorBtn.title = color;
+    colorBtn.setAttribute("data-color", color);
+    colorBtn.setAttribute("aria-label", color);
+
+    colorBtn.style.setProperty("--zg-color", color);
+    colorBtn.style.background = color;
+    colorBtn.style.width = "24px";
+    colorBtn.style.height = "24px";
+    colorBtn.style.borderRadius = "999px";
+    colorBtn.style.border = "1px solid rgba(15, 23, 42, 0.14)";
+    colorBtn.style.cursor = "pointer";
+    colorBtn.style.display = "inline-flex";
+
+    colorBtn.addEventListener("click", function () {
+      const input = document.getElementById("section-bg-color");
+      const hexInput = document.getElementById("section-color-hex");
+
+      if (input) input.value = color;
+      if (hexInput) hexInput.value = color;
+
+      if (input) {
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+
+    wrap.appendChild(colorBtn);
+  });
+}
+
+// Section Background Editor event bindings
+// Safe scope: only controls inside the new Section Background Editor UI
+(function () {
+  const colorPicker = document.getElementById("section-bg-color");
+  const colorHex = document.getElementById("section-color-hex");
+  const colorOpacity = document.getElementById("section-color-opacity");
+  const colorOpacityVal = document.getElementById("section-color-opacity-val");
+
+  const solidEyedropperBtn = document.getElementById("section-color-eyedropper");
+  const gradC1EyedropperBtn = document.getElementById("section-grad-c1-eyedropper");
+  const gradC2EyedropperBtn = document.getElementById("section-grad-c2-eyedropper");
+  const overlayEyedropperBtn = document.getElementById("section-image-overlay-eyedropper");
+
+  const uploadInput = document.getElementById("section-bg-upload");
+  const galleryBtn = document.getElementById("section-bg-gallery-btn");
+  const imageInfo = document.getElementById("section-bg-selected-info");
+  const clearImageBtn = document.getElementById("section-bg-clear-btn");
+
+  const overlayColor = document.getElementById("section-image-overlay-color");
+  const overlayHex = document.getElementById("section-image-overlay-hex");
+  const overlayOpacity = document.getElementById("section-image-overlay-opacity");
+  const overlayOpacityVal = document.getElementById("section-image-overlay-opacity-val");
+
+  const gradC1 = document.getElementById("section-grad-c1");
+  const gradC1Hex = document.getElementById("section-grad-c1-hex");
+  const gradC2 = document.getElementById("section-grad-c2");
+  const gradC2Hex = document.getElementById("section-grad-c2-hex");
+  const gradAngle = document.getElementById("section-grad-angle");
+  const gradAngleVal = document.getElementById("section-grad-angle-val");
+  const gradC1Opacity = document.getElementById("section-grad-c1a");
+  const gradC1OpacityVal = document.getElementById("section-grad-c1a-val");
+  const gradC2Opacity = document.getElementById("section-grad-c2a");
+  const gradC2OpacityVal = document.getElementById("section-grad-c2a-val");
+
+  const applyBtn = document.getElementById("section-bg-apply");
+  const cancelBtn = document.getElementById("section-bg-cancel");
+  const resetBtn = document.getElementById("section-bg-reset");
+
+  const undoBtn = document.getElementById("section-undo-btn");
+  const redoBtn = document.getElementById("section-redo-btn");
+  const pencilBtn = document.getElementById("section-edit-pencil");
+
+  function normalizeHex(value) {
+    value = (value || "").trim();
+
+    if (!value) return null;
+
+    if (value.charAt(0) !== "#") {
+      value = "#" + value;
+    }
+
+    if (/^#[0-9a-fA-F]{3}$/.test(value)) {
+      value =
+        "#" +
+        value.charAt(1) +
+        value.charAt(1) +
+        value.charAt(2) +
+        value.charAt(2) +
+        value.charAt(3) +
+        value.charAt(3);
+    }
+
+    if (!/^#[0-9a-fA-F]{6}$/.test(value)) {
+      return null;
+    }
+
+    return value.toUpperCase();
+  }
+
+  function setupEyeDropperButton(button, callback) {
+    if (!button) return;
+
+    const unsupportedMessage =
+      "This feature is not supported in safari browser";
+
+    const hasNativeEyeDropper = typeof window.EyeDropper === "function";
+
+    if (!hasNativeEyeDropper) {
+      /*
+        Do not use button.disabled = true here.
+  
+        Reason:
+        Disabled buttons often do not receive hover events properly,
+        so the tooltip may not show in Safari.
+        This keeps it visually and functionally disabled while still allowing hover tooltip.
+      */
+      button.disabled = false;
+      button.classList.add("zg-se-eyedropper-disabled");
+      button.setAttribute("aria-disabled", "true");
+      button.removeAttribute("title");
+      button.setAttribute("aria-label", unsupportedMessage);
+      button.setAttribute("data-tooltip", unsupportedMessage);
+
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      });
+
+      return;
+    }
+
+    button.disabled = false;
+    button.classList.remove("zg-se-eyedropper-disabled");
+    button.removeAttribute("aria-disabled");
+    button.removeAttribute("data-tooltip");
+    button.setAttribute("title", "Pick color from page");
+
+    button.addEventListener("click", async function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      try {
+        const eyeDropper = new EyeDropper();
+        const result = await eyeDropper.open();
+
+        const pickedColor = normalizeHex(result.sRGBHex);
+
+        if (!pickedColor) return;
+
+        callback(pickedColor);
+      } catch (err) {
+        // User cancelled picker. Do nothing.
+      }
+    });
+  }
+
+  function getTemplateColorFromVars(varNames) {
+    const selectedEl = Vvveb.SectionEditor?.element || null;
+
+    const frameDoc =
+      selectedEl?.ownerDocument ||
+      window.FrameDocument ||
+      Vvveb?.Builder?.iframe?.contentDocument ||
+      document;
+
+    const frameWin = frameDoc?.defaultView || window;
+    const frameRoot = frameDoc?.documentElement || null;
+    const frameBody = frameDoc?.body || null;
+    const mainRoot = document.documentElement;
+
+    const globalVars = window.__zigrowGlobalStyles?.colors?.vars || {};
+
+    for (const name of varNames) {
+      let value = "";
+
+      try {
+        if (selectedEl) {
+          value =
+            frameWin.getComputedStyle(selectedEl).getPropertyValue(name).trim() ||
+            "";
+        }
+      } catch (e) { }
+
+      try {
+        if (!value && frameBody) {
+          value =
+            frameWin.getComputedStyle(frameBody).getPropertyValue(name).trim() ||
+            "";
+        }
+      } catch (e) { }
+
+      try {
+        if (!value && frameRoot) {
+          value =
+            frameWin.getComputedStyle(frameRoot).getPropertyValue(name).trim() ||
+            "";
+        }
+      } catch (e) { }
+
+      try {
+        if (!value) {
+          value =
+            window.getComputedStyle(mainRoot).getPropertyValue(name).trim() || "";
+        }
+      } catch (e) { }
+
+      if (!value && globalVars[name]) {
+        value = globalVars[name];
+      }
+      const validHex = normalizeHex(value) || _rgbToHex(value);
+
+      if (validHex) {
+        return validHex.toUpperCase();
+      }
+    }
+
+    return null;
+  }
+
+  setupEyeDropperButton(solidEyedropperBtn, function (color) {
+    updateColorPreview(color);
+  });
+
+  setupEyeDropperButton(gradC1EyedropperBtn, function (color) {
+    if (gradC1) gradC1.value = color;
+    if (gradC1Hex) gradC1Hex.value = color;
+
+    updateGradientPreview();
+  });
+
+  setupEyeDropperButton(gradC2EyedropperBtn, function (color) {
+    if (gradC2) gradC2.value = color;
+    if (gradC2Hex) gradC2Hex.value = color;
+
+    updateGradientPreview();
+  });
+
+  setupEyeDropperButton(overlayEyedropperBtn, function (color) {
+    if (overlayColor) overlayColor.value = color;
+    if (overlayHex) overlayHex.value = color;
+
+    updateImageOverlayPreview();
+  });
+
+  function renderSectionTemplateBrandColors() {
+    const wrap = document.querySelector(
+      "#section-editor .zg-se-brand-colors"
+    );
+
+    if (!wrap) return;
+
+    const colors = [
+      {
+        label: "Primary",
+        color: getTemplateColorFromVars([
+          "--primary-colors",
+          "--zigrow-primary-color",
+          "--zigrow-primary-500",
+        ]),
+      },
+      {
+        label: "Secondary",
+        color: getTemplateColorFromVars([
+          "--secondary-colors",
+          "--zigrow-secondary-color",
+          "--zigrow-subheading-color",
+        ]),
+      },
+      {
+        label: "Tertiary",
+        color: getTemplateColorFromVars([
+          "--tertiary-colors",
+          "--territory-colors",
+          "--zigrow-tertiary-color",
+          "--zigrow-heading-color",
+        ]),
+      },
+    ].filter((item) => item.color);
+
+    wrap.innerHTML = "";
+
+    if (!colors.length) {
+      const empty = document.createElement("span");
+      empty.className = "zg-se-help-text";
+      empty.textContent = "No template colors found.";
+      wrap.appendChild(empty);
+      return;
+    }
+
+    colors.forEach((item) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "zg-se-brand-color";
+      btn.style.setProperty("--zg-color", item.color);
+      btn.setAttribute("data-color", item.color);
+      btn.setAttribute("title", item.label + ": " + item.color);
+      btn.setAttribute("aria-label", item.label + " color");
+
+      wrap.appendChild(btn);
+    });
+  }
+
+  function refreshSectionBrandColorsFromLiveTheme() {
+    renderSectionTemplateBrandColors();
+
+    const activeColor = document.querySelector(
+      "#section-editor .zg-se-brand-color.active"
+    );
+
+    if (!activeColor) return;
+
+    const color = activeColor.getAttribute("data-color");
+
+    if (!color) return;
+
+    activeColor.style.setProperty("--zg-color", color);
+  }
+
+  function restoreOriginalSectionBackground() {
+    const el = Vvveb.SectionEditor?.element;
+    if (!el) return;
+
+    const originalStyle = Vvveb.SectionEditor._originalStyle || "";
+
+    if (originalStyle) {
+      el.setAttribute("style", originalStyle);
+    } else {
+      el.removeAttribute("style");
+    }
+
+    Vvveb.SectionEditor._gradientPreviewOriginalStyle = null;
+    Vvveb.SectionEditor.updatePreview();
+
+    if (typeof Vvveb.SectionEditor.syncAccordionWithCurrentBackground === "function") {
+      Vvveb.SectionEditor.syncAccordionWithCurrentBackground();
+    }
+  }
+
+  function setImageInfo(msg) {
+    if (imageInfo) {
+      imageInfo.textContent = msg || "No image selected.";
+    }
+  }
+
+  function updateColorPreview(hex) {
+    const validHex = normalizeHex(hex);
+    if (!validHex) return;
+
+    if (colorPicker) colorPicker.value = validHex;
+    if (colorHex) colorHex.value = validHex;
+
+    if (colorOpacityVal && colorOpacity) {
+      colorOpacityVal.textContent = colorOpacity.value + "%";
+    }
+
+    if (Vvveb.SectionEditor?.element) {
+      Vvveb.SectionEditor.applyColor(validHex, { recordUndo: false });
+    }
+
+    repaintAllSectionRanges()
+  }
+
+  function updateImageOverlayPreview() {
+    let validHex =
+      normalizeHex(overlayColor?.value || overlayHex?.value || "#000000") ||
+      _rgbToHex(overlayColor?.value || overlayHex?.value || "");
+
+    if (!validHex) validHex = "#000000";
+
+    validHex = validHex.toUpperCase();
+
+    if (overlayColor) overlayColor.value = validHex;
+
+    if (overlayOpacityVal && overlayOpacity) {
+      overlayOpacityVal.textContent = overlayOpacity.value + "%";
+    }
+
+    if (!Vvveb.SectionEditor?._lastImageUrl) {
+      return;
+    }
+
+    Vvveb.SectionEditor.applyImageFromMedia(Vvveb.SectionEditor._lastImageUrl, {
+      recordUndo: false,
+    });
+
+    repaintAllSectionRanges();
+  }
+
+  function updateGradientLabels() {
+    if (gradC1 && gradC1Hex) {
+      gradC1Hex.value = gradC1.value.toUpperCase();
+    }
+
+    if (gradC2 && gradC2Hex) {
+      gradC2Hex.value = gradC2.value.toUpperCase();
+    }
+
+    if (gradAngle && gradAngleVal) {
+      gradAngleVal.textContent = gradAngle.value + "°";
+    }
+
+    if (gradC1Opacity && gradC1OpacityVal) {
+      gradC1OpacityVal.textContent = gradC1Opacity.value + "%";
+    }
+
+    if (gradC2Opacity && gradC2OpacityVal) {
+      gradC2OpacityVal.textContent = gradC2Opacity.value + "%";
+    }
+
+    repaintAllSectionRanges();
+  }
+
+  function updateGradientPreview() {
+    updateGradientLabels();
+    repaintGradientPreviewBox();
+
+    if (Vvveb.SectionEditor?.element) {
+      Vvveb.SectionEditor.applyGradient({ recordUndo: false });
+    }
+  }
+
+  function syncGradientHexToPicker(hexInput, picker) {
+    if (!hexInput || !picker) return;
+
+    const validHex = normalizeHex(hexInput.value);
+    if (!validHex) return;
+
+    picker.value = validHex;
+    hexInput.value = validHex;
+
+    updateGradientPreview();
+  }
+
+  function repaintOneRange(range) {
+    if (!range) return;
+
+    const min = parseFloat(range.min || "0");
+    const max = parseFloat(range.max || "100");
+    const value = parseFloat(range.value || "0");
+
+    const percent =
+      max > min ? ((value - min) / (max - min)) * 100 : 0;
+
+    const safePercent = Math.max(0, Math.min(100, percent));
+
+    range.style.setProperty("--zg-range-fill", safePercent + "%");
+  }
+
+  function repaintAllSectionRanges() {
+    document
+      .querySelectorAll("#section-editor .zg-se-range")
+      .forEach(function (range) {
+        repaintOneRange(range);
+      });
+  }
+
+  function syncSectionEditorHeightMode() {
+    const editor = document.getElementById("section-editor");
+    if (!editor) return;
+
+    const hasOpenAccordion = !!editor.querySelector(".zg-se-accordion[open]");
+
+    if (hasOpenAccordion) {
+      editor.classList.remove("zg-se-compact-height");
+    } else {
+      editor.classList.add("zg-se-compact-height");
+    }
+
+    repaintAllSectionRanges();
+  }
+
+  function repaintGradientPreviewBox() {
+    const big = document.getElementById("section-grad-preview");
+    const mini = document.getElementById("section-grad-preview-mini");
+
+    const c1 = gradC1?.value || "#000000";
+    const c2 = gradC2?.value || "#000000";
+
+    const a1 = parseInt(gradC1Opacity?.value || "100", 10) / 100;
+    const a2 = parseInt(gradC2Opacity?.value || "100", 10) / 100;
+
+    const angle = parseInt(gradAngle?.value || "180", 10);
+
+    const css =
+      "linear-gradient(" +
+      angle +
+      "deg, " +
+      _hexToRgba(c1, a1) +
+      " 0%, " +
+      _hexToRgba(c2, a2) +
+      " 100%)";
+
+    if (big) {
+      big.style.backgroundImage = css;
+      big.setAttribute("data-label", angle + "°");
+    }
+
+    if (mini) {
+      mini.style.backgroundImage = css;
+    }
+
+    if (gradAngleVal) gradAngleVal.textContent = angle + "°";
+    if (gradC1OpacityVal) {
+      gradC1OpacityVal.textContent =
+        parseInt(gradC1Opacity?.value || "100", 10) + "%";
+    }
+    if (gradC2OpacityVal) {
+      gradC2OpacityVal.textContent =
+        parseInt(gradC2Opacity?.value || "100", 10) + "%";
+    }
+
+    repaintAllSectionRanges();
+  }
+
+  function refreshSectionEditorUIAfterRead() {
+    const el = Vvveb.SectionEditor?.element;
+
+    if (el) {
+      const computed = window.getComputedStyle(el);
+      const bgImage = computed.backgroundImage || "";
+
+      if (bgImage && bgImage !== "none" && bgImage.indexOf("linear-gradient(") !== -1) {
+        const parsedGradient = _sectionParseLinearGradient(bgImage);
+
+        if (parsedGradient) {
+          if (gradC1 && parsedGradient.c1.hex) {
+            gradC1.value = parsedGradient.c1.hex;
+          }
+
+          if (gradC1Hex && parsedGradient.c1.hex) {
+            gradC1Hex.value = parsedGradient.c1.hex.toUpperCase();
+          }
+
+          if (gradC1Opacity) {
+            gradC1Opacity.value = parsedGradient.c1.alpha;
+          }
+
+          if (gradC2 && parsedGradient.c2.hex) {
+            gradC2.value = parsedGradient.c2.hex;
+          }
+
+          if (gradC2Hex && parsedGradient.c2.hex) {
+            gradC2Hex.value = parsedGradient.c2.hex.toUpperCase();
+          }
+
+          if (gradC2Opacity) {
+            gradC2Opacity.value = parsedGradient.c2.alpha;
+          }
+
+          if (gradAngle) {
+            gradAngle.value = parsedGradient.angle;
+          }
+
+          const big = document.getElementById("section-grad-preview");
+          const mini = document.getElementById("section-grad-preview-mini");
+
+          if (big) {
+            big.style.backgroundImage = bgImage;
+            big.setAttribute("data-label", parsedGradient.angle + "°");
+          }
+
+          if (mini) {
+            mini.style.backgroundImage = bgImage;
+          }
+        }
+      }
+    }
+
+    repaintGradientPreviewBox();
+    repaintAllSectionRanges();
+
+    if (typeof renderSectionRecentColors === "function") {
+      renderSectionRecentColors();
+    }
+  }
+
+  colorPicker?.addEventListener("input", function () {
+    updateColorPreview(this.value);
+  });
+
+  colorPicker?.addEventListener("change", function () {
+    updateColorPreview(this.value);
+  });
+
+  document
+    .querySelectorAll("#section-editor .zg-se-color-box")
+    .forEach(function (box) {
+      if (box.__zgColorBoxBound) return;
+      box.__zgColorBoxBound = true;
+
+      box.addEventListener("click", function (e) {
+        const picker = box.querySelector('input[type="color"]');
+        if (!picker) return;
+        if (e.target === picker) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        try {
+          picker.focus({ preventScroll: true });
+        } catch (_) {
+          picker.focus();
+        }
+
+        if (typeof picker.showPicker === "function") {
+          try {
+            picker.showPicker();
+            return;
+          } catch (_) { }
+        }
+
+        try {
+          picker.click();
+        } catch (_) { }
+      });
+    });
+
+  document
+    .querySelectorAll("#section-editor input[type='color']")
+    .forEach(function (picker) {
+      if (picker.__zgColorPickerStopBound) return;
+      picker.__zgColorPickerStopBound = true;
+
+      ["pointerdown", "mousedown", "click"].forEach(function (eventName) {
+        picker.addEventListener(eventName, function (e) {
+          e.stopPropagation();
+        });
+      });
+    });
+
+  colorHex?.addEventListener("input", function () {
+    const validHex = normalizeHex(this.value);
+    if (!validHex) return;
+
+    if (colorPicker) colorPicker.value = validHex;
+  });
+
+  colorHex?.addEventListener("change", function () {
+    const validHex = normalizeHex(this.value);
+    if (!validHex) return;
+
+    this.value = validHex;
+    updateColorPreview(validHex);
+  });
+
+  colorOpacity?.addEventListener("input", function () {
+    updateColorPreview(colorPicker?.value || colorHex?.value || "#6C47F5");
+  });
+
+  document.addEventListener("click", function (e) {
+    const brandBtn = e.target.closest("#section-editor .zg-se-brand-color");
+
+    if (!brandBtn) return;
+
+    const chipColor =
+      brandBtn.getAttribute("data-color") ||
+      brandBtn.style.getPropertyValue("--zg-color") ||
+      "#6C47F5";
+
+    document
+      .querySelectorAll("#section-editor .zg-se-brand-color")
+      .forEach(function (item) {
+        item.classList.remove("active");
+      });
+
+    brandBtn.classList.add("active");
+
+    updateColorPreview(chipColor);
+  });
+
+  document.addEventListener("click", function (e) {
+    const recentBtn = e.target.closest("#section-recent-colors button");
+
+    if (!recentBtn) return;
+
+    const recentColor =
+      recentBtn.getAttribute("data-color") ||
+      recentBtn.style.getPropertyValue("--zg-color") ||
+      recentBtn.style.backgroundColor;
+
+    updateColorPreview(recentColor);
+  });
+
+  uploadInput?.addEventListener("change", function () {
+    if (this.files && this.files[0]) {
+      Vvveb.SectionEditor.applyImage(this.files[0], { recordUndo: false });
+    }
+  });
+
+  galleryBtn?.addEventListener("click", function () {
+    try {
+      if (!window.Vvveb?.NewMediaModal) {
+        setImageInfo("New media gallery not available");
+        return;
+      }
+
+      Vvveb.NewMediaModal.open(Vvveb.SectionEditor.element, {
+        mode: "background-image",
+        type: "image",
+        source: "upload",
+        title: "Insert background image",
+        subtitle: "Choose an image to use as this section background.",
+        onApply: function (media) {
+          const imgUrl = media && (media.url || media.src);
+          if (!imgUrl) return;
+
+          Vvveb.SectionEditor.applyImageFromMedia(imgUrl, { recordUndo: false });
+
+          try {
+            setImageInfo(imgUrl.split("/").pop() || imgUrl);
+          } catch (e) {
+            setImageInfo(imgUrl);
+          }
+        },
+      });
+    } catch (e) {
+      setImageInfo("New media gallery not available");
+    }
+  });
+
+  clearImageBtn?.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const el = Vvveb.SectionEditor?.element;
+    if (!el) return;
+
+    el.style.removeProperty("background");
+    el.style.removeProperty("background-image");
+    el.style.removeProperty("background-color");
+    el.style.removeProperty("background-size");
+    el.style.removeProperty("background-position");
+    el.style.removeProperty("background-repeat");
+
+    Vvveb.SectionEditor._lastImageUrl = "";
+
+    const imagePreview = document.getElementById("section-image-preview");
+    if (imagePreview) {
+      imagePreview.style.backgroundImage = "";
+      imagePreview.innerHTML = "<span>No image</span>";
+    }
+
+    setImageInfo("No image selected.");
+    Vvveb.SectionEditor.updatePreview();
+  });
+
+  overlayColor?.addEventListener("input", function () {
+    updateImageOverlayPreview();
+  });
+
+  overlayColor?.addEventListener("change", function () {
+    updateImageOverlayPreview();
+  });
+
+  overlayHex?.addEventListener("input", function () {
+    const validHex = normalizeHex(this.value);
+    if (validHex && overlayColor) overlayColor.value = validHex;
+    updateImageOverlayPreview();
+  });
+
+  overlayHex?.addEventListener("change", function () {
+    const validHex = normalizeHex(this.value);
+    if (validHex && overlayColor) overlayColor.value = validHex;
+    updateImageOverlayPreview();
+  });
+
+  overlayOpacity?.addEventListener("input", function () {
+    if (overlayOpacityVal) {
+      overlayOpacityVal.textContent = this.value + "%";
+    }
+
+    repaintOneRange(this);
+    updateImageOverlayPreview();
+  });
+
+  overlayOpacity?.addEventListener("change", function () {
+    if (overlayOpacityVal) {
+      overlayOpacityVal.textContent = this.value + "%";
+    }
+
+    repaintOneRange(this);
+    updateImageOverlayPreview();
+  });
+
+  gradC1?.addEventListener("input", updateGradientPreview);
+  gradC1?.addEventListener("change", updateGradientPreview);
+
+  gradC2?.addEventListener("input", updateGradientPreview);
+  gradC2?.addEventListener("change", updateGradientPreview);
+
+  gradC1Hex?.addEventListener("input", function () {
+    const validHex = normalizeHex(this.value);
+    if (!validHex) return;
+
+    if (gradC1) gradC1.value = validHex;
+  });
+
+  gradC1Hex?.addEventListener("change", function () {
+    syncGradientHexToPicker(gradC1Hex, gradC1);
+  });
+
+  gradC2Hex?.addEventListener("input", function () {
+    const validHex = normalizeHex(this.value);
+    if (!validHex) return;
+
+    if (gradC2) gradC2.value = validHex;
+  });
+
+  gradC2Hex?.addEventListener("change", function () {
+    syncGradientHexToPicker(gradC2Hex, gradC2);
+  });
+
+  gradAngle?.addEventListener("input", updateGradientPreview);
+  gradAngle?.addEventListener("change", updateGradientPreview);
+
+  gradC1Opacity?.addEventListener("input", updateGradientPreview);
+  gradC1Opacity?.addEventListener("change", updateGradientPreview);
+
+  gradC2Opacity?.addEventListener("input", updateGradientPreview);
+  gradC2Opacity?.addEventListener("change", updateGradientPreview);
+
+  const gradientPresets = {
+    soft: {
+      c1: "#F4F2FF",
+      c2: "#C7BFFF",
+      angle: 135,
+      opacity: 100,
+    },
+    ocean: {
+      c1: "#2F80ED",
+      c2: "#37C78A",
+      angle: 135,
+      opacity: 100,
+    },
+    sunset: {
+      c1: "#FF8A5B",
+      c2: "#E7356E",
+      angle: 135,
+      opacity: 100,
+    },
+    premium: {
+      c1: "#5B3DF2",
+      c2: "#1F2937",
+      angle: 135,
+      opacity: 100,
+    },
+  };
+
+  document.querySelectorAll(".zg-se-preset").forEach(function (btn) {
+    btn.disabled = false;
+
+    btn.addEventListener("click", function () {
+      let presetKey = "";
+
+      if (this.classList.contains("zg-se-preset-soft")) presetKey = "soft";
+      if (this.classList.contains("zg-se-preset-ocean")) presetKey = "ocean";
+      if (this.classList.contains("zg-se-preset-sunset")) presetKey = "sunset";
+      if (this.classList.contains("zg-se-preset-premium")) presetKey = "premium";
+
+      const preset = gradientPresets[presetKey];
+      if (!preset) return;
+
+      document.querySelectorAll(".zg-se-preset").forEach(function (item) {
+        item.classList.remove("active");
+      });
+
+      this.classList.add("active");
+
+      if (gradC1) gradC1.value = preset.c1;
+      if (gradC1Hex) gradC1Hex.value = preset.c1;
+      if (gradC2) gradC2.value = preset.c2;
+      if (gradC2Hex) gradC2Hex.value = preset.c2;
+      if (gradAngle) gradAngle.value = preset.angle;
+      if (gradC1Opacity) gradC1Opacity.value = preset.opacity;
+      if (gradC2Opacity) gradC2Opacity.value = preset.opacity;
+
+      updateGradientPreview();
+    });
+  });
+
+  applyBtn?.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const el = Vvveb.SectionEditor?.element;
+    if (!el) return;
+
+    const oldStyle = Vvveb.SectionEditor._originalStyle || "";
+    const newStyle = el.getAttribute("style") || "";
+
+    if (oldStyle !== newStyle && Vvveb?.Undo?.addMutation) {
+      Vvveb.Undo.addMutation({
+        type: "attributes",
+        target: el,
+        attributeName: "style",
+        oldValue: oldStyle,
+        newValue: newStyle,
+      });
+    }
+
+    if (oldStyle !== newStyle && Vvveb?.Builder?.setDirty) {
+      Vvveb.Builder.setDirty(true);
+    }
+
+    const appliedMode =
+      typeof Vvveb.SectionEditor.detectBackgroundMode === "function"
+        ? Vvveb.SectionEditor.detectBackgroundMode(el)
+        : "";
+
+    if (
+      appliedMode === "color" &&
+      colorPicker &&
+      window.SectionRecentColors &&
+      typeof window.SectionRecentColors.add === "function"
+    ) {
+      const finalColor = normalizeHex(colorPicker.value);
+
+      if (finalColor) {
+        window.SectionRecentColors.add(finalColor);
+      }
+
+      if (typeof renderSectionRecentColors === "function") {
+        renderSectionRecentColors();
+      }
+    }
+
+    Vvveb.SectionEditor._originalStyle = newStyle;
+    Vvveb.SectionEditor._previewCommitted = true;
+    Vvveb.SectionEditor.destroy();
+  });
+
+  cancelBtn?.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    restoreOriginalSectionBackground();
+    Vvveb.SectionEditor.destroy();
+  });
+
+  resetBtn?.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const el = Vvveb.SectionEditor?.element;
+
+    restoreOriginalSectionBackground();
+
+    if (el && typeof Vvveb.SectionEditor.edit === "function") {
+      Vvveb.SectionEditor.edit(el);
+    }
+
+    renderSectionTemplateBrandColors();
+
+    if (typeof renderSectionRecentColors === "function") {
+      renderSectionRecentColors();
+    }
+
+    setTimeout(function () {
+      refreshSectionEditorUIAfterRead();
+    }, 0);
+  });
+
+  undoBtn?.addEventListener("click", function () {
+    Vvveb.SectionEditor.destroy();
+    Vvveb.Undo.undo();
+  });
+
+  redoBtn?.addEventListener("click", function () {
+    Vvveb.SectionEditor.destroy();
+    Vvveb.Undo.redo();
+  });
+
+  document.addEventListener("click", function (e) {
+    const closeBtn = e.target.closest("#section-bg-close-btn");
+
+    if (!closeBtn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    restoreOriginalSectionBackground();
+    Vvveb.SectionEditor.destroy();
+  });
+
+  pencilBtn?.addEventListener("click", function () {
+    const sectionEditOptions = document.getElementById("section-edit-options");
+    const editorPanel = document.getElementById("section-editor");
+
+    if (sectionEditOptions) {
+      sectionEditOptions.style.setProperty("display", "none", "important");
+    }
+
+    if (editorPanel) {
+      editorPanel.style.setProperty("display", "flex", "important");
+
+      requestAnimationFrame(() => {
+        editorPanel.classList.add("is-open");
+      });
+    }
+
+    if (Vvveb.SectionEditor?.element) {
+      Vvveb.SectionEditor.syncAccordionWithCurrentBackground();
+    }
+
+    renderSectionTemplateBrandColors();
+
+    if (typeof renderSectionRecentColors === "function") {
+      renderSectionRecentColors();
+    }
+
+
+
+    setTimeout(function () {
+      refreshSectionEditorUIAfterRead();
+      syncSectionEditorHeightMode();
+    }, 0);
+  });
+
+
+  document
+    .querySelectorAll("#section-editor .zg-se-accordion")
+    .forEach(function (accordion) {
+      accordion.addEventListener("toggle", function () {
+        setTimeout(function () {
+          syncSectionEditorHeightMode();
+          repaintAllSectionRanges();
+        }, 0);
+      });
+    });
+
+  document.addEventListener("zigrow:global-colors-updated", function () {
+    requestAnimationFrame(function () {
+      renderSectionTemplateBrandColors();
+    });
+  });
+
+  renderSectionTemplateBrandColors();
+
+  if (typeof renderSectionRecentColors === "function") {
+    renderSectionRecentColors();
+  }
+
+  refreshSectionEditorUIAfterRead();
+
+  setTimeout(function () {
+    syncSectionEditorHeightMode();
+  }, 0);
+})();
+
+function _sectionParseImageOverlay(bgImage) {
+  if (!bgImage || bgImage.indexOf("linear-gradient(") === -1) {
+    return null;
+  }
+
+  const content = _sectionGetLinearGradientContent(bgImage);
+  if (!content) return null;
+
+  const parts = _sectionSplitTopLevelCommas(content);
+  if (!parts.length) return null;
+
+  const colorRegex = /(rgba?\([^)]+\)|#[0-9a-fA-F]{3,8})/;
+  const colorMatch = parts[0].match(colorRegex);
+
+  if (!colorMatch) return null;
+
+  const parsed = _sectionCssColorToHexAlpha(colorMatch[1]);
+
+  return {
+    hex: parsed.hex.toUpperCase(),
+    opacity: parsed.alpha,
+  };
+}
+
+
+
+// ---- helpers for gradient ----
+function _hexToRgba(hex, alpha) {
+  if (!hex) hex = "#000000";
+  hex = hex.replace("#", "");
+  if (hex.length === 3)
+    hex = hex
+      .split("")
+      .map(function (c) {
+        return c + c;
+      })
+      .join("");
+  var r = parseInt(hex.substr(0, 2), 16);
+  var g = parseInt(hex.substr(2, 2), 16);
+  var b = parseInt(hex.substr(4, 2), 16);
+  var a = isNaN(alpha) ? 1 : Math.max(0, Math.min(1, alpha));
+  return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+}
+
+// Helpers for recognize gradient, color
+function _rgbToHex(rgbString) {
+  if (!rgbString) return null;
+
+  // "rgb(255, 0, 128)" ya "rgba(255, 0, 128, 0.8)"
+  var parts = rgbString.match(/[\d.]+/g);
+  if (!parts || parts.length < 3) return null;
+
+  var r = parseInt(parts[0], 10);
+  var g = parseInt(parts[1], 10);
+  var b = parseInt(parts[2], 10);
+
+  function toHex(v) {
+    v = Math.max(0, Math.min(255, v || 0));
+    var h = v.toString(16);
+    return h.length === 1 ? "0" + h : h;
+  }
+
+  return "#" + toHex(r) + toHex(g) + toHex(b);
+}
+
+
+
+function _rgbaToHexAlpha(rgbaString) {
+  if (!rgbaString) {
+    return { hex: "#000000", alpha: 100 };
+  }
+
+  var nums = rgbaString.match(/[\d.]+/g);
+  if (!nums || nums.length < 3) {
+    return { hex: "#000000", alpha: 100 };
+  }
+
+  var r = parseInt(nums[0], 10) || 0;
+  var g = parseInt(nums[1], 10) || 0;
+  var b = parseInt(nums[2], 10) || 0;
+  var a = nums[3] !== undefined ? parseFloat(nums[3]) : 1;
+
+  function toHex(v) {
+    v = Math.max(0, Math.min(255, v || 0));
+    var h = v.toString(16);
+    return h.length === 1 ? "0" + h : h;
+  }
+
+  var hex = "#" + toHex(r) + toHex(g) + toHex(b);
+  var alphaPercent = Math.round(a * 100);
+
+  return { hex: hex, alpha: alphaPercent };
+}
+
+// ---- helpers for Image overlay ----
+function _ensureSectionOverlayCSS(doc) {
+  if (!doc) return;
+  if (doc.getElementById("vvv-overlay-section-bg-css")) return; // already added
+
+  const style = doc.createElement("style");
+  style.id = "vvv-overlay-section-bg-css";
+  style.textContent = `
+    /* more specific selector + stacking isolation */
+    section.vvv-section-has-bg, 
+    footer.vvv-section-has-bg {
+      position: relative !important;
+      background-size: cover !important;
+      background-position: center !important;
+      isolation: isolate;
+      z-index: 0;
+    }
+    section.vvv-section-has-bg::before ,
+    footer.vvv-section-has-bg::before {
+      content: "";                /* REQUIRED for pseudo-element */
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);/* default overlay */
+      pointer-events: none;
+      z-index: 1;
+    }
+    section.vvv-section-has-bg > * ,
+    footer.vvv-section-has-bg > * {
+      position: relative;
+      z-index: 2;
+    }
+  `;
+  doc.head.appendChild(style);
+}
+
+(function () {
+  const c1 = document.getElementById("section-grad-c1");
+  const a1 = document.getElementById("section-grad-c1a");
+  const c2 = document.getElementById("section-grad-c2");
+  const a2 = document.getElementById("section-grad-c2a");
+  const ang = document.getElementById("section-grad-angle");
+  const chip = document.getElementById("section-grad-preview-mini");
+  const big = document.getElementById("section-grad-preview");
+  const angVal = document.getElementById("section-grad-angle-val");
+  const a1Val = document.getElementById("section-grad-c1a-val");
+  const a2Val = document.getElementById("section-grad-c2a-val");
+  const ov = document.getElementById("section-grad-overlay");
+  const ovTxt = document.getElementById("se-overlay-text");
+
+  function grad() {
+    const _c1 = c1?.value || "#000000";
+    const _a1 = parseInt(a1?.value || "60", 10) / 100;
+    const _c2 = c2?.value || "#000000";
+    const _a2 = parseInt(a2?.value || "0", 10) / 100;
+    const _ang = parseInt(ang?.value || "180", 10);
+    return {
+      css: `linear-gradient(${_ang}deg, ${_hexToRgba(
+        _c1,
+        _a1,
+      )} 0%, ${_hexToRgba(_c2, _a2)} 100%)`,
+      ang: _ang,
+    };
+  }
+  function paint() {
+    const g = grad();
+    if (chip) chip.style.backgroundImage = g.css;
+    if (big) {
+      big.style.backgroundImage = g.css;
+      big.setAttribute("data-label", g.ang + "°");
+    }
+    if (angVal) angVal.textContent = g.ang + "°";
+    if (a1Val) a1Val.textContent = parseInt(a1.value || "0", 10) + "%";
+    if (a2Val) a2Val.textContent = parseInt(a2.value || "0", 10) + "%";
+    if (ovTxt) ovTxt.textContent = ov && ov.checked ? "On" : "Off";
+  }
+  ["input", "change"].forEach((e) => {
+    c1?.addEventListener(e, paint);
+    a1?.addEventListener(e, paint);
+    c2?.addEventListener(e, paint);
+    a2?.addEventListener(e, paint);
+    ang?.addEventListener(e, paint);
+    ov?.addEventListener(e, paint);
+  });
+  paint();
+})();
+
+// Jayanty: section editor code ends here
+
+
+
 
 // Custom Modification - Jayanti Changes - Commented out for not close section editor by itself
 // document.addEventListener("click", (e) => {
@@ -10191,11 +14824,11 @@ Vvveb.SectionEditor = {
 //   }
 // });
 
-window.addEventListener("blur", () => {
-  if (document.activeElement.tagName === "IFRAME") {
-    Vvveb.SectionEditor.destroy();
-  }
-});
+// window.addEventListener("blur", () => {
+//   if (document.activeElement.tagName === "IFRAME") {
+//     Vvveb.SectionEditor.destroy();
+//   }
+// });
 
 Vvveb.SectionPadding = {
   pdstyles: `
@@ -10295,13 +14928,15 @@ Vvveb.SectionPadding = {
       document.body.style.userSelect = "";
 
       // Add to Undo History using classes
-      Vvveb.Undo.addMutation({
-        type: "attributes",
-        target: section,
-        attributeName: "class",
-        oldValue: oldClasses,
-        newValue: section.getAttribute("class") || "",
-      });
+      if (oldClasses != (section.getAttribute("class") || "")) {
+        Vvveb.Undo.addMutation({
+          type: "attributes",
+          target: section,
+          attributeName: "class",
+          oldValue: oldClasses,
+          newValue: section.getAttribute("class") || "",
+        });
+      }
     };
 
     window.addEventListener("mousemove", onMouseMove);
@@ -10799,7 +15434,6 @@ Vvveb.FormEditor = {
       }
     });
 
-    // Inside bindEvents()
     document.addEventListener("touchstart", (e) => {
       const handle = e.target.closest(".field-move");
       if (!handle) return;
@@ -11082,6 +15716,7 @@ Vvveb.FormEditor = {
   },
 };
 
+
 // form edit commented
 Vvveb.FormEditor.init();
 
@@ -11091,359 +15726,7 @@ document.getElementById("form-edit-btn").addEventListener("click", (e) => {
   Vvveb.FormEditor.open(form);
 });
 
-// Background color
-document
-  .getElementById("section-bg-color")
-  .addEventListener("change", function () {
-    Vvveb.SectionEditor.applyColor(this.value);
-    SectionRecentColors.add(this.value);
-    renderSectionRecentColors();
-  });
 
-// Background image
-document
-  .getElementById("section-bg-upload")
-  .addEventListener("change", function () {
-    if (this.files && this.files[0]) {
-      Vvveb.SectionEditor.applyImage(this.files[0]);
-    }
-  });
-
-// Custom Modification - Jayanti - 31-10-25
-// Background image via Media Gallery
-(function () {
-  const btn = document.getElementById("section-bg-gallery-btn");
-  const info = document.getElementById("section-bg-selected-info");
-  const clear = document.getElementById("section-bg-clear-btn");
-
-  function setInfo(msg) {
-    if (info) info.textContent = msg || "No image selected.";
-  }
-
-  btn?.addEventListener("click", function () {
-    try {
-      if (!window.Vvveb.MediaModal) {
-        Vvveb.MediaModal = new MediaModal(true);
-        Vvveb.MediaModal.mediaPath = window.mediaPath;
-      }
-      //Current changes : 13-2-26 start
-      Vvveb.MediaModal.open(null, function (imgData) {
-        const payload =
-          typeof imgData === "string" ? { src: imgData } : imgData || {};
-        const imgUrl = payload.src;
-        if (!imgUrl) return;
-
-        //Current changes : 13-2-26 ends
-        // Apply to the currently edited section
-        Vvveb.SectionEditor.applyImageFromMedia(imgUrl);
-
-        try {
-          const short = imgUrl.split("/").pop();
-          setInfo(short || imgUrl);
-        } catch (e) {
-          setInfo(imgUrl);
-        }
-      });
-    } catch (e) {
-      setInfo("Media gallery not available");
-    }
-  });
-
-  clear?.addEventListener("click", function (e) {
-    e.preventDefault();
-    const el = Vvveb.SectionEditor?.element;
-    if (!el) return;
-
-    const oldStyle = el.getAttribute("style") || "";
-    el.style.removeProperty("background-image");
-
-    if (info) info.textContent = "No image selected.";
-
-    if (Vvveb?.Undo?.addMutation) {
-      console.log("Called attributes on 8076");
-
-      Vvveb.Undo.addMutation({
-        type: "attributes",
-        target: el,
-        attributeName: "style",
-        oldValue: oldStyle,
-        newValue: el.getAttribute("style") || "",
-      });
-    }
-    if (Vvveb?.Builder?.setDirty) Vvveb.Builder.setDirty(true);
-  });
-})();
-// Undo/Redo
-document.getElementById("section-undo-btn").onclick = function () {
-  Vvveb.SectionEditor.destroy();
-  Vvveb.Undo.undo();
-};
-document.getElementById("section-redo-btn").onclick = function () {
-  Vvveb.SectionEditor.destroy();
-  Vvveb.Undo.redo();
-};
-
-// Close
-document.getElementById("section-close-btn").onclick = function () {
-  Vvveb.SectionEditor.destroy();
-};
-
-document
-  .getElementById("section-edit-pencil")
-  .addEventListener("click", function () {
-    document.getElementById("section-edit-options").style.display = "none";
-    document.getElementById("section-editor").style.display = "block";
-  });
-
-// Gradient UI live labels + LIVE PREVIEW with single undo
-(function () {
-  var c1 = document.getElementById("section-grad-c1");
-  var a1 = document.getElementById("section-grad-c1a");
-  var c2 = document.getElementById("section-grad-c2");
-  var a2 = document.getElementById("section-grad-c2a");
-  var ang = document.getElementById("section-grad-angle");
-  var ov = document.getElementById("section-grad-overlay");
-
-  function updateLabels() {
-    if (a1) {
-      var v1 = parseInt(a1.value || "0", 10);
-      var l1 = document.getElementById("section-grad-c1a-val");
-      if (l1) l1.textContent = v1 + "%";
-    }
-    if (a2) {
-      var v2 = parseInt(a2.value || "0", 10);
-      var l2 = document.getElementById("section-grad-c2a-val");
-      if (l2) l2.textContent = v2 + "%";
-    }
-    if (ang) {
-      var va = parseInt(ang.value || "0", 10);
-      var la = document.getElementById("section-grad-angle-val");
-      if (la) la.textContent = va + "°";
-    }
-  }
-
-  function preview() {
-    if (!Vvveb.SectionEditor || !Vvveb.SectionEditor.element) return;
-    Vvveb.SectionEditor.applyGradient({ recordUndo: false });
-  }
-
-  function commit() {
-    if (!Vvveb.SectionEditor || !Vvveb.SectionEditor.element) return;
-    Vvveb.SectionEditor.applyGradient({ recordUndo: true });
-  }
-
-  function bindRange(el, withLabel) {
-    if (!el) return;
-
-    // Slider drag karte waqt live preview
-    el.addEventListener("input", function () {
-      if (withLabel) updateLabels();
-      preview();
-    });
-
-    // Mouse chhodte hi / value final hote hi commit + undo snapshot
-    el.addEventListener("change", function () {
-      if (withLabel) updateLabels();
-      commit();
-    });
-  }
-
-  function bindColor(el) {
-    if (!el) return;
-    // Color picker drag -> preview
-    el.addEventListener("input", preview);
-    // Color chosen -> commit
-    el.addEventListener("change", commit);
-  }
-
-  function bindOverlay(el) {
-    if (!el) return;
-    // Toggle change -> directly commit (Undo ke saath)
-    el.addEventListener("change", commit);
-  }
-
-  // Bind controls
-  bindRange(a1, true);
-  bindRange(a2, true);
-  bindRange(ang, true);
-  bindColor(c1);
-  bindColor(c2);
-  bindOverlay(ov);
-
-  // Apply + Clear buttons (agar rakhne hain)
-  var applyBtn = document.getElementById("section-grad-apply");
-  if (applyBtn)
-    applyBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      commit();
-    });
-
-  var clearBtn = document.getElementById("section-grad-clear");
-  if (clearBtn)
-    clearBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      Vvveb.SectionEditor.clearGradient();
-    });
-
-  // Initial label sync
-  updateLabels();
-})();
-
-// ---- helpers for gradient ----
-function _hexToRgba(hex, alpha) {
-  if (!hex) hex = "#000000";
-  hex = hex.replace("#", "");
-  if (hex.length === 3)
-    hex = hex
-      .split("")
-      .map(function (c) {
-        return c + c;
-      })
-      .join("");
-  var r = parseInt(hex.substr(0, 2), 16);
-  var g = parseInt(hex.substr(2, 2), 16);
-  var b = parseInt(hex.substr(4, 2), 16);
-  var a = isNaN(alpha) ? 1 : Math.max(0, Math.min(1, alpha));
-  return "rgba(" + r + "," + g + "," + b + "," + a + ")";
-}
-
-// Helpers for recognize gradient, color
-function _rgbToHex(rgbString) {
-  if (!rgbString) return null;
-
-  // "rgb(255, 0, 128)" ya "rgba(255, 0, 128, 0.8)"
-  var parts = rgbString.match(/[\d.]+/g);
-  if (!parts || parts.length < 3) return null;
-
-  var r = parseInt(parts[0], 10);
-  var g = parseInt(parts[1], 10);
-  var b = parseInt(parts[2], 10);
-
-  function toHex(v) {
-    v = Math.max(0, Math.min(255, v || 0));
-    var h = v.toString(16);
-    return h.length === 1 ? "0" + h : h;
-  }
-
-  return "#" + toHex(r) + toHex(g) + toHex(b);
-}
-
-function _rgbaToHexAlpha(rgbaString) {
-  if (!rgbaString) {
-    return { hex: "#000000", alpha: 100 };
-  }
-
-  var nums = rgbaString.match(/[\d.]+/g);
-  if (!nums || nums.length < 3) {
-    return { hex: "#000000", alpha: 100 };
-  }
-
-  var r = parseInt(nums[0], 10) || 0;
-  var g = parseInt(nums[1], 10) || 0;
-  var b = parseInt(nums[2], 10) || 0;
-  var a = nums[3] !== undefined ? parseFloat(nums[3]) : 1;
-
-  function toHex(v) {
-    v = Math.max(0, Math.min(255, v || 0));
-    var h = v.toString(16);
-    return h.length === 1 ? "0" + h : h;
-  }
-
-  var hex = "#" + toHex(r) + toHex(g) + toHex(b);
-  var alphaPercent = Math.round(a * 100);
-
-  return { hex: hex, alpha: alphaPercent };
-}
-
-//Custom Modification Ends Here - Jayanti - 09-09-2025
-
-// ---- helpers for Image overlay ----
-function _ensureSectionOverlayCSS(doc) {
-  if (!doc) return;
-  if (doc.getElementById("vvv-overlay-section-bg-css")) return; // already added
-
-  const style = doc.createElement("style");
-  style.id = "vvv-overlay-section-bg-css";
-  style.textContent = `
-    /* more specific selector + stacking isolation */
-    section.vvv-section-has-bg, 
-    footer.vvv-section-has-bg {
-      position: relative !important;
-      background-size: cover !important;
-      background-position: center !important;
-      isolation: isolate;
-      z-index: 0;
-    }
-    section.vvv-section-has-bg::before ,
-    footer.vvv-section-has-bg::before {
-      content: "";                /* REQUIRED for pseudo-element */
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.5);/* default overlay */
-      pointer-events: none;
-      z-index: 1;
-    }
-    section.vvv-section-has-bg > * ,
-    footer.vvv-section-has-bg > * {
-      position: relative;
-      z-index: 2;
-    }
-  `;
-  doc.head.appendChild(style);
-}
-
-(function () {
-  const c1 = document.getElementById("section-grad-c1");
-  const a1 = document.getElementById("section-grad-c1a");
-  const c2 = document.getElementById("section-grad-c2");
-  const a2 = document.getElementById("section-grad-c2a");
-  const ang = document.getElementById("section-grad-angle");
-  const chip = document.getElementById("section-grad-preview-mini");
-  const big = document.getElementById("section-grad-preview");
-  const angVal = document.getElementById("section-grad-angle-val");
-  const a1Val = document.getElementById("section-grad-c1a-val");
-  const a2Val = document.getElementById("section-grad-c2a-val");
-  const ov = document.getElementById("section-grad-overlay");
-  const ovTxt = document.getElementById("se-overlay-text");
-
-  function grad() {
-    const _c1 = c1?.value || "#000000";
-    const _a1 = parseInt(a1?.value || "60", 10) / 100;
-    const _c2 = c2?.value || "#000000";
-    const _a2 = parseInt(a2?.value || "0", 10) / 100;
-    const _ang = parseInt(ang?.value || "180", 10);
-    return {
-      css: `linear-gradient(${_ang}deg, ${_hexToRgba(
-        _c1,
-        _a1
-      )} 0%, ${_hexToRgba(_c2, _a2)} 100%)`,
-      ang: _ang,
-    };
-  }
-  function paint() {
-    const g = grad();
-    if (chip) chip.style.backgroundImage = g.css;
-    if (big) {
-      big.style.backgroundImage = g.css;
-      big.setAttribute("data-label", g.ang + "°");
-    }
-    if (angVal) angVal.textContent = g.ang + "°";
-    if (a1Val) a1Val.textContent = parseInt(a1.value || "0", 10) + "%";
-    if (a2Val) a2Val.textContent = parseInt(a2.value || "0", 10) + "%";
-    if (ovTxt) ovTxt.textContent = ov && ov.checked ? "On" : "Off";
-  }
-  ["input", "change"].forEach((e) => {
-    c1?.addEventListener(e, paint);
-    a1?.addEventListener(e, paint);
-    c2?.addEventListener(e, paint);
-    a2?.addEventListener(e, paint);
-    ang?.addEventListener(e, paint);
-    ov?.addEventListener(e, paint);
-  });
-  paint();
-})();
 
 Vvveb.Builder.updateAddBtnLabel = Vvveb.Builder.updateAddBtnLabel;
 
@@ -11488,51 +15771,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })();
 
-// Recent Section Bg Colors
-const SectionRecentColors = {
-  key: "zigrow.sectionRecentBgColors",
-  get() {
-    try {
-      return JSON.parse(localStorage.getItem(this.key)) || [];
-    } catch (e) {
-      return [];
-    }
-  },
 
-  set(arr) {
-    localStorage.setItem(this.key, JSON.stringify(arr));
-  },
-  add(color) {
-    if (!color) return;
-    let arr = this.get().filter((c) => c !== color);
-    arr.unshift(color);
-    if (arr.length > 10) arr = arr.slice(0, 8);
-    this.set(arr);
-  },
-};
-
-// Recent Colors Preset
-function renderSectionRecentColors() {
-  const wrap = document.getElementById("section-recent-colors");
-  if (!wrap) return;
-  wrap.innerHTML = "";
-  SectionRecentColors.get().forEach((c) => {
-    const colorBtn = document.createElement("button");
-    colorBtn.type = "button";
-    colorBtn.className = "se-swatch";
-    colorBtn.title = c;
-    colorBtn.style.background = c;
-    colorBtn.setAttribute("aria-label", c);
-    colorBtn.addEventListener("click", () => {
-      const input = document.getElementById("section-bg-color");
-      if (!input) input.value = c;
-      Vvveb.SectionEditor.applyColor(c);
-      SectionRecentColors.add(c);
-      renderSectionRecentColors();
-    });
-    wrap.appendChild(colorBtn);
-  });
-}
 
 // Section Replacement - Jayanti
 document.addEventListener("DOMContentLoaded", () => {
@@ -11682,6 +15921,8 @@ Vvveb.LinkEditor = {
   actionSel: null,
   styleSheet: null,
   _lastBgFromUser: null,
+  _buttonToggleUndoSnapshot: null,
+  _outsideCloseBound: false,
 
   // for keep data of original style
   styleTouched: {
@@ -11729,10 +15970,61 @@ Vvveb.LinkEditor = {
   },
 
   countryCodes: [
-    { code: "+91", name: "India", flag: "🇮🇳" },
-    { code: "+1", name: "USA", flag: "🇺🇸" },
-    { code: "+33", name: "France", flag: "🇫🇷" },
+    {
+      code: "+91",
+      iso: "IN",
+      name: "India",
+      flag: "🇮🇳",
+      min: 10,
+      max: 10,
+      mobileRegex: /^[6-9]\d{9}$/,
+      example: "9876543210",
+    },
+    {
+      code: "+1",
+      iso: "US",
+      name: "USA / Canada",
+      flag: "🇺🇸",
+      min: 10,
+      max: 10,
+      mobileRegex: /^[2-9]\d{2}[2-9]\d{6}$/,
+      example: "2125551234",
+    },
+    {
+      code: "+44",
+      iso: "GB",
+      name: "UK",
+      flag: "🇬🇧",
+      min: 10,
+      max: 10,
+      mobileRegex: /^7\d{9}$/,
+      example: "7123456789",
+      allowLeadingZero: true,
+    },
+    {
+      code: "+61",
+      iso: "AU",
+      name: "Australia",
+      flag: "🇦🇺",
+      min: 9,
+      max: 9,
+      mobileRegex: /^4\d{8}$/,
+      example: "412345678",
+      allowLeadingZero: true,
+    },
+    {
+      code: "+33",
+      iso: "FR",
+      name: "France",
+      flag: "🇫🇷",
+      min: 9,
+      max: 9,
+      mobileRegex: /^[67]\d{8}$/,
+      example: "612345678",
+      allowLeadingZero: true,
+    },
   ],
+
   init() {
     this.modal = document.getElementById("link-popup");
     if (!this.modal) return;
@@ -11767,8 +16059,16 @@ Vvveb.LinkEditor = {
       this.buttonModeToggle._bound = true;
 
       this.buttonModeToggle.addEventListener("change", (e) => {
+        if (this.el?.parentElement && this._buttonToggleUndoSnapshot === null) {
+          this._buttonToggleUndoSnapshot = this.el.parentElement.innerHTML;
+        }
+
         this.pendingButtonMode = !!e.target.checked;
+
         this.toggleButtonCustomization(this.pendingButtonMode);
+
+        // Live preview only. Undo mutation will be committed on Apply.
+        this.applyButtonShellFromToggle(this.pendingButtonMode);
       });
     }
 
@@ -11784,9 +16084,48 @@ Vvveb.LinkEditor = {
     this.modal.querySelector("#link-cancel").addEventListener("click", close);
     this.modal.querySelector("#link-close-x").addEventListener("click", close);
 
-    this.modal
-      .querySelector(".vvv-link-modal__backdrop[data-dismiss='link']")
-      .addEventListener("click", close);
+    if (!this._outsideCloseBound) {
+      this._outsideCloseBound = true;
+
+      const dialog = this.modal.querySelector(".vvv-link-modal__dialog");
+      const backdrop = this.modal.querySelector(
+        ".vvv-link-modal__backdrop[data-dismiss='link']"
+      );
+
+      const isOpen = () => {
+        if (!this.modal) return false;
+
+        const display = this.modal.style.display || "";
+        return display !== "" && display !== "none";
+      };
+
+      const closeFromOutside = (e) => {
+        if (!isOpen()) return;
+
+        // Click inside the white dialog should not close.
+        if (dialog && dialog.contains(e.target)) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.close();
+      };
+
+      backdrop?.addEventListener("pointerdown", closeFromOutside);
+
+      this.modal.addEventListener("pointerdown", closeFromOutside);
+
+      dialog?.addEventListener("pointerdown", (e) => {
+        e.stopPropagation();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (!isOpen()) return;
+
+        this.close();
+      });
+    }
 
     const touch = (key) => {
       if (!this.styleTouched || !this.styleCleared) this._resetStyleFlags();
@@ -11869,56 +16208,97 @@ Vvveb.LinkEditor = {
         const sel = inputByKey[key];
         const input = sel && this.modal.querySelector(sel);
         if (input) {
-          if (key === "bg") input.value = "#ffffff";
-          else if (key === "hoverBg") input.value = "#3730a3";
-          else if (key === "radius") input.value = "";
-          else if (key === "size") input.value = "";
-          else input.value = "#ffffff";
+          let defaultValue = "";
 
-          input.classList.add("is-default");
+          const doc = this._getDoc();
+          const win = doc.defaultView || window;
+          const rootStyle = win.getComputedStyle(doc.documentElement);
+
+          if (key === "bg") {
+            defaultValue =
+              this.el?.getAttribute("data-btn-bg-original") ||
+              rootStyle.getPropertyValue("--primary-colors").trim() ||
+              rootStyle.getPropertyValue("--zigrow-primary-color").trim() ||
+              "#5b3df2";
+          } else if (key === "text") {
+            defaultValue =
+              this.el?.getAttribute("data-btn-color-original") ||
+              "#ffffff";
+          } else if (key === "hoverBg") {
+            defaultValue =
+              this.el?.getAttribute("data-btn-hover-bg-original") ||
+              this.el?.getAttribute("data-btn-bg-original") ||
+              rootStyle.getPropertyValue("--primary-colors").trim() ||
+              rootStyle.getPropertyValue("--zigrow-primary-color").trim() ||
+              "#5b3df2";
+          } else if (key === "hoverText") {
+            defaultValue =
+              this.el?.getAttribute("data-btn-hover-color-original") ||
+              this.el?.getAttribute("data-btn-color-original") ||
+              "#ffffff";
+          } else if (key === "borderColor") {
+            defaultValue =
+              this.el?.getAttribute("data-btn-color-original") ||
+              "#ffffff";
+          } else if (key === "size") {
+            defaultValue = "2x";
+          } else if (key === "radius") {
+            defaultValue = "rounded";
+          }
+
+          input.value = defaultValue;
+
           const row = input.closest(".vvv-link-style-row");
           if (row) row.classList.add("is-default");
         }
 
+
         // size UI reset
         if (key === "size") {
           const toggle = this.modal.querySelector("#link-size-toggle");
+          const hidden = this.modal.querySelector("#link-style-size");
+
+          if (hidden) hidden.value = "2x";
+
           if (toggle) {
-            toggle
-              .querySelectorAll(".vvv-size-option")
-              .forEach((b) => b.classList.remove("is-active"));
+            toggle.querySelectorAll(".vvv-size-option").forEach((b) => {
+              b.classList.toggle("is-active", b.getAttribute("data-size") === "2x");
+            });
           }
+
+          this.styleTouched.size = true;
+          this.styleCleared.size = false;
         }
 
         // radius UI reset
-        // radius + border reset
+
         if (key === "radius") {
           const wrap = this.modal.querySelector("#link-radius-options");
-          if (wrap) {
-            wrap
-              .querySelectorAll(".vvv-radius-option")
-              .forEach((b) => b.classList.remove("is-active"));
-          }
-
-          // hidden values clear
           const radiusHidden = this.modal.querySelector("#link-style-radius");
           const borderHidden = this.modal.querySelector("#link-style-border");
-          const borderColorInput = this.modal.querySelector(
-            "#link-style-border-color"
-          );
+          const borderColorInput = this.modal.querySelector("#link-style-border-color");
           const borderRow = this.modal.querySelector("#link-border-color-row");
 
-          if (radiusHidden) radiusHidden.value = "";
-          if (borderHidden) borderHidden.value = "";
-          if (borderColorInput) borderColorInput.value = "#000000"; // jo tumhara default hai
+          if (radiusHidden) radiusHidden.value = "rounded";
+          if (borderHidden) borderHidden.value = "none";
+          if (borderColorInput) borderColorInput.value = "#ffffff";
           if (borderRow) borderRow.style.display = "none";
 
-          // flags: radius + border + borderColor sabko clear mark karo
+          if (wrap) {
+            wrap.querySelectorAll(".vvv-radius-option").forEach((b) => {
+              const isDefault =
+                b.getAttribute("data-radius") === "rounded" &&
+                b.getAttribute("data-border") === "none";
+
+              b.classList.toggle("is-active", isDefault);
+            });
+          }
+
           this.styleTouched.radius = true;
-          this.styleCleared.radius = true;
+          this.styleCleared.radius = false;
 
           this.styleTouched.border = true;
-          this.styleCleared.border = true;
+          this.styleCleared.border = false;
 
           this.styleTouched.borderColor = true;
           this.styleCleared.borderColor = true;
@@ -11929,6 +16309,9 @@ Vvveb.LinkEditor = {
 
   open(el) {
     this.el = el;
+
+    this.wasBuilderConvertedButton =
+      this.el.getAttribute("data-btn-converted") === "true";
 
     this.wasTemporaryLink = this.el.getAttribute("data-temp-link") === "true"
     this.originalLinkHtml = this.el ? this.el.innerHTML : ""
@@ -12023,7 +16406,6 @@ Vvveb.LinkEditor = {
       this.el.style.display = "inline-block";
     }
 
-    // 2.2 - ORIGINAL base text color ka snapshot only for real buttons
     let originalColorAttr =
       this.el.getAttribute("data-btn-color-original") || "";
 
@@ -12032,27 +16414,60 @@ Vvveb.LinkEditor = {
       this.el.setAttribute("data-btn-color-original", originalColorAttr);
     }
 
-    // 3. Merge priorities only for already existing buttons
-    const bg = alreadyButton ? (bgAttr || originalBgAttr || computedBg || "") : "";
-    const color = alreadyButton ? (colorAttr || originalColorAttr || computedColor || "") : "";
-    const hBg = alreadyButton ? hBgAttr : "";
-    const hColor = alreadyButton ? hColorAttr : "";
-    const borderColor = alreadyButton ? (borderColorAttr || computedBorderColor || "") : "";
+    const docForDefault = this._getDoc();
+    const winForDefault = docForDefault.defaultView || window;
+    const elStyleForDefault = this.el
+      ? winForDefault.getComputedStyle(this.el)
+      : null;
+    const rootStyleForDefault = winForDefault.getComputedStyle(
+      docForDefault.documentElement
+    );
+    const bodyStyleForDefault = docForDefault.body
+      ? winForDefault.getComputedStyle(docForDefault.body)
+      : null;
+
+    const defaultBtnBg =
+      elStyleForDefault?.getPropertyValue("--primary-colors").trim() ||
+      elStyleForDefault?.getPropertyValue("--zigrow-primary-color").trim() ||
+      rootStyleForDefault.getPropertyValue("--primary-colors").trim() ||
+      rootStyleForDefault.getPropertyValue("--zigrow-primary-color").trim() ||
+      bodyStyleForDefault?.getPropertyValue("--primary-colors").trim() ||
+      bodyStyleForDefault?.getPropertyValue("--zigrow-primary-color").trim() ||
+      "#5b3df2";
+
+    const defaultBtnText = "#ffffff";
+
+    const bg = alreadyButton
+      ? (bgAttr || originalBgAttr || computedBg || defaultBtnBg)
+      : defaultBtnBg;
+
+    const color = alreadyButton
+      ? (colorAttr || originalColorAttr || computedColor || defaultBtnText)
+      : defaultBtnText;
+    const hBg = alreadyButton
+      ? (
+        hBgAttr ||
+        this.el.getAttribute("data-btn-hover-bg-original") ||
+        originalBgAttr ||
+        defaultBtnBg
+      )
+      : defaultBtnBg;
+
+    const hColor = alreadyButton
+      ? (
+        hColorAttr ||
+        this.el.getAttribute("data-btn-hover-color-original") ||
+        originalColorAttr ||
+        defaultBtnText
+      )
+      : defaultBtnText;
+    const borderColor = alreadyButton
+      ? (borderColorAttr || computedBorderColor || "")
+      : "";
+
     const border = alreadyButton ? (borderAttr || "") : "";
 
 
-    // Debug once (dekhne ke liye kya jaa raha hai inputs me)
-    // console.log("[LinkEditor] style merge:", {
-    //   bgAttr,
-    //   computedBg,
-    //   finalBg: bg,
-    //   colorAttr,
-    //   computedColor,
-    //   finalColor: color,
-    //   borderColorAttr,
-    //   computedBorderColor,
-    //   finalBorderColor: borderColor,
-    // });
 
     const selVal = (sel, val, fallback) => {
       const input = this.modal.querySelector(sel);
@@ -12061,10 +16476,10 @@ Vvveb.LinkEditor = {
       }
     };
 
-    selVal("#link-style-bg", bg, "#ffffff");
-    selVal("#link-style-text", color, "#ffffff");
-    selVal("#link-style-hover-bg", hBg, "#ffffff");
-    selVal("#link-style-hover-text", hColor, "#ffffff");
+    selVal("#link-style-bg", bg, defaultBtnBg);
+    selVal("#link-style-text", color, defaultBtnText);
+    selVal("#link-style-hover-bg", hBg, bg || defaultBtnBg);
+    selVal("#link-style-hover-text", hColor, color || defaultBtnText);
     selVal("#link-style-size", size, "");
     selVal("#link-style-radius", radius, "");
     selVal("#link-style-border-color", borderColor, "#000000");
@@ -12093,42 +16508,41 @@ Vvveb.LinkEditor = {
     markDefault("#link-style-hover-bg", hasHoverBgUI);
     markDefault("#link-style-hover-text", hasHoverTextUI);
 
-    // --- Lock base background when hover background changes ---
-    // --- Lock base background when hover background changes ---
-    const bgInput = this.modal.querySelector("#link-style-bg");
-    const hoverBgInput = this.modal.querySelector("#link-style-hover-bg");
 
-    if (bgInput) {
-      this._lastBgFromUser = bg || bgInput.value || "";
+    // const bgInput = this.modal.querySelector("#link-style-bg");
+    // const hoverBgInput = this.modal.querySelector("#link-style-hover-bg");
 
-      const onBaseBgChange = () => {
-        this._lastBgFromUser = bgInput.value;
-      };
+    // if (bgInput) {
+    //   this._lastBgFromUser = bg || bgInput.value || "";
 
-      bgInput.addEventListener("input", onBaseBgChange);
-      bgInput.addEventListener("change", onBaseBgChange);
-    }
+    //   const onBaseBgChange = () => {
+    //     this._lastBgFromUser = bgInput.value;
+    //   };
 
-    if (bgInput && hoverBgInput) {
-      const fixBgAfterHoverChange = () => {
-        let frames = 5;
+    //   bgInput.addEventListener("input", onBaseBgChange);
+    //   bgInput.addEventListener("change", onBaseBgChange);
+    // }
 
-        const restore = () => {
-          if (!bgInput) return;
-          if (this._lastBgFromUser != null) {
-            bgInput.value = this._lastBgFromUser;
-          }
-          if (--frames > 0) {
-            requestAnimationFrame(restore);
-          }
-        };
+    // if (bgInput && hoverBgInput) {
+    //   const fixBgAfterHoverChange = () => {
+    //     let frames = 5;
 
-        requestAnimationFrame(restore);
-      };
+    //     const restore = () => {
+    //       if (!bgInput) return;
+    //       if (this._lastBgFromUser != null) {
+    //         bgInput.value = this._lastBgFromUser;
+    //       }
+    //       if (--frames > 0) {
+    //         requestAnimationFrame(restore);
+    //       }
+    //     };
 
-      hoverBgInput.addEventListener("input", fixBgAfterHoverChange);
-      hoverBgInput.addEventListener("change", fixBgAfterHoverChange);
-    }
+    //     requestAnimationFrame(restore);
+    //   };
+
+    //   hoverBgInput.addEventListener("input", fixBgAfterHoverChange);
+    //   hoverBgInput.addEventListener("change", fixBgAfterHoverChange);
+    // }
 
     // UI active for toggling size buttons
     const sizeToggle = this.modal.querySelector("#link-size-toggle");
@@ -12192,6 +16606,9 @@ Vvveb.LinkEditor = {
 
       // click handler for all presets
       radiusWrap.querySelectorAll(".vvv-radius-option").forEach((btn) => {
+        if (btn._zgRadiusBound) return;
+        btn._zgRadiusBound = true;
+
         btn.addEventListener("click", () => {
           const radiusVal = btn.getAttribute("data-radius") || "";
           const borderVal = btn.getAttribute("data-border") || "none";
@@ -12232,23 +16649,41 @@ Vvveb.LinkEditor = {
     }, 50);
   },
 
-  close() {
-    if (this.el && this.wasTemporaryLink) {
-      this.unwrapTemporaryLink()
+  close(skipButtonPreviewRestore = false) {
+    let restoredButtonPreview = false;
+
+    if (
+      !skipButtonPreviewRestore &&
+      this._buttonToggleUndoSnapshot !== null &&
+      this.el?.parentElement
+    ) {
+      this.el.parentElement.innerHTML = this._buttonToggleUndoSnapshot;
+      restoredButtonPreview = true;
     }
-    if (this.modal) this.modal.style.display = "none";
+
+    if (restoredButtonPreview) {
+      this._rebuildButtonStyles();
+    }
+
+    if (this.el && this.wasTemporaryLink) {
+      this.unwrapTemporaryLink();
+    }
+
+    if (this.modal) {
+      this.modal.style.display = "none";
+    }
 
     this.clearValidationError();
 
-
     this.el = null;
-
     this.pendingButtonMode = false;
+    this._buttonToggleUndoSnapshot = null;
+
     if (this.buttonModeToggle) {
       this.buttonModeToggle.checked = false;
     }
-    this.toggleButtonCustomization(false);
 
+    this.toggleButtonCustomization(false);
     this.toggleButtonModeCheckbox(true);
   },
 
@@ -12272,10 +16707,12 @@ Vvveb.LinkEditor = {
         ${this._getCountryCodeOptions()}
       </select>
       <input
-        type="text"
-        id="link-phone"
-        class="form-control vvv-phone-input"
-        placeholder="9876543210"
+       type="text"
+  id="link-phone"
+  class="form-control vvv-phone-input"
+  placeholder="9876543210"
+  inputmode="tel"
+  autocomplete="tel-national"
       />
     </div>
   
@@ -12298,11 +16735,13 @@ Vvveb.LinkEditor = {
       <select id="link-wa-country" class="form-select vvv-cc-select">
         ${this._getCountryCodeOptions()}
       </select>
-      <input
-        type="text"
-        id="link-wa-number"
-        class="form-control vvv-phone-input"
-        placeholder="9876543210"
+       <input
+     type="text"
+  id="link-wa-number"
+  class="form-control vvv-phone-input"
+  placeholder="9876543210"
+  inputmode="tel"
+  autocomplete="tel-national"
       />
     </div>
    
@@ -12316,7 +16755,7 @@ Vvveb.LinkEditor = {
   `,
       pdf: `
      <div class="vvv-field">
-  <label class="form-label">Pick PDF from Media Gallery</label>
+  <label class="form-label">Attach PDF from Media Gallery</label>
 
   <div style="display:flex; gap:8px;">
     <button
@@ -12338,7 +16777,7 @@ Vvveb.LinkEditor = {
     />
   </div>
 
-  <div class="form-text">Choose a PDF from Media Gallery</div>
+  <div class="form-text">Upload/ Choose a PDF from Media Gallery</div>
 </div>
 
   `,
@@ -12517,32 +16956,37 @@ Vvveb.LinkEditor = {
       }
       if (pickBtn) {
         pickBtn.addEventListener("click", () => {
-          try {
-            if (!window.Vvveb.MediaModal) {
-              Vvveb.MediaModal = new MediaModal(true);
-              Vvveb.MediaModal.mediaPath = window.mediaPath;
-            }
+          if (!window.Vvveb?.NewMediaModal) {
+            alert("New media gallery not available");
+            return;
+          }
 
-            //Current changes : 13-2-26 start
+          Vvveb.NewMediaModal.open(null, {
+            mode: "link-pdf",
+            type: "pdf",
+            source: "upload",
+            title: "Choose PDF",
+            subtitle: "Upload or select a PDF file to link.",
+            onApply: (media) => {
+              const fileUrl = media && (media.url || media.src);
 
-            Vvveb.MediaModal.open(null, function (fileData) {
-              const payload =
-                typeof fileData === "string"
-                  ? { src: fileData }
-                  : fileData || {};
-              const fileUrl = payload.src;
-              //Current changes : 13-2-26 ends
               if (!fileUrl) return;
+
               if (!/\.pdf(?:\?|#|$)/i.test(fileUrl)) {
                 alert("Please select a PDF file from media.");
                 return;
               }
-              urlInp.value = fileUrl; // fill selected PDF url
-              if (pdfWrap) pdfWrap.style.display = "block";
-            });
-          } catch (e) {
-            alert("Media gallery not available");
-          }
+
+              urlInp.value = fileUrl;
+
+              if (pdfWrap) {
+                pdfWrap.style.display = "block";
+              }
+
+              urlInp.dispatchEvent(new Event("input", { bubbles: true }));
+              urlInp.dispatchEvent(new Event("change", { bubbles: true }));
+            },
+          });
         });
       }
     }
@@ -12578,77 +17022,104 @@ Vvveb.LinkEditor = {
     const oldHref = this.el.getAttribute("href") || "";
     const oldTarget = this.el.getAttribute("target");
 
+
     // Amit has added this related to multiple-undo/redo
-    const oldLinkParent = this.el.parentElement.innerHTML;
+    // const oldLinkParent = this.el.parentElement.innerHTML;
+    // Jayanti has added this related to mutate toggle btn undo/redo issue
+    const oldLinkParent =
+      this._buttonToggleUndoSnapshot || this.el.parentElement.innerHTML;
 
     if (type === "url") {
-      let url = this.modal.querySelector("#link-url").value.trim();
+      const input = this.fieldsWrap.querySelector("#link-url");
+      const result = this._validateWebUrl(input?.value);
 
-      if (url.startsWith("#")) {
-        newHref = url;
-        newTarget = null;
-      } else {
-        if (url && !/^https?:\/\//i.test(url)) {
-          url = "https://" + url;
-        }
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
+        return;
       }
 
-      newHref = url || "#";
+      newHref = result.value;
+
       const openNew =
         this.fieldsWrap.querySelector("#link-newtab")?.checked;
       newTarget = openNew ? "_blank" : null;
     } else if (type === "phone") {
-      const phone = (
-        this.fieldsWrap.querySelector("#link-phone")?.value || ""
-      ).trim();
-      const code = (
-        this.fieldsWrap.querySelector("#link-phone-country")?.value ||
-        ""
-      ).trim();
-      const fullPhone = code && phone ? code + phone : phone;
-      newHref = fullPhone ? "tel:" + fullPhone : "#";
+      const input = this.fieldsWrap.querySelector("#link-phone");
+      const country = this.fieldsWrap.querySelector(
+        "#link-phone-country",
+      );
+
+      const result = this._validatePhone(
+        input?.value,
+        country?.value,
+        "phone number",
+      );
+
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
+        return;
+      }
+
+      newHref = "tel:" + result.e164;
       newTarget = null;
     } else if (type === "email") {
-      const email = (
-        this.fieldsWrap.querySelector("#link-email")?.value || ""
-      ).trim();
-      newHref = email ? "mailto:" + email : "#";
+      const input = this.fieldsWrap.querySelector("#link-email");
+      const result = this._validateEmail(input?.value);
+
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
+        return;
+      }
+
+      newHref = "mailto:" + input.value.trim();
       newTarget = null;
     } else if (type === "scroll") {
-      const id = (
-        this.fieldsWrap.querySelector("#link-scroll")?.value || ""
-      ).trim();
-      newHref = id || "#";
+      const input = this.fieldsWrap.querySelector("#link-scroll");
+      const result = this._validateScrollTarget(input?.value);
+
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
+        return;
+      }
+
+      newHref = input.value.trim();
       newTarget = null;
     } else if (type === "whatsapp") {
-      // Input values
-      const number = document
-        .querySelector("#link-wa-number")
-        ?.value.trim();
-      const message = encodeURIComponent(
-        document.querySelector("#link-wa-message")?.value.trim() ?? "",
+      const input = this.fieldsWrap.querySelector("#link-wa-number");
+      const country = this.fieldsWrap.querySelector("#link-wa-country");
+
+      const result = this._validatePhone(
+        input?.value,
+        country?.value,
+        "WhatsApp number",
       );
-      let waHref = "https://wa.me/" + number;
-      if (message) waHref += "?text=" + message;
-      newHref = waHref;
-      newTarget = "_blank";
-    } else if (type === "pdf") {
-      const pdfUrl = document
-        .querySelector("#link-pdf-url")
-        ?.value.trim();
-      newHref = pdfUrl;
-      newTarget = "_blank";
-      if (pdfUrl) {
-        this.el.setAttribute("download", "");
-      } else {
-        this.el.removeAttribute("download");
+
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
+        return;
       }
+
+      const message = encodeURIComponent(
+        this.fieldsWrap
+          .querySelector("#link-wa-message")
+          ?.value.trim() || "",
+      );
+
+      newHref = "https://wa.me/" + result.waNumber;
+
+      if (message) {
+        newHref += "?text=" + message;
+      }
+
+      newTarget = "_blank";
     } else if (type === "page") {
       const pageSel = this.fieldsWrap.querySelector("#link-page");
       if (pageSel && pageSel.value) {
         newHref = pageSel.value;
         const selectedOpt = pageSel.options[pageSel.selectedIndex];
-        const pageKey = selectedOpt ? selectedOpt.getAttribute("data-page-key") || "" : "";
+        const pageKey = selectedOpt
+          ? selectedOpt.getAttribute("data-page-key") || ""
+          : "";
         if (pageKey) {
           this.el.setAttribute("data-page-key", pageKey);
         } else {
@@ -12659,8 +17130,19 @@ Vvveb.LinkEditor = {
         this.el.removeAttribute("data-page-key");
       }
       newTarget = null;
-    }
+    } else if (type === "pdf") {
+      const input = this.fieldsWrap.querySelector("#link-pdf-url");
+      const result = this._validatePdfUrl(input?.value);
 
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
+        return;
+      }
+
+      newHref = input.value.trim();
+      newTarget = "_blank";
+      this.el.setAttribute("download", "");
+    }
     const oldHtml = this.el.innerHTML;
 
     (() => {
@@ -12707,14 +17189,23 @@ Vvveb.LinkEditor = {
     if (newHref) this.el.setAttribute("href", newHref);
     else this.el.removeAttribute("href");
 
-    if (newTarget) this.el.setAttribute("target", newTarget);
-    else this.el.removeAttribute("target");
+    if (newTarget) {
+      this.el.setAttribute("target", newTarget);
+      this.el.setAttribute("rel", "noopener noreferrer");
+    } else {
+      this.el.removeAttribute("target");
+      this.el.removeAttribute("rel");
+    }
 
     // Clean up data-page-key when switching away from "page" type
     if (type !== "page") {
       this.el.removeAttribute("data-page-key");
     }
 
+    // Clean up download attribute when switching away from "pdf" type
+    if (type !== "pdf") {
+      this.el.removeAttribute("download");
+    }
     // undo mutations
     //
     // Vvveb.Undo.addMutation({
@@ -12735,11 +17226,30 @@ Vvveb.LinkEditor = {
     // });
 
     if (this.pendingButtonMode) {
-      this.el.setAttribute("data-btn", "true");
-      this.el.setAttribute("data-btn-converted", "true")
+      const existingBtnValue = this.el.getAttribute("data-btn");
+
+      // Keep template button identity like data-btn="music".
+      // Only set data-btn="true" when this is a link-editor-created button
+      // or when the element does not already have a data-btn value.
+      if (!existingBtnValue) {
+        this.el.setAttribute("data-btn", "true");
+      }
+
+      if (
+        this.wasBuilderConvertedButton ||
+        this.buttonModeToggle?.checked
+      ) {
+        this.el.setAttribute("data-btn-converted", "true");
+
+        if (!this.el.hasAttribute("data-btn")) {
+          this.el.setAttribute("data-btn", "true");
+        }
+      } else {
+        this.el.removeAttribute("data-btn-converted");
+      }
     } else {
       this.el.removeAttribute("data-btn");
-      this.el.removeAttribute("data-btn-converted")
+      this.el.removeAttribute("data-btn-converted");
       this.el.removeAttribute("data-link-style-id");
 
       this.el.removeAttribute("data-btn-bg");
@@ -12772,7 +17282,6 @@ Vvveb.LinkEditor = {
         return c ? c.value || "" : "";
       };
 
-
       // Without toggle
       const newBg = getVal("#link-style-bg");
       const newColor = getVal("#link-style-text");
@@ -12790,7 +17299,9 @@ Vvveb.LinkEditor = {
       const oldHoverColor = this.el.getAttribute("data-btn-hover-color");
       const oldSize = this.el.getAttribute("data-btn-size");
       const oldRadius = this.el.getAttribute("data-btn-radius");
-      const oldBorderColor = this.el.getAttribute("data-btn-border-color");
+      const oldBorderColor = this.el.getAttribute(
+        "data-btn-border-color",
+      );
       const oldBorder = this.el.getAttribute("data-btn-border");
 
       // Set / clear attributes
@@ -12811,30 +17322,61 @@ Vvveb.LinkEditor = {
       const t = this.styleTouched || {};
       const cl = this.styleCleared || {};
 
+      //       if (t.bg && !t.hoverBg && !oldHoverBg) {
+      //   const preservedHoverBg =
+      //     this.el.getAttribute("data-btn-hover-bg-original") ||
+      //     this.el.getAttribute("data-btn-bg-original") ||
+      //     oldBg ||
+      //     "#5b3df2";
+
+      //   setAttr("data-btn-hover-bg", preservedHoverBg, oldHoverBg);
+      // }
+
+      // if (t.text && !t.hoverText && !oldHoverColor) {
+      //   const preservedHoverColor =
+      //     this.el.getAttribute("data-btn-hover-color-original") ||
+      //     this.el.getAttribute("data-btn-color-original") ||
+      //     oldColor ||
+      //     "#ffffff";
+
+      //   setAttr("data-btn-hover-color", preservedHoverColor, oldHoverColor);
+      // }
       if (t.bg) {
-        const val = cl.bg ? null : newBg;
+        const val = cl.bg ? newBg || "#5b3df2" : newBg;
         setAttr("data-btn-bg", val, oldBg);
       }
+
       if (t.text) {
-        const val = cl.text ? "" : newColor;
+        const val = cl.text ? newColor || "#ffffff" : newColor;
         setAttr("data-btn-color", val, oldColor);
       }
       if (t.hoverBg) {
-        const val = cl.hoverBg ? "" : newHoverBg;
+        const val = cl.hoverBg
+          ? newHoverBg ||
+          this.el.getAttribute("data-btn-hover-bg-original") ||
+          this.el.getAttribute("data-btn-bg-original") ||
+          "#5b3df2"
+          : newHoverBg;
+
         setAttr("data-btn-hover-bg", val, oldHoverBg);
       }
       if (t.hoverText) {
-        const val = cl.hoverText ? "" : newHoverColor;
+        const val = cl.hoverText
+          ? newHoverColor ||
+          this.el.getAttribute("data-btn-hover-color-original") ||
+          this.el.getAttribute("data-btn-color-original") ||
+          "#ffffff"
+          : newHoverColor;
+
         setAttr("data-btn-hover-color", val, oldHoverColor);
       }
 
-
       if (t.size) {
-        const val = cl.size ? "" : newSize;
+        const val = cl.size ? "2x" : newSize || "2x";
         setAttr("data-btn-size", val, oldSize);
       }
       if (t.radius) {
-        const val = cl.radius ? "" : newRadius;
+        const val = cl.radius ? "rounded" : newRadius || "rounded";
         setAttr("data-btn-radius", val, oldRadius);
       }
       if (t.borderColor) {
@@ -12842,7 +17384,7 @@ Vvveb.LinkEditor = {
         setAttr("data-btn-border-color", val, oldBorderColor);
       }
       if (t.border) {
-        const val = cl.border ? "" : newBorder;
+        const val = cl.border ? "none" : newBorder || "none";
         setAttr("data-btn-border", val, oldBorder);
       }
     }
@@ -12850,9 +17392,17 @@ Vvveb.LinkEditor = {
 
     this._rebuildButtonStyles();
 
-    const newLinkParent = this.el.parentElement.innerHTML;
+    const newLinkParent =
+      this.el.parentElement.innerHTML;
 
-    if (oldLinkParent != newLinkParent && Vvveb.Undo) {
+    /*
+     * Preserve the original Link Editor Undo behavior.
+     * One Apply creates one Undo mutation.
+     */
+    if (
+      oldLinkParent !== newLinkParent &&
+      Vvveb.Undo
+    ) {
       Vvveb.Undo.addMutation({
         type: "characterData",
         target: this.el.parentElement,
@@ -12861,10 +17411,9 @@ Vvveb.LinkEditor = {
       });
     }
 
-
-    this.el.removeAttribute("data-temp-link")
+    this.el.removeAttribute("data-temp-link");
     this.wasTemporaryLink = false;
-    this.close();
+    this.close(true);
   },
 
   _sectionsOptions() {
@@ -12897,7 +17446,15 @@ Vvveb.LinkEditor = {
     return keys
       .map((fname) => {
         const p = pages[fname];
-        const label = p._pageName + (p._isHome ? " (Home)" : "");
+        const rawLabel = p._isHome
+          ? "Home"
+          : (p._pageName || p._pageKey || "");
+
+        const label = String(rawLabel)
+          .replace(/[-_]+/g, " ")
+          .replace(/\s+/g, " ")
+          .trim()
+          .replace(/\b[a-z0-9]/g, (char) => char.toUpperCase());
         const slug = p._pageSlug || "/";
         const safeKey = (p._pageKey || "").replace(/"/g, "&quot;");
         return `<option value="${slug}" data-page-key="${safeKey}">${label}</option>`;
@@ -12906,14 +17463,12 @@ Vvveb.LinkEditor = {
   },
 
   _getCountryCodeOptions() {
-    const codes = [
-      { code: "+91", name: "India 🇮🇳" },
-      { code: "+1", name: "USA 🇺🇸" },
-      { code: "+44", name: "UK 🇬🇧" },
-      { code: "+61", name: "Australia 🇦🇺" },
-    ];
-    return codes
-      .map((c) => `<option value="${c.code}">${c.name} (${c.code})</option>`)
+    return (this.countryCodes || [])
+      .map((c) => {
+        return `<option value="${c.code}" data-iso="${c.iso || ""}" data-example="${c.example || ""}">
+        ${c.flag || ""} ${c.name} (${c.code})
+      </option>`;
+      })
       .join("");
   },
 
@@ -12923,6 +17478,142 @@ Vvveb.LinkEditor = {
       Vvveb?.Builder?.iframe?.contentDocument ||
       document
     );
+  },
+
+  ensureButtonStyleId() {
+    if (!this.el) return "";
+
+    let id = this.el.getAttribute("data-link-style-id");
+
+    if (!id) {
+      id =
+        "link-" +
+        Date.now().toString(36) +
+        "-" +
+        Math.floor(Math.random() * 9999).toString(36);
+
+      this.el.setAttribute("data-link-style-id", id);
+    }
+
+    return id;
+  },
+
+
+  applyButtonShellFromToggle(isButton) {
+    if (!this.el) return;
+
+    if (isButton) {
+      this.el.setAttribute("data-btn", "true");
+      this.el.setAttribute("data-btn-converted", "true");
+      this.el.setAttribute("data-btn-created-by", "link-editor-toggle");
+      this.el.classList.add("zigrow-link-button");
+
+      this.ensureButtonStyleId();
+
+      // Default button values
+      // bg is intentionally not stored, so CSS can use primary variable fallback.
+      const doc = this._getDoc();
+      const win = doc.defaultView || window;
+      const rootStyle = win.getComputedStyle(doc.documentElement);
+
+      const elStyle = win.getComputedStyle(this.el);
+      const bodyStyle = doc.body ? win.getComputedStyle(doc.body) : null;
+
+      const defaultBg =
+        elStyle.getPropertyValue("--primary-colors").trim() ||
+        elStyle.getPropertyValue("--zigrow-primary-color").trim() ||
+        rootStyle.getPropertyValue("--primary-colors").trim() ||
+        rootStyle.getPropertyValue("--zigrow-primary-color").trim() ||
+        bodyStyle?.getPropertyValue("--primary-colors").trim() ||
+        bodyStyle?.getPropertyValue("--zigrow-primary-color").trim() ||
+        "#5b3df2";
+
+      const defaultText = "#ffffff";
+
+      if (!this.el.getAttribute("data-btn-bg")) {
+        this.el.setAttribute("data-btn-bg", defaultBg);
+      }
+
+      if (!this.el.getAttribute("data-btn-color")) {
+        this.el.setAttribute("data-btn-color", defaultText);
+      }
+
+      if (!this.el.getAttribute("data-btn-hover-bg")) {
+        this.el.setAttribute("data-btn-hover-bg", defaultBg);
+      }
+
+      if (!this.el.getAttribute("data-btn-hover-color")) {
+        this.el.setAttribute("data-btn-hover-color", defaultText);
+      }
+
+      if (!this.el.getAttribute("data-btn-bg-original")) {
+        this.el.setAttribute("data-btn-bg-original", defaultBg);
+      }
+
+      if (!this.el.getAttribute("data-btn-color-original")) {
+        this.el.setAttribute("data-btn-color-original", defaultText);
+      }
+
+      if (!this.el.getAttribute("data-btn-hover-bg-original")) {
+        this.el.setAttribute("data-btn-hover-bg-original", defaultBg);
+      }
+
+      if (!this.el.getAttribute("data-btn-hover-color-original")) {
+        this.el.setAttribute("data-btn-hover-color-original", defaultText);
+      }
+
+      if (!this.el.getAttribute("data-btn-size")) {
+        this.el.setAttribute("data-btn-size", "2x");
+      }
+
+      if (!this.el.getAttribute("data-btn-radius")) {
+        this.el.setAttribute("data-btn-radius", "rounded");
+      }
+
+      if (!this.el.getAttribute("data-btn-border")) {
+        this.el.setAttribute("data-btn-border", "none");
+      }
+
+      const bgInput = this.modal?.querySelector("#link-style-bg");
+      const textInput = this.modal?.querySelector("#link-style-text");
+      const hoverBgInput = this.modal?.querySelector("#link-style-hover-bg");
+      const hoverTextInput = this.modal?.querySelector("#link-style-hover-text");
+
+      if (bgInput && !this.styleTouched.bg) {
+        bgInput.value = defaultBg;
+      }
+
+      if (textInput && !this.styleTouched.text) {
+        textInput.value = defaultText;
+      }
+
+      if (hoverBgInput && !this.styleTouched.hoverBg) {
+        hoverBgInput.value = defaultBg;
+      }
+
+      if (hoverTextInput && !this.styleTouched.hoverText) {
+        hoverTextInput.value = defaultText;
+      }
+
+      this._lastBgFromUser = defaultBg;
+    } else {
+      this.el.removeAttribute("data-btn");
+      this.el.removeAttribute("data-btn-converted");
+      this.el.removeAttribute("data-link-style-id");
+      this.el.classList.remove("zigrow-link-button");
+      this.el.removeAttribute("data-btn-created-by");
+
+      this.el.removeAttribute("data-btn-bg");
+      this.el.removeAttribute("data-btn-color");
+      this.el.removeAttribute("data-btn-hover-bg");
+      this.el.removeAttribute("data-btn-hover-color");
+      this.el.removeAttribute("data-btn-size");
+      this.el.removeAttribute("data-btn-radius");
+      this.el.removeAttribute("data-btn-border");
+      this.el.removeAttribute("data-btn-border-color");
+    }
+
+    this._rebuildButtonStyles();
   },
 
   _ensureStyleSheet() {
@@ -12948,78 +17639,173 @@ Vvveb.LinkEditor = {
     const nodes = doc.querySelectorAll("a[data-link-style-id]");
 
     let css = "";
+
     nodes.forEach((el) => {
       const id = el.getAttribute("data-link-style-id");
-      const bg = el.getAttribute("data-btn-bg");
-      const color = el.getAttribute("data-btn-color");
-      const hoverBg = el.getAttribute("data-btn-hover-bg");
-      const hoverColor = el.getAttribute("data-btn-hover-color");
-      const size = el.getAttribute("data-btn-size");
-      const radius = el.getAttribute("data-btn-radius");
-      const border = el.getAttribute("data-btn-border");
-      const borderColor = el.getAttribute("data-btn-border-color");
-
       if (!id) return;
 
-      const sel = `a[data-link-style-id="${id}"]`;
+      const bg =
+        el.getAttribute("data-btn-bg");
 
-      // Border radius
-      let radiusCss = "";
+      const color =
+        el.getAttribute("data-btn-color");
+
+      const hoverBg =
+        el.getAttribute(
+          "data-btn-hover-bg",
+        );
+
+      const hoverColor =
+        el.getAttribute(
+          "data-btn-hover-color",
+        );
+
+      const size =
+        el.getAttribute("data-btn-size");
+
+      const radius =
+        el.getAttribute(
+          "data-btn-radius",
+        );
+
+      const border =
+        el.getAttribute(
+          "data-btn-border",
+        );
+
+      const borderColor =
+        el.getAttribute(
+          "data-btn-border-color",
+        );
+
+      /*
+       * Once data-btn styling owns the button, remove
+       * old inline smart-contrast declarations.
+       *
+       * Link Editor stylesheet becomes the single source
+       * for background, text, and border colors.
+       */
+      if (
+        bg ||
+        color ||
+        hoverBg ||
+        hoverColor ||
+        borderColor
+      ) {
+        el.style.removeProperty(
+          "background",
+        );
+
+        el.style.removeProperty(
+          "background-color",
+        );
+
+        el.style.removeProperty(
+          "color",
+        );
+
+        el.style.removeProperty(
+          "border-color",
+        );
+      }
+
+      const sel =
+        `a[data-link-style-id="${id}"]`;
+
+      let baseCss = "";
+
+      baseCss += `text-decoration: none !important;`;
+      baseCss += `transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;`;
+
+      const effectiveBg =
+        bg ||
+        "var(--primary-colors, var(--zigrow-primary-color, #5b3df2))";
+
+      const effectiveColor = color || "#ffffff";
+      const effectiveHoverBg =
+        hoverBg ||
+        el.getAttribute("data-btn-hover-bg-original") ||
+        el.getAttribute("data-btn-bg-original") ||
+        "var(--primary-colors, var(--zigrow-primary-color, #5b3df2))";
+
+      const effectiveHoverColor =
+        hoverColor ||
+        el.getAttribute("data-btn-hover-color-original") ||
+        el.getAttribute("data-btn-color-original") ||
+        "#ffffff";
+
+      baseCss += `background: ${effectiveBg} !important;`;
+      baseCss += `color: ${effectiveColor} !important;`;
+
+      if (size === "1x") {
+        baseCss += `padding: 6px 14px !important; font-size: 12px !important;`;
+      } else if (size === "2x") {
+        baseCss += `padding: 9px 18px !important; font-size: 14px !important;`;
+      } else if (size === "3x") {
+        baseCss += `padding: 12px 24px !important; font-size: 16px !important;`;
+      } else if (size === "4x") {
+        baseCss += `padding: 14px 28px !important; font-size: 18px !important;`;
+      } else if (size === "5x") {
+        baseCss += `padding: 16px 30px !important; font-size: 20px !important;`;
+      } else if (size === "6x") {
+        baseCss += `padding: 18px 32px !important; font-size: 22px !important;`;
+      }
 
       if (radius === "square") {
-        radiusCss = "border-radius: 0 !important;";
+        baseCss += `border-radius: 0 !important;`;
       } else if (radius === "rounded") {
-        radiusCss = "border-radius: 8px !important;";
+        baseCss += `border-radius: 8px !important;`;
       } else if (radius === "pill") {
-        radiusCss = "border-radius: 9999px !important;";
-      } else {
-        radiusCss = "border-radius: 8px !important;"
+        baseCss += `border-radius: 9999px !important;`;
       }
 
-      // Base styles
-      css += `${sel}{`;
-      css += `display: inline-block !important;`;
-      css += `text-decoration: none !important;`;
-      css += `transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;`;
-
-      css += `background: ${bg || "var(--primary-colors, #ccc)"} !important;`;
-      css += `color: ${color || "#ffffff"} !important;`;
-
-      // size -> padding + font-size
-      if (size === "1x") {
-        css += `padding: 6px 14px !important; font-size: 12px !important;`;
-      } else if (size === "2x") {
-        css += `padding: 9px 18px !important; font-size: 14px !important;`;
-      } else if (size === "3x") {
-        css += `padding: 12px 24px !important; font-size: 16px !important;`;
-      } else if (size === "4x") {
-        css += `padding: 14px 28px !important; font-size: 18px !important;`;
-      } else if (size === "5x") {
-        css += `padding: 16px 30px !important; font-size: 20px !important;`;
-      } else if (size === "6x") {
-        css += `padding: 18px 32px !important; font-size: 22px !important;`;
-      } else {
-        css += `padding: 10px 18px !important; font-size: 14px !important;`
-      }
-      if (radiusCss) {
-        css += radiusCss;
-      }
       if (border === "border") {
-        const bColor = borderColor || color || "currentColor";
-        css += `border: 1px solid ${bColor} !important;`;
-      } else {
-        css += `border: none`;
+        const bColor = borderColor || effectiveColor || "currentColor";
+        baseCss += `border: 1px solid ${bColor} !important;`;
+      } else if (border === "none") {
+        baseCss += `border: none !important;`;
       }
 
+      css += `${sel}{${baseCss}}\n`;
+
+      css += `${sel}:hover{`;
+      css += `background:${effectiveHoverBg} !important;`;
+      css += `color:${effectiveHoverColor} !important;`;
       css += `}\n`;
 
-      if (hoverBg || hoverColor) {
-        css += `${sel}:hover{`;
-        if (hoverBg) css += `background:${hoverBg} !important;\n`;
-        if (hoverColor) css += `color:${hoverColor} !important;`;
-        css += `}\n`;
-      }
+      /* Hide nav/footer underline animations only while link is converted to button */
+      css += `
+${sel},
+${sel}:hover,
+${sel}:focus,
+${sel}:active {
+  text-decoration: none !important;
+}
+
+${sel}::before,
+${sel}::after,
+${sel}:hover::before,
+${sel}:hover::after,
+${sel}:focus::before,
+${sel}:focus::after,
+${sel}:active::before,
+${sel}:active::after {
+  content: none !important;
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+`;
     });
+
     styleEl.textContent = css;
   },
 
@@ -13123,10 +17909,12 @@ Vvveb.LinkEditor = {
     this.modal
       .querySelectorAll(".link-field-error")
       .forEach((el) => el.remove());
+
     this.modal.querySelectorAll(".link-invalid").forEach((el) => {
       el.classList.remove("link-invalid");
     });
   },
+
 
   showValidationError(input, message) {
     if (!input) return;
@@ -13139,89 +17927,373 @@ Vvveb.LinkEditor = {
     error.style.color = "#dc3545";
     error.style.fontSize = "12px";
     error.style.marginTop = "6px";
+    error.style.lineHeight = "1.35";
 
     const parent =
-      input.closest(".vvv-phone") || input.parentElement || input;
+      input.closest(".vvv-phone, .form-row, .vvv-field") ||
+      input.parentElement ||
+      input;
+
     parent.insertAdjacentElement("afterend", error);
 
     if (typeof input.focus === "function") input.focus();
   },
+
+  _getCountryMeta(countryCode) {
+    const code = String(countryCode || "").trim();
+    return (this.countryCodes || []).find((c) => c.code === code) || null;
+  },
+
+  _getDigits(value) {
+    return String(value || "").replace(/[^\d]/g, "");
+  },
+
+  _normalizeLocalPhone(value, countryCode) {
+    const meta = this._getCountryMeta(countryCode);
+    const countryDigits = this._getDigits(countryCode);
+    const rawValue = String(value || "").trim();
+    let digits = this._getDigits(rawValue);
+
+    const localMax = meta?.max || 10;
+    const hasExplicitCountryPrefix =
+      rawValue.startsWith("+") || digits.length > localMax;
+
+    if (
+      countryDigits &&
+      digits.startsWith(countryDigits) &&
+      hasExplicitCountryPrefix
+    ) {
+      digits = digits.slice(countryDigits.length);
+    }
+
+    if (
+      meta &&
+      meta.allowLeadingZero &&
+      digits.startsWith("0") &&
+      digits.length === meta.max + 1
+    ) {
+      digits = digits.slice(1);
+    }
+
+    return digits;
+  },
+
+  _validatePhone(value, countryCode, label = "phone number") {
+    const meta = this._getCountryMeta(countryCode);
+    const localNumber = this._normalizeLocalPhone(value, countryCode);
+    const countryDigits = this._getDigits(countryCode);
+
+    if (!localNumber) {
+      return {
+        valid: false,
+        message: `Please enter a ${label}.`,
+      };
+    }
+
+    if (!/^\d+$/.test(localNumber)) {
+      return {
+        valid: false,
+        message: `Please enter digits only.`,
+      };
+    }
+
+    if (!meta) {
+      if (localNumber.length < 7 || localNumber.length > 15) {
+        return {
+          valid: false,
+          message: `Please enter a valid ${label}.`,
+        };
+      }
+
+      return {
+        valid: true,
+        localNumber,
+        e164: "+" + countryDigits + localNumber,
+        waNumber: countryDigits + localNumber,
+      };
+    }
+
+    if (localNumber.length < meta.min || localNumber.length > meta.max) {
+      return {
+        valid: false,
+        message: `Please enter a valid ${meta.name} mobile number. Example: ${meta.example}`,
+      };
+    }
+
+    if (meta.mobileRegex && !meta.mobileRegex.test(localNumber)) {
+      return {
+        valid: false,
+        message: `Please enter a valid ${meta.name} mobile number. Example: ${meta.example}`,
+      };
+    }
+
+    return {
+      valid: true,
+      localNumber,
+      e164: meta.code + localNumber,
+      waNumber: countryDigits + localNumber,
+    };
+  },
+
+  _validateWebUrl(value) {
+    const rawValue = String(value || "").trim();
+
+    if (!rawValue) {
+      return {
+        valid: false,
+        value: "",
+        message: "Please enter a web address.",
+      };
+    }
+
+    if (/\s/.test(rawValue)) {
+      return {
+        valid: false,
+        value: "",
+        message: "Web address cannot contain spaces.",
+      };
+    }
+
+    if (/^(javascript|data|vbscript|file):/i.test(rawValue)) {
+      return {
+        valid: false,
+        value: "",
+        message: "This type of link is not allowed.",
+      };
+    }
+
+    if (/^mailto:/i.test(rawValue)) {
+      return {
+        valid: false,
+        value: "",
+        message: "Use the Email option for email links.",
+      };
+    }
+
+    if (/^tel:/i.test(rawValue)) {
+      return {
+        valid: false,
+        value: "",
+        message: "Use the Phone option for phone links.",
+      };
+    }
+
+    if (rawValue.startsWith("#")) {
+      return {
+        valid: false,
+        value: "",
+        message: "Use the Scroll to section option for section links.",
+      };
+    }
+
+    let urlValue = rawValue;
+
+    if (urlValue.startsWith("//")) {
+      urlValue = "https:" + urlValue;
+    }
+
+    if (!/^https?:\/\//i.test(urlValue)) {
+      urlValue = "https://" + urlValue;
+    }
+
+    try {
+      const parsed = new URL(urlValue);
+      const hostname = parsed.hostname.toLowerCase();
+
+      const isLocalhost = hostname === "localhost";
+
+      const isIPv4 =
+        /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/.test(
+          hostname
+        );
+
+      const isDomain =
+        /^(?=.{1,253}$)(?!-)([a-z0-9-]{1,63}\.)+[a-z]{2,63}$/i.test(hostname);
+
+      if (!["http:", "https:"].includes(parsed.protocol)) {
+        return {
+          valid: false,
+          value: "",
+          message: "Only http and https links are allowed.",
+        };
+      }
+
+      if (!isLocalhost && !isIPv4 && !isDomain) {
+        return {
+          valid: false,
+          value: "",
+          message: "Please enter a valid website URL, like example.com.",
+        };
+      }
+
+      return {
+        valid: true,
+        value: parsed.href,
+        message: "",
+      };
+    } catch (e) {
+      return {
+        valid: false,
+        value: "",
+        message: "Please enter a valid website URL, like example.com.",
+      };
+    }
+  },
+
+  _validateEmail(value) {
+    const email = String(value || "").trim();
+
+    if (!email) {
+      return {
+        valid: false,
+        message: "Please enter an email address.",
+      };
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      return {
+        valid: false,
+        message: "Please enter a valid email address.",
+      };
+    }
+
+    return {
+      valid: true,
+      message: "",
+    };
+  },
+
+  _validateScrollTarget(value) {
+    const target = String(value || "").trim();
+
+    if (!target) {
+      return {
+        valid: false,
+        message: "Please select a section.",
+      };
+    }
+
+    if (!target.startsWith("#") || target.length <= 1) {
+      return {
+        valid: false,
+        message: "Please select a valid section.",
+      };
+    }
+
+    const doc =
+      window.FrameDocument ||
+      Vvveb?.Builder?.iframe?.contentDocument ||
+      document;
+
+    const id = target.slice(1);
+
+    if (!doc.getElementById(id)) {
+      return {
+        valid: false,
+        message: "This section does not exist anymore. Please select again.",
+      };
+    }
+
+    return {
+      valid: true,
+      message: "",
+    };
+  },
+
+  _validatePdfUrl(value) {
+    const pdfUrl = String(value || "").trim();
+
+    if (!pdfUrl) {
+      return {
+        valid: false,
+        message: "Please select or enter a PDF URL.",
+      };
+    }
+
+    if (!/\.pdf(?:[?#].*)?$/i.test(pdfUrl)) {
+      return {
+        valid: false,
+        message: "Please select a valid PDF file.",
+      };
+    }
+
+    if (/^(javascript|data|vbscript|file):/i.test(pdfUrl)) {
+      return {
+        valid: false,
+        message: "This PDF link type is not allowed.",
+      };
+    }
+
+    const isAbsolute = /^https?:\/\//i.test(pdfUrl);
+    const isRelative =
+      /^\/[^/]/.test(pdfUrl) || /^[\w./%-]+\.pdf(?:[?#].*)?$/i.test(pdfUrl);
+
+    if (!isAbsolute && !isRelative) {
+      return {
+        valid: false,
+        message: "Please select a valid PDF file.",
+      };
+    }
+
+    return {
+      valid: true,
+      message: "",
+    };
+  },
+
+
   validateBeforeApply() {
     this.clearValidationError();
 
     const type = this.actionSel?.value;
 
     if (type === "url") {
-      const input = this.modal.querySelector("#link-url");
-      const value = (input?.value || "").trim();
+      const input = this.fieldsWrap?.querySelector("#link-url");
+      const result = this._validateWebUrl(input?.value);
 
-      if (!value) {
-        this.showValidationError(input, "Please enter a web address.");
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
         return false;
       }
     }
 
     if (type === "phone") {
-      const input = this.fieldsWrap.querySelector("#link-phone");
-      const value = (input?.value || "").trim();
+      const input = this.fieldsWrap?.querySelector("#link-phone");
+      const country = this.fieldsWrap?.querySelector("#link-phone-country");
+      const result = this._validatePhone(
+        input?.value,
+        country?.value,
+        "phone number"
+      );
 
-      if (!value) {
-        this.showValidationError(input, "Please enter a phone number.");
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
         return false;
       }
     }
 
     if (type === "email") {
-      const input = this.fieldsWrap.querySelector("#link-email");
-      const value = (input?.value || "").trim();
+      const input = this.fieldsWrap?.querySelector("#link-email");
+      const result = this._validateEmail(input?.value);
 
-      if (!value) {
-        this.showValidationError(
-          input,
-          "Please enter an email address.",
-        );
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
         return false;
       }
     }
 
     if (type === "scroll") {
-      const input = this.fieldsWrap.querySelector("#link-scroll");
-      const value = (input?.value || "").trim();
+      const input = this.fieldsWrap?.querySelector("#link-scroll");
+      const result = this._validateScrollTarget(input?.value);
 
-      if (!value) {
-        this.showValidationError(input, "Please select a section.");
-        return false;
-      }
-    }
-
-    if (type === "whatsapp") {
-      const input = this.fieldsWrap.querySelector("#link-wa-number");
-      const value = (input?.value || "").trim();
-
-      if (!value) {
-        this.showValidationError(
-          input,
-          "Please enter a WhatsApp number.",
-        );
-        return false;
-      }
-    }
-
-    if (type === "pdf") {
-      const input = this.fieldsWrap.querySelector("#link-pdf-url");
-      const value = (input?.value || "").trim();
-
-      if (!value) {
-        this.showValidationError(
-          input,
-          "Please select or enter a PDF URL.",
-        );
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
         return false;
       }
     }
 
     if (type === "page") {
-      const input = this.fieldsWrap.querySelector("#link-page");
+      const input = this.fieldsWrap?.querySelector("#link-page");
       const value = (input?.value || "").trim();
 
       if (!value) {
@@ -13230,16 +18302,67 @@ Vvveb.LinkEditor = {
       }
     }
 
+    if (type === "whatsapp") {
+      const input = this.fieldsWrap?.querySelector("#link-wa-number");
+      const country = this.fieldsWrap?.querySelector("#link-wa-country");
+      const result = this._validatePhone(
+        input?.value,
+        country?.value,
+        "WhatsApp number"
+      );
+
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
+        return false;
+      }
+    }
+
+    if (type === "pdf") {
+      const input = this.fieldsWrap?.querySelector("#link-pdf-url");
+      const result = this._validatePdfUrl(input?.value);
+
+      if (!result.valid) {
+        this.showValidationError(input, result.message);
+        return false;
+      }
+    }
+
+    if (type === "popup") {
+      this.showValidationError(
+        this.actionSel,
+        "Popup action is not connected yet. Please choose another option."
+      );
+      return false;
+    }
+
     return true;
   },
+
   shouldShowButtonToggle() {
     if (!this.el) return false;
 
-    const isButton = this.el.hasAttribute("data-btn");
     const isConvertedButton =
       this.el.getAttribute("data-btn-converted") === "true";
 
-    return !isButton || isConvertedButton;
+    const isZigrowStyledButton = this.el.hasAttribute("data-btn");
+
+    const hasTemplateButtonClass =
+      this.el.classList.contains("btn") ||
+      this.el.className.toLowerCase().includes("button") ||
+      this.el.className.toLowerCase().includes("btn-");
+
+    // Builder-created link-to-button should always show the toggle.
+    if (isConvertedButton) return true;
+
+    // Already styled/customized Zigrow button, but not converted by builder.
+    // This is treated as a template/default button, so do not show toggle.
+    if (isZigrowStyledButton) return false;
+
+    // Template/default button should not show the toggle.
+    if (hasTemplateButtonClass) return false;
+
+    // Normal plain link can show "Change link into button".
+    return true;
   },
 
   toggleButtonModeCheckbox(show) {
@@ -13257,7 +18380,6 @@ Vvveb.LinkEditor = {
       row.style.display = show ? "" : "none";
     }
   },
-
   unwrapTemporaryLink() {
     if (!this.el || !this.el.parentNode) return;
 
@@ -13323,6 +18445,8 @@ Vvveb.AIWriter = {
     generatedText: "",
     sourceText: "",
     systemHint: "",
+    context: null,
+    userPrompt: "",
   },
 
   init() {
@@ -13354,7 +18478,7 @@ Vvveb.AIWriter = {
     this._bindUI();
 
     Vvveb.AIWriter.positionPanelBound = Vvveb.AIWriter.positionPanel.bind(
-      Vvveb.AIWriter
+      Vvveb.AIWriter,
     );
 
     this.quickSendBtn =
@@ -13435,7 +18559,7 @@ Vvveb.AIWriter = {
       if (!prompt) return;
 
       self.state.action = "transform";
-      // close quick, open full panel
+      self.state.userPrompt = prompt;
       self.closeQuick();
 
       // set prompt into main panel input
@@ -13443,6 +18567,13 @@ Vvveb.AIWriter = {
 
       // open full panel at same place and generate
       self.openPanelAtMenuPosition();
+      if (self.ppInput) {
+        self.ppInput.value = prompt;
+      }
+
+      console.log("[AI TRANSFORM PROMPT SAVED]", prompt);
+      console.log("[AI PP INPUT BEFORE GENERATE]", self.ppInput?.value || "");
+
       self.autoGenerate();
     });
 
@@ -13457,7 +18588,8 @@ Vvveb.AIWriter = {
     document.addEventListener("click", (e) => {
       const clickedInsideMenu = self.menu && self.menu.contains(e.target);
       const clickedInsideBtn = self.btn && self.btn.contains(e.target);
-      const clickedInsidePanel = self.panel && self.panel.contains(e.target);
+      const clickedInsidePanel =
+        self.panel && self.panel.contains(e.target);
 
       const clickedInsideQuick =
         self.quickPanel && self.quickPanel.contains(e.target);
@@ -13631,19 +18763,19 @@ Vvveb.AIWriter = {
       top: rect.top,
       bottom: window.innerHeight - rect.bottom,
       left: rect.left,
-      right: window.innerWidth - rect.right
+      right: window.innerWidth - rect.right,
     };
 
-    let placement = 'default';
+    let placement = "default";
 
     if (space.bottom > 500) {
-      placement = 'bottom';
+      placement = "bottom";
     } else if (space.top > 500) {
-      placement = 'top-flip';
+      placement = "top-flip";
     } else if (space.right > 280) {
-      placement = 'right-flip';
+      placement = "right-flip";
     } else if (space.left > 280) {
-      placement = 'left-flip';
+      placement = "left-flip";
     }
 
     menu.dataset.placement = placement;
@@ -13666,7 +18798,8 @@ Vvveb.AIWriter = {
     sub.style.visibility = "hidden";
 
     // 2) anchor wrapper (relative container)
-    const wrap = anchorItem?.closest(".ai-menu-subwrap") || sub.parentElement;
+    const wrap =
+      anchorItem?.closest(".ai-menu-subwrap") || sub.parentElement;
     if (!wrap) {
       sub.style.visibility = "";
       return;
@@ -13721,25 +18854,32 @@ Vvveb.AIWriter = {
   },
 
   closeAllSubmenus() {
-    document.querySelectorAll("#ai-writer-menu .ai-submenu").forEach((s) => {
-      s.classList.add("is-hidden");
-      s.style.display = "";
-      s.style.visibility = "";
-    });
+    document
+      .querySelectorAll("#ai-writer-menu .ai-submenu")
+      .forEach((s) => {
+        s.classList.add("is-hidden");
+        s.style.display = "";
+        s.style.visibility = "";
+      });
   },
 
   handleAction(action) {
     if (action === "transform" || action === "write") {
       const el = Vvveb?.WysiwygEditor?.element || null;
 
+
       this.state.systemHint =
-        "Transform the selected text using the user's instruction. Follow the user's constraints strictly.";
+        action === "transform"
+          ? "Apply the user's instruction naturally to the selected text. Return only the final text."
+          : "Write fresh text based on the user's instruction. Return only the final text.";
+
       this.state.action = action;
       this.state.element = el;
+      this.state.context = this.buildAIContext(el);
+
       this.state.sourceText = el
         ? (el.innerText || el.textContent || "").trim()
         : "";
-
       if (this.ppActionLabel)
         this.ppActionLabel.textContent =
           action === "transform" ? "Transform" : "Write for me";
@@ -13755,6 +18895,7 @@ Vvveb.AIWriter = {
 
     this.state.action = action;
     this.state.element = el;
+    this.state.context = this.buildAIContext(el);
     this._lastElement = el;
 
     const actionMap = {
@@ -13857,11 +18998,15 @@ Vvveb.AIWriter = {
     ) {
       const prompt = (this.quickInput?.value || "").trim();
       if (prompt) {
-        // quick->full open + generate
+        this.state.userPrompt = prompt;
+
         this.closeQuick();
         this.openPanelAtMenuPosition();
-        // ppInput me prompt set
-        if (this.ppInput) this.ppInput.value = prompt;
+
+        if (this.ppInput) {
+          this.ppInput.value = prompt;
+        }
+
         this.autoGenerate();
       }
     }
@@ -14011,22 +19156,332 @@ Vvveb.AIWriter = {
     if (output) output.style.display = isLoading ? "none" : "block";
   },
 
+
+
+  getContextSource() {
+    return (
+      window.ZigrowTemplateContext ||
+      window.__zigrowTemplateContext ||
+      window.__zigrowBuilderContext ||
+      window.__zigrowAIContext ||
+      {}
+    );
+  },
+
+  getUrlContext() {
+    const params = new URLSearchParams(window.location.search || "");
+
+    return {
+      templateName:
+        params.get("template_name") ||
+        params.get("template") ||
+        params.get("tName") ||
+        "",
+
+      pageType:
+        params.get("page") ||
+        params.get("page_type") ||
+        "",
+    };
+  },
+
+  getTemplatePathFromUrl() {
+    try {
+      const params = new URLSearchParams(window.location.search || "");
+      const encoded = params.get("t") || "";
+
+      if (!encoded) return "";
+
+      try {
+        return atob(encoded);
+      } catch (e) {
+        return encoded;
+      }
+    } catch (e) {
+      return "";
+    }
+  },
+
+  getTemplateSourceFromPath(path = "") {
+    const p = (path || "").toLowerCase();
+
+    if (!p) return "";
+
+    if (
+      p.includes("ai-template") ||
+      p.includes("ai_templates") ||
+      p.includes("ai-generated") ||
+      p.includes("generated") ||
+      p.includes("user-generated")
+    ) {
+      return "ai-template";
+    }
+
+    if (
+      p.includes("templates/") ||
+      p.includes("template/")
+    ) {
+      return "custom-template";
+    }
+
+    return "";
+  },
+
+  findClosestSection(el) {
+    if (!el || !el.closest) return null;
+
+    return el.closest(
+      "section, header, footer, [data-section], [id*='zigrow-']"
+    );
+  },
+
+  getElementType(el) {
+    if (!el || !el.tagName) return "text";
+
+    const explicitType =
+      el.getAttribute("data-ai-element-type") ||
+      el.closest("[data-ai-element-type]")?.getAttribute("data-ai-element-type");
+
+    if (explicitType) {
+      return this.normalizeContextValue(explicitType);
+    }
+
+    const tag = el.tagName.toLowerCase();
+    const text = (el.innerText || el.textContent || "").trim();
+
+    const className = (el.className || "").toString().toLowerCase();
+    const id = (el.id || "").toString().toLowerCase();
+
+    const parentClassName = (el.parentElement?.className || "").toString().toLowerCase();
+    const grandParentClassName = (el.parentElement?.parentElement?.className || "").toString().toLowerCase();
+
+    const closestAccordionItem = el.closest(".accordion-item");
+    const closestAccordionHeader = el.closest(".accordion-header");
+    const closestAccordionButton = el.closest(".accordion-button");
+    const closestAccordionBody = el.closest(".accordion-body");
+    const closestAccordionCollapse = el.closest(".accordion-collapse");
+
+    const combined = `
+    ${className}
+    ${id}
+    ${parentClassName}
+    ${grandParentClassName}
+  `.toLowerCase();
+
+    // 1. Any question-like text should be treated as question,
+    // even outside FAQ.
+    if (text.endsWith("?")) {
+      return closestAccordionItem ? "faq-question" : "question";
+    }
+
+    // 2. Bootstrap FAQ / accordion question detection.
+    if (
+      closestAccordionButton ||
+      closestAccordionHeader ||
+      combined.includes("accordion-button") ||
+      combined.includes("accordion-header") ||
+      combined.includes("faq-question") ||
+      combined.includes("question")
+    ) {
+      return closestAccordionItem ? "faq-question" : "question";
+    }
+
+    // 3. Bootstrap FAQ / accordion answer detection.
+    if (
+      closestAccordionBody ||
+      combined.includes("accordion-body") ||
+      combined.includes("faq-answer") ||
+      combined.includes("answer")
+    ) {
+      return closestAccordionItem ? "faq-answer" : "answer";
+    }
+
+    // 4. If selected element is inside accordion collapse but not header,
+    // it is most likely an FAQ answer.
+    if (closestAccordionCollapse && !closestAccordionHeader && !closestAccordionButton) {
+      return closestAccordionItem ? "faq-answer" : "answer";
+    }
+
+    // 5. Normal website element fallback.
+    if (/^h[1-6]$/.test(tag)) return "heading";
+    if (tag === "p") return "paragraph";
+    if (tag === "a" || tag === "button") return "button";
+    if (tag === "li") return "list-item";
+    if (tag === "span") return "inline-text";
+    if (tag === "small") return "small-text";
+    if (tag === "label") return "form-label";
+    if (tag === "input" || tag === "textarea") return "form-field";
+
+    return tag || "text";
+  },
+
+  normalizeContextValue(value) {
+    return (value || "").toString().trim();
+  },
+
+  getTemplateTitleFromCanvas() {
+    try {
+      const iframe = window.Vvveb?.Builder?.iframe || null;
+      const doc = iframe?.contentDocument || iframe?.contentWindow?.document || null;
+
+      return (
+        doc?.querySelector("title")?.textContent ||
+        doc?.title ||
+        ""
+      ).trim();
+    } catch (e) {
+      return "";
+    }
+  },
+
+  buildAIContext(el) {
+    const globalCtx = this.getContextSource();
+    const urlCtx = this.getUrlContext();
+    const pageCtx = this.getCurrentPageContext();
+
+    const templatePath = this.getTemplatePathFromUrl();
+    const detectedTemplateSource = this.getTemplateSourceFromPath(templatePath);
+    const templateTitleFromCanvas = this.getTemplateTitleFromCanvas();
+
+    const sectionEl = this.findClosestSection(el);
+
+    const sectionId =
+      sectionEl?.getAttribute("data-section") ||
+      sectionEl?.id ||
+      "";
+
+    const sectionType =
+      sectionEl
+        ? (
+          sectionEl.getAttribute("data-ai-section-type") ||
+          sectionEl.getAttribute("data-section-category") ||
+          sectionEl.getAttribute("data-vvveb-block-cat") ||
+          (typeof _sectionCategoryFromEl === "function"
+            ? _sectionCategoryFromEl(sectionEl)
+            : "")
+        )
+        : "";
+
+    const elementType = this.getElementType(el);
+    const elementTag = el?.tagName ? el.tagName.toLowerCase() : "";
+
+    return {
+      templateCategory: this.normalizeContextValue(
+        globalCtx.templateCategory ||
+        globalCtx.template_category ||
+        globalCtx.businessCategory ||
+        globalCtx.business_category ||
+        globalCtx.industry ||
+        globalCtx.category
+      ),
+
+      businessCategory: this.normalizeContextValue(
+        globalCtx.templateCategory ||
+        globalCtx.template_category ||
+        globalCtx.businessCategory ||
+        globalCtx.business_category ||
+        globalCtx.industry ||
+        globalCtx.category
+      ),
+
+      templateName: this.normalizeContextValue(
+        globalCtx.templateName ||
+        globalCtx.template_name ||
+        globalCtx.title ||
+        templateTitleFromCanvas ||
+        urlCtx.templateName
+      ),
+
+      templateSource: this.normalizeContextValue(
+        globalCtx.templateSource ||
+        globalCtx.template_source ||
+        detectedTemplateSource
+      ),
+
+      templatePath: this.normalizeContextValue(templatePath),
+
+      pageType: this.normalizeContextValue(
+        globalCtx.pageType ||
+        globalCtx.page_type ||
+        urlCtx.pageType ||
+        pageCtx.pageType ||
+        "Home"
+      ),
+
+      pageKey: this.normalizeContextValue(pageCtx.pageKey),
+      pageSlug: this.normalizeContextValue(pageCtx.pageSlug),
+      pageFile: this.normalizeContextValue(pageCtx.pageFile),
+
+      sectionType: this.normalizeContextValue(sectionType || "other"),
+      sectionId: this.normalizeContextValue(sectionId),
+      elementType: this.normalizeContextValue(elementType),
+      elementTag: this.normalizeContextValue(elementTag),
+    };
+  },
+
+  getCurrentPageContext() {
+    const currentPageName =
+      (window.Vvveb &&
+        Vvveb.FileManager &&
+        Vvveb.FileManager.currentPage) ||
+      "index.html";
+
+    const currentPageData =
+      (window.__zigrowPages && window.__zigrowPages[currentPageName]) ||
+      {};
+
+    const cleanFileName = currentPageName
+      .replace(".html", "")
+      .replace(/[-_]+/g, " ")
+      .trim();
+
+    const readablePageName =
+      cleanFileName
+        ? cleanFileName.replace(/\b\w/g, (c) => c.toUpperCase())
+        : "";
+
+    return {
+      pageType:
+        currentPageData._pageName ||
+        currentPageData.title ||
+        (currentPageData._isHome ? "Home" : "") ||
+        readablePageName ||
+        "Home",
+
+      pageKey:
+        currentPageData._pageKey ||
+        cleanFileName.toLowerCase().replace(/\s+/g, "-") ||
+        "home",
+
+      pageSlug:
+        currentPageData._pageSlug ||
+        (currentPageName === "index.html" ? "/" : `/${cleanFileName.replace(/\s+/g, "-")}`),
+
+      pageFile:
+        currentPageName
+    };
+  },
+
   async autoGenerate() {
     //   const el = this.state.element;
     const action = this.state.action;
     const tone = this.state.tone;
 
     const selectedText = this.state.sourceText || "";
-    const typed = (this.ppInput?.value || "").trim();
-    const userPrompt = action === "transform" ? typed : "";
 
-    const hardPrompt = userPrompt
-      ? `USER_INSTRUCTION (must follow exactly): ${userPrompt}\n` +
-      `Rules: If user asks word/character limit, follow strictly. If user asks "exactly N words", output exactly N words.`
-      : "";
+    const typed = (
+      this.state.userPrompt ||
+      this.ppInput?.value ||
+      this.quickInput?.value ||
+      ""
+    ).trim();
 
-    const finalHint =
-      `${hardPrompt}\n` + `${this.state.systemHint || ""}`.trim();
+    const userPrompt =
+      action === "transform" || action === "write"
+        ? typed
+        : "";
+
+    const finalHint = this.state.systemHint || "";
 
     if (this.ppPreview) {
       this.ppPreview.classList.remove("is-hidden");
@@ -14036,23 +19491,32 @@ Vvveb.AIWriter = {
     try {
       this.setLoading(true);
 
+      const context =
+        this.state.context ||
+        this.buildAIContext(this.state.element);
+
+      console.log("[AI Writer Context]", context);
+
       const result = await window.AIWriterAPI.generate({
         action,
         tone,
         selectedText,
         userPrompt,
-        hint: finalHint,
+        context,
       });
 
       const textRaw = result?.text || "";
 
-      const text = this._postProcessByPrompt(textRaw, userPrompt);
+      const text =
+        action === "transform"
+          ? textRaw.trim()
+          : this._postProcessByPrompt(textRaw, userPrompt);
+
+      const inputForTokens = `${selectedText}\n${userPrompt}\n${finalHint || ""}`;
+
       const usedTokens =
         result?.usedTokens ||
         this.estimateTokens(inputForTokens) + this.estimateTokens(text);
-
-      const inputForTokens = `${selectedText}\n${userPrompt}\n${finalHint || ""
-        }`;
 
       try {
         const updated = await window.ZigrowTokenAPI.consume(usedTokens);
@@ -14065,13 +19529,15 @@ Vvveb.AIWriter = {
 
       if (this.ppOutput) this.ppOutput.textContent = text;
       if (this.ppInput) this.ppInput.value = "";
+      this.state.userPrompt = "";
 
       if (this.ppPreview) {
         this.ppPreview.textContent = "";
         this.ppPreview.classList.add("is-hidden");
       }
     } catch (err) {
-      if (this.ppOutput) this.ppOutput.textContent = `❌ ${err.message || err}`;
+      if (this.ppOutput)
+        this.ppOutput.textContent = `❌ ${err.message || err}`;
     } finally {
       this.setLoading(false);
     }
@@ -14084,7 +19550,11 @@ Vvveb.AIWriter = {
 
   applyGenerated(mode = "replace") {
     const el = this.state.element;
-    const text = (this.state.generatedText || this.ppInput?.value || "").trim();
+    const text = (
+      this.state.generatedText ||
+      this.ppInput?.value ||
+      ""
+    ).trim();
 
     if (!el || !text) return;
 
@@ -14186,7 +19656,9 @@ Vvveb.AIWriter = {
   },
 
   isQuickOpen() {
-    return this.quickPanel && !this.quickPanel.classList.contains("is-hidden");
+    return (
+      this.quickPanel && !this.quickPanel.classList.contains("is-hidden")
+    );
   },
 
   openQuickAtMenuPosition() {
@@ -14198,7 +19670,8 @@ Vvveb.AIWriter = {
       document.body;
 
     const parentRect = parent.getBoundingClientRect();
-    const menuRect = this._lastMenuRect || this.menu.getBoundingClientRect();
+    const menuRect =
+      this._lastMenuRect || this.menu.getBoundingClientRect();
 
     const left = menuRect.left - parentRect.left;
     const top = menuRect.top - parentRect.top;
@@ -14302,7 +19775,7 @@ Vvveb.AIWriter = {
     const used = Number(data.consumed_tokens ?? data.used ?? 0);
 
     const remaining = Number(
-      data.remaining_tokens ?? data.remaining ?? total - used
+      data.remaining_tokens ?? data.remaining ?? total - used,
     );
 
     document.querySelectorAll(".zg-token-used").forEach((el) => {
@@ -14317,7 +19790,8 @@ Vvveb.AIWriter = {
     const usedInCredit = data.used_tokens_in_current_credit;
 
     // ✅ main line
-    if (this.tokenCountEl) this.tokenCountEl.textContent = `${used} / ${total}`;
+    if (this.tokenCountEl)
+      this.tokenCountEl.textContent = `${used} / ${total}`;
 
     //   if(this.tokenRemainingEl) {
     //     if (leftInCredit !== undefined && leftInCredit !== null) {
@@ -14336,7 +19810,8 @@ Vvveb.AIWriter = {
         ? Number(leftInCredit)
         : remaining;
 
-    if (this.tokenRow) this.tokenRow.classList.toggle("is-low", warnVal < 200);
+    if (this.tokenRow)
+      this.tokenRow.classList.toggle("is-low", warnVal < 200);
   },
 
   async refreshTokenStatus() {
@@ -14391,7 +19866,9 @@ Vvveb.AIWriter = {
     if (this._quickBound) return;
     this._quickBound = true;
 
-    this.quickInput?.addEventListener("input", () => this._updateQuickSendUI());
+    this.quickInput?.addEventListener("input", () =>
+      this._updateQuickSendUI(),
+    );
 
     this.quickInput?.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
@@ -14412,6 +19889,8 @@ Vvveb.AIWriter = {
     }
   },
 };
+
+
 Vvveb.AIWriter.positionMenuBound = Vvveb.AIWriter.positionMenu.bind(
   Vvveb.AIWriter
 );
@@ -14459,6 +19938,8 @@ Vvveb.GlobalCustomVariable = {
   styleEl: null,
   pairSelect: null,
   selectedPalette: null,
+
+  fontPairs: [],
 
   init(doc) {
     this.doc = doc || window.FrameDocument;
@@ -14587,7 +20068,579 @@ Vvveb.GlobalCustomVariable = {
         heading: { name: "Rosario", provider: "google" },
         body: { name: "Rubik", provider: "google" },
       },
+
+      // 🧱 Slab & companion sans
+      {
+        key: "epunda_slab_sans",
+        label: "Epunda Slab + Epunda Sans",
+        heading: { name: "Epunda Slab", provider: "google" },
+        body: { name: "Epunda Sans", provider: "google" },
+      },
+
+      // 🔨 Editorial & mono contrasts
+      {
+        key: "work_bitter",
+        label: "Work Sans + Bitter",
+        heading: { name: "Work Sans", provider: "google" },
+        body: { name: "Bitter", provider: "google" },
+      },
+      {
+        key: "archivo_ibmplexmono",
+        label: "Archivo + IBM Plex Mono",
+        heading: { name: "Archivo", provider: "google" },
+        body: { name: "IBM Plex Mono", provider: "google" },
+      },
+      {
+        key: "ebgaramond_dmmono",
+        label: "EB Garamond + DM Mono",
+        heading: { name: "EB Garamond", provider: "google" },
+        body: { name: "DM Mono", provider: "google" },
+      },
+      {
+        key: "dmsans_playfair",
+        label: "DM Sans + Playfair Display",
+        heading: { name: "DM Sans", provider: "google" },
+        body: { name: "Playfair Display", provider: "google" },
+      },
+      {
+        key: "geistmono_ebgaramond",
+        label: "Geist Mono + EB Garamond",
+        heading: { name: "Geist Mono", provider: "google" },
+        body: { name: "EB Garamond", provider: "google" },
+      },
+      {
+        key: "sourcesanspro_sourcecodepro",
+        label: "Source Sans Pro + Source Code Pro",
+        heading: { name: "Source Sans Pro", provider: "google" },
+        body: { name: "Source Code Pro", provider: "google" },
+      },
+      {
+        key: "zalandosans_jetbrainsmono",
+        label: "Zalando Sans + JetBrains Mono",
+        heading: { name: "Zalando Sans", provider: "google" },
+        body: { name: "JetBrains Mono", provider: "google" },
+      },
+      {
+        key: "crimsonpro_vt323",
+        label: "Crimson Pro + VT323",
+        heading: { name: "Crimson Pro", provider: "google" },
+        body: { name: "VT323", provider: "google" },
+      },
+      {
+        key: "karla_inconsolata",
+        label: "Karla + Inconsolata",
+        heading: { name: "Karla", provider: "google" },
+        body: { name: "Inconsolata", provider: "google" },
+      },
+      {
+        key: "instrument_sans_chivomono",
+        label: "Instrument Sans + Chivo Mono",
+        heading: { name: "Instrument Sans", provider: "google" },
+        body: { name: "Chivo Mono", provider: "google" },
+      },
+
+      // 🖋️ Gothic / condensed display
+      {
+        key: "special_gothic_condensed_one",
+        label: "Special Gothic Condensed One + Special Gothic",
+        heading: { name: "Special Gothic Condensed One", provider: "google" },
+        body: { name: "Special Gothic", provider: "google" },
+      },
+      {
+        key: "special_gothic_expanded_one_gothic",
+        label: "Special Gothic Expanded One + Special Gothic",
+        heading: { name: "Special Gothic Expanded One", provider: "google" },
+        body: { name: "Special Gothic", provider: "google" },
+      },
+      {
+        key: "special_gothic_expanded_one_inter",
+        label: "Special Gothic Expanded One + Inter",
+        heading: { name: "Special Gothic Expanded One", provider: "google" },
+        body: { name: "Inter", provider: "google" },
+      },
+      {
+        key: "dmsans_staatliches",
+        label: "DM Sans + Staatliches",
+        heading: { name: "DM Sans", provider: "google" },
+        body: { name: "Staatliches", provider: "google" },
+      },
+
+      // 💻 Mono + mono / tech pairs
+      {
+        key: "suse_mono_suse",
+        label: "SUSE Mono + SUSE",
+        heading: { name: "SUSE Mono", provider: "google" },
+        body: { name: "SUSE", provider: "google" },
+      },
+
+      // 🏙️ Modern brand sans
+      {
+        key: "tiktok_sans_geist",
+        label: "TikTok Sans + Geist",
+        heading: { name: "TikTok Sans", provider: "google" },
+        body: { name: "Geist", provider: "google" },
+      },
+      {
+        key: "unbounded_albert",
+        label: "Unbounded + Albert Sans",
+        heading: { name: "Unbounded", provider: "google" },
+        body: { name: "Albert Sans", provider: "google" },
+      },
+      {
+        key: "urbanist_opensans",
+        label: "Urbanist + Open Sans",
+        heading: { name: "Urbanist", provider: "google" },
+        body: { name: "Open Sans", provider: "google" },
+      },
+      {
+        key: "voltaire_inter",
+        label: "Voltaire + Inter",
+        heading: { name: "Voltaire", provider: "google" },
+        body: { name: "Inter", provider: "google" },
+      },
+      {
+        key: "bricolage_biorhyme",
+        label: "Bricolage Grotesque + BioRhyme",
+        heading: { name: "Bricolage Grotesque", provider: "google" },
+        body: { name: "BioRhyme", provider: "google" },
+      },
+      {
+        key: "bricolage_geist",
+        label: "Bricolage Grotesque + Geist",
+        heading: { name: "Bricolage Grotesque", provider: "google" },
+        body: { name: "Geist", provider: "google" },
+      },
+      {
+        key: "bricolage_ubuntu",
+        label: "Bricolage Grotesque + Ubuntu",
+        heading: { name: "Bricolage Grotesque", provider: "google" },
+        body: { name: "Ubuntu", provider: "google" },
+      },
+      {
+        key: "alumni_sans_dmsans",
+        label: "Alumni Sans + DM Sans",
+        heading: { name: "Alumni Sans", provider: "google" },
+        body: { name: "DM Sans", provider: "google" },
+      },
+      {
+        key: "libre_franklin_eczar",
+        label: "Libre Franklin + Eczar",
+        heading: { name: "Libre Franklin", provider: "google" },
+        body: { name: "Eczar", provider: "google" },
+      },
+      {
+        key: "libre_franklin_baskerville",
+        label: "Libre Franklin + Libre Baskerville",
+        heading: { name: "Libre Franklin", provider: "google" },
+        body: { name: "Libre Baskerville", provider: "google" },
+      },
+      {
+        key: "libre_franklin_self",
+        label: "Libre Franklin Bold + Libre Franklin Regular",
+        heading: { name: "Libre Franklin", provider: "google" },
+        body: { name: "Libre Franklin", provider: "google" },
+      },
+      {
+        key: "vend_sans_self",
+        label: "Vend Sans Bold + Vend Sans Regular",
+        heading: { name: "Vend Sans", provider: "google" },
+        body: { name: "Vend Sans", provider: "google" },
+      },
+      {
+        key: "yantramanav_self",
+        label: "Yantramanav Bold + Yantramanav Regular",
+        heading: { name: "Yantramanav", provider: "google" },
+        body: { name: "Yantramanav", provider: "google" },
+      },
+      {
+        key: "zen_maru_gothic_self",
+        label: "Zen Maru Gothic Bold + Zen Maru Gothic Regular",
+        heading: { name: "Zen Maru Gothic", provider: "google" },
+        body: { name: "Zen Maru Gothic", provider: "google" },
+      },
+      {
+        key: "zalando_sans_self",
+        label: "Zalando Sans Bold + Zalando Sans Regular",
+        heading: { name: "Zalando Sans", provider: "google" },
+        body: { name: "Zalando Sans", provider: "google" },
+      },
+      {
+        key: "zalando_expanded_sans",
+        label: "Zalando Sans Expanded + Zalando Sans",
+        heading: { name: "Zalando Sans Expanded", provider: "google" },
+        body: { name: "Zalando Sans", provider: "google" },
+      },
+
+      // ✒️ Serif display
+      {
+        key: "gloock_inter",
+        label: "Gloock + Inter",
+        heading: { name: "Gloock", provider: "google" },
+        body: { name: "Inter", provider: "google" },
+      },
+      {
+        key: "pt_serif_lato",
+        label: "PT Serif + Lato",
+        heading: { name: "PT Serif", provider: "google" },
+        body: { name: "Lato", provider: "google" },
+      },
+      {
+        key: "instrument_sans_serif",
+        label: "Instrument Sans + Instrument Serif",
+        heading: { name: "Instrument Sans", provider: "google" },
+        body: { name: "Instrument Serif", provider: "google" },
+      },
+      {
+        key: "alfa_slab_gentium",
+        label: "Alfa Slab One + Gentium Book Plus",
+        heading: { name: "Alfa Slab One", provider: "google" },
+        body: { name: "Gentium Book Plus", provider: "google" },
+      },
+      {
+        key: "cardo_roboto_serif",
+        label: "Cardo + Roboto Serif",
+        heading: { name: "Cardo", provider: "google" },
+        body: { name: "Roboto Serif", provider: "google" },
+      },
+      {
+        key: "alegreya_sourcesans",
+        label: "Alegreya + Source Sans Pro",
+        heading: { name: "Alegreya", provider: "google" },
+        body: { name: "Source Sans Pro", provider: "google" },
+      },
+      {
+        key: "alegreya_sc_alegreya",
+        label: "Alegreya SC + Alegreya",
+        heading: { name: "Alegreya SC", provider: "google" },
+        body: { name: "Alegreya", provider: "google" },
+      },
+      {
+        key: "alegreya_sans_sc",
+        label: "Alegreya Sans SC + Alegreya Sans",
+        heading: { name: "Alegreya Sans SC", provider: "google" },
+        body: { name: "Alegreya Sans", provider: "google" },
+      },
+      {
+        key: "lora_manrope",
+        label: "Lora + Manrope",
+        heading: { name: "Lora", provider: "google" },
+        body: { name: "Manrope", provider: "google" },
+      },
+      {
+        key: "lusitana_raleway",
+        label: "Lusitana + Raleway",
+        heading: { name: "Lusitana", provider: "google" },
+        body: { name: "Raleway", provider: "google" },
+      },
+      {
+        key: "lustria_mulish",
+        label: "Lustria + Mulish",
+        heading: { name: "Lustria", provider: "google" },
+        body: { name: "Mulish", provider: "google" },
+      },
+      {
+        key: "ovo_mulish",
+        label: "Ovo + Mulish",
+        heading: { name: "Ovo", provider: "google" },
+        body: { name: "Mulish", provider: "google" },
+      },
+      {
+        key: "brawler_nunitosans",
+        label: "Brawler + Nunito Sans",
+        heading: { name: "Brawler", provider: "google" },
+        body: { name: "Nunito Sans", provider: "google" },
+      },
+
+      // 🌐 Script & decorative
+      {
+        key: "yellowtail_nunito",
+        label: "Yellowtail + Nunito",
+        heading: { name: "Yellowtail", provider: "google" },
+        body: { name: "Nunito", provider: "google" },
+      },
+      {
+        key: "yellowtail_lato",
+        label: "Yellowtail + Lato",
+        heading: { name: "Yellowtail", provider: "google" },
+        body: { name: "Lato", provider: "google" },
+      },
+
+      // 🎌 CJK / multilingual
+      {
+        key: "ysabeau_infant_ysabeau",
+        label: "Ysabeau Infant + Ysabeau",
+        heading: { name: "Ysabeau Infant", provider: "google" },
+        body: { name: "Ysabeau", provider: "google" },
+      },
+      {
+        key: "ysabeau_sc_ysabeau",
+        label: "Ysabeau SC + Ysabeau",
+        heading: { name: "Ysabeau SC", provider: "google" },
+        body: { name: "Ysabeau", provider: "google" },
+      },
+      {
+        key: "zain_nunito",
+        label: "Zain + Nunito",
+        heading: { name: "Zain", provider: "google" },
+        body: { name: "Nunito", provider: "google" },
+      },
+      {
+        key: "zen_kaku_antique_new",
+        label: "Zen Kaku Gothic Antique + Zen Kaku Gothic New",
+        heading: { name: "Zen Kaku Gothic Antique", provider: "google" },
+        body: { name: "Zen Kaku Gothic New", provider: "google" },
+      },
+
+      // 🎯 Humanist workhorse
+      {
+        key: "oswald_montserrat",
+        label: "Oswald + Montserrat",
+        heading: { name: "Oswald", provider: "google" },
+        body: { name: "Montserrat", provider: "google" },
+      },
+      {
+        key: "teko_ubuntu",
+        label: "Teko + Ubuntu",
+        heading: { name: "Teko", provider: "google" },
+        body: { name: "Ubuntu", provider: "google" },
+      },
+      {
+        key: "rubik_karla",
+        label: "Rubik + Karla",
+        heading: { name: "Rubik", provider: "google" },
+        body: { name: "Karla", provider: "google" },
+      },
+      {
+        key: "roboto_nunitosans",
+        label: "Roboto + Nunito Sans",
+        heading: { name: "Roboto", provider: "google" },
+        body: { name: "Nunito Sans", provider: "google" },
+      },
+      {
+        key: "montserrat_hind",
+        label: "Montserrat + Hind",
+        heading: { name: "Montserrat", provider: "google" },
+        body: { name: "Hind", provider: "google" },
+      },
+      {
+        key: "montserrat_geist",
+        label: "Montserrat + Geist",
+        heading: { name: "Montserrat", provider: "google" },
+        body: { name: "Geist", provider: "google" },
+      },
+      {
+        key: "montserrat_nunito",
+        label: "Montserrat + Nunito",
+        heading: { name: "Montserrat", provider: "google" },
+        body: { name: "Nunito", provider: "google" },
+      },
+      {
+        key: "nunito_ptsans",
+        label: "Nunito + PT Sans",
+        heading: { name: "Nunito", provider: "google" },
+        body: { name: "PT Sans", provider: "google" },
+      },
+      {
+        key: "palanquin_dark_palanquin",
+        label: "Palanquin Dark + Palanquin",
+        heading: { name: "Palanquin Dark", provider: "google" },
+        body: { name: "Palanquin", provider: "google" },
+      },
+
+
+      // 🖥️ Ubuntu family pairs
+      {
+        key: "ubuntu_sans_mono_ubuntu_sans",
+        label: "Ubuntu Sans Mono + Ubuntu Sans",
+        heading: { name: "Ubuntu Sans Mono", provider: "google" },
+        body: { name: "Ubuntu Sans", provider: "google" },
+      },
+      {
+        key: "ubuntu_condensed_ubuntu_sans",
+        label: "Ubuntu Condensed + Ubuntu Sans",
+        heading: { name: "Ubuntu Condensed", provider: "google" },
+        body: { name: "Ubuntu Sans", provider: "google" },
+      },
+      {
+        key: "ubuntu_sans_ubuntu",
+        label: "Ubuntu Sans + Ubuntu",
+        heading: { name: "Ubuntu Sans", provider: "google" },
+        body: { name: "Ubuntu", provider: "google" },
+      },
+      {
+        key: "ubuntu_sans_mono_ubuntu_mono",
+        label: "Ubuntu Sans Mono + Ubuntu Mono",
+        heading: { name: "Ubuntu Sans Mono", provider: "google" },
+        body: { name: "Ubuntu Mono", provider: "google" },
+      },
+      {
+        key: "ubuntu_condensed_ubuntu",
+        label: "Ubuntu Condensed + Ubuntu",
+        heading: { name: "Ubuntu Condensed", provider: "google" },
+        body: { name: "Ubuntu", provider: "google" },
+      },
+
+      // 🔴 Red Hat & Manrope
+      {
+        key: "manrope_ibmplexmono",
+        label: "Manrope + IBM Plex Mono",
+        heading: { name: "Manrope", provider: "google" },
+        body: { name: "IBM Plex Mono", provider: "google" },
+      },
+      {
+        key: "red_hat_mono_self",
+        label: "Red Hat Mono Bold + Red Hat Mono Regular",
+        heading: { name: "Red Hat Mono", provider: "google" },
+        body: { name: "Red Hat Mono", provider: "google" },
+      },
+
+      // 🅿️ PT family pairs
+      {
+        key: "pt_sans_narrow_pt_serif",
+        label: "PT Sans Narrow + PT Serif",
+        heading: { name: "PT Sans Narrow", provider: "google" },
+        body: { name: "PT Serif", provider: "google" },
+      },
+      {
+        key: "pt_serif_self",
+        label: "PT Serif Bold + PT Serif Regular",
+        heading: { name: "PT Serif", provider: "google" },
+        body: { name: "PT Serif", provider: "google" },
+      },
+      {
+        key: "pt_sans_caption_pt_sans",
+        label: "PT Sans Caption + PT Sans",
+        heading: { name: "PT Sans Caption", provider: "google" },
+        body: { name: "PT Sans", provider: "google" },
+      },
+      {
+        key: "pt_sans_narrow_pt_sans",
+        label: "PT Sans Narrow + PT Sans",
+        heading: { name: "PT Sans Narrow", provider: "google" },
+        body: { name: "PT Sans", provider: "google" },
+      },
+
+      // 🅿️ Playfair family pairs
+      {
+        key: "playfair_display_sc_playfair",
+        label: "Playfair Display SC + Playfair",
+        heading: { name: "Playfair Display SC", provider: "google" },
+        body: { name: "Playfair", provider: "google" },
+      },
+      {
+        key: "playfair_display_playfair",
+        label: "Playfair Display + Playfair",
+        heading: { name: "Playfair Display", provider: "google" },
+        body: { name: "Playfair", provider: "google" },
+      },
+
+      // 🌐 Noto family pairs
+      {
+        key: "noto_serif_display_noto_sans",
+        label: "Noto Serif Display + Noto Sans",
+        heading: { name: "Noto Serif Display", provider: "google" },
+        body: { name: "Noto Sans", provider: "google" },
+      },
+      {
+        key: "noto_serif_self",
+        label: "Noto Serif Bold + Noto Serif Regular",
+        heading: { name: "Noto Serif", provider: "google" },
+        body: { name: "Noto Serif", provider: "google" },
+      },
+      {
+        key: "noto_serif_noto_sans",
+        label: "Noto Serif + Noto Sans",
+        heading: { name: "Noto Serif", provider: "google" },
+        body: { name: "Noto Sans", provider: "google" },
+      },
+      {
+        key: "noto_sans_self",
+        label: "Noto Sans Bold + Noto Sans Regular",
+        heading: { name: "Noto Sans", provider: "google" },
+        body: { name: "Noto Sans", provider: "google" },
+      },
+
+      // 🔥 Fira & Encode
+      {
+        key: "fira_mono_self",
+        label: "Fira Mono Bold + Fira Mono Regular",
+        heading: { name: "Fira Mono", provider: "google" },
+        body: { name: "Fira Mono", provider: "google" },
+      },
+      {
+        key: "encode_expanded_condensed",
+        label: "Encode Sans Expanded + Encode Sans Condensed",
+        heading: { name: "Encode Sans Expanded", provider: "google" },
+        body: { name: "Encode Sans Condensed", provider: "google" },
+      },
+
+      // 🔵 Barlow condensed
+      {
+        key: "barlow_semi_condensed_barlow",
+        label: "Barlow Semi Condensed + Barlow",
+        heading: { name: "Barlow Semi Condensed", provider: "google" },
+        body: { name: "Barlow", provider: "google" },
+      },
+
+      // 💼 IBM Plex family pairs
+      {
+        key: "ibm_plex_sans_condensed_serif",
+        label: "IBM Plex Sans Condensed + IBM Plex Serif",
+        heading: { name: "IBM Plex Sans Condensed", provider: "google" },
+        body: { name: "IBM Plex Serif", provider: "google" },
+      },
+      {
+        key: "ibm_plex_sans_condensed_sans",
+        label: "IBM Plex Sans Condensed + IBM Plex Sans",
+        heading: { name: "IBM Plex Sans Condensed", provider: "google" },
+        body: { name: "IBM Plex Sans", provider: "google" },
+      },
+
+      // 🔷 Source & Reddit & Roboto family pairs
+      {
+        key: "source_code_pro_self",
+        label: "Source Code Pro Bold + Source Code Pro Regular",
+        heading: { name: "Source Code Pro", provider: "google" },
+        body: { name: "Source Code Pro", provider: "google" },
+      },
+      {
+        key: "source_serif_4_self",
+        label: "Source Serif 4 Bold + Source Serif 4 Regular",
+        heading: { name: "Source Serif 4", provider: "google" },
+        body: { name: "Source Serif 4", provider: "google" },
+      },
+      {
+        key: "reddit_mono_self",
+        label: "Reddit Mono Bold + Reddit Mono Regular",
+        heading: { name: "Reddit Mono", provider: "google" },
+        body: { name: "Reddit Mono", provider: "google" },
+      },
+      {
+        key: "roboto_serif_self",
+        label: "Roboto Serif Bold + Roboto Serif Regular",
+        heading: { name: "Roboto Serif", provider: "google" },
+        body: { name: "Roboto Serif", provider: "google" },
+      },
+      {
+        key: "roboto_roboto_serif",
+        label: "Roboto + Roboto Serif",
+        heading: { name: "Roboto", provider: "google" },
+        body: { name: "Roboto Serif", provider: "google" },
+      },
+      {
+        key: "roboto_mono_self",
+        label: "Roboto Mono Bold + Roboto Mono Regular",
+        heading: { name: "Roboto Mono", provider: "google" },
+        body: { name: "Roboto Mono", provider: "google" },
+      },
     ];
+
+    this.fontPairs = fontPairs;
+    this._ensureGlobalFontLibrary(this.fontPairs, this.doc)
+
+    // Load same fonts in builder parent UI also,
+    // so Heading / Body preview chips use their own font family.
+    this._ensureGlobalFontLibrary(this.fontPairs, document)
 
     // New: list instead of dropdown
     const listEl = document.getElementById("font-pair-list");
@@ -14600,8 +20653,8 @@ Vvveb.GlobalCustomVariable = {
         <div>
           <div class="pair-names">${p.label}</div>
          <div class="pair-sub modern">
-        <span class="chip chip-h" style="font-family:'${p.heading.name}', serif;">Heading</span>
-        <span class="chip chip-b" style="font-family:'${p.body.name}', sans-serif;">Body</span>
+      <span class="chip chip-h" style="font-family:'${p.heading.name}', serif !important;">Heading</span>
+<span class="chip chip-b" style="font-family:'${p.body.name}', sans-serif !important;">Body</span>
       </div>
         </div>
       </li>
@@ -14632,34 +20685,34 @@ Vvveb.GlobalCustomVariable = {
         //     );
         // } catch (e) {}
 
-        try {
-          const currentH = this._getVar("--vvv-font-h")
-            .replace(/^['"]|['"]$/g, "")
-            .trim();
-          const currentB = this._getVar("--vvv-font-b")
-            .replace(/^['"]|['"]$/g, "")
-            .trim();
+        // try {
+        //   const currentH = this._getVar("--vvv-font-h")
+        //     .replace(/^['"]|['"]$/g, "")
+        //     .trim();
+        //   const currentB = this._getVar("--vvv-font-b")
+        //     .replace(/^['"]|['"]$/g, "")
+        //     .trim();
 
-          const current = fontPairs.find(
-            (p) =>
-              currentH &&
-              currentB &&
-              currentH.replace(/\s+/g, "").toLowerCase() ===
-              p.heading.name.replace(/\s+/g, "").toLowerCase() &&
-              currentB.replace(/\s+/g, "").toLowerCase() ===
-              p.body.name.replace(/\s+/g, "").toLowerCase()
-          );
+        //   const current = fontPairs.find(
+        //     (p) =>
+        //       currentH &&
+        //       currentB &&
+        //       currentH.replace(/\s+/g, "").toLowerCase() ===
+        //       p.heading.name.replace(/\s+/g, "").toLowerCase() &&
+        //       currentB.replace(/\s+/g, "").toLowerCase() ===
+        //       p.body.name.replace(/\s+/g, "").toLowerCase()
+        //   );
 
-          if (current) {
-            const currentItem = listEl.querySelector(
-              `[data-key="${current.key}"]`
-            );
-            if (currentItem) currentItem.classList.add("active");
+        //   if (current) {
+        //     const currentItem = listEl.querySelector(
+        //       `[data-key="${current.key}"]`
+        //     );
+        //     if (currentItem) currentItem.classList.add("active");
 
-            this._ensureBodyClass();
-            this._syncGlobalFontHead(current);
-          }
-        } catch (e) { }
+        //     this._ensureBodyClass();
+        //     this._syncGlobalFontHead(current);
+        //   }
+        // } catch (e) { }
         // Apply fonts
         this._applyFontPair(pair);
 
@@ -14668,6 +20721,12 @@ Vvveb.GlobalCustomVariable = {
           .querySelectorAll(".vvv-font-pair-item.active")
           .forEach((el) => el.classList.remove("active"));
         item.classList.add("active");
+
+        // Update global styles state after font pair change
+        window.__zigrowGlobalStyles = this.serializeGlobalStyles
+          ? this.serializeGlobalStyles()
+          : window.__zigrowGlobalStyles;
+
 
         // mark builder dirty
         if (Vvveb?.Builder?.setDirty) Vvveb.Builder.setDirty(true);
@@ -14744,121 +20803,105 @@ Vvveb.GlobalCustomVariable = {
     }
   },
 
+
+  // jayanti New updated code
   // _applyFontPair(pair) {
   //   if (!this.doc || !pair) return;
 
-  //   // 0) old values capture (for undo)
   //   const root = this.doc.documentElement;
   //   const body = this.doc.body;
+  //   const head = this.doc.head;
+
   //   const oldRootStyle = root.getAttribute("style") || "";
   //   const oldBodyClass = body.className;
+  //   const oldHeadContent = head.innerHTML;
 
-  //   // 1) load webfonts (as you already do)
+  //   // make sure body class exists
+  //   this._ensureBodyClass();
+
+  //   // Persist everything into iframe head
+  //   this._syncGlobalFontHead(pair);
+
+  //   // optional: still register fonts for editor/runtime tracking
   //   try {
-  //     if (pair.heading.provider)
+  //     if (pair.heading.provider) {
   //       Vvveb.FontsManager.addFont(
   //         pair.heading.provider,
   //         pair.heading.name,
-  //         body,
-  //         // this.doc,
+  //         body
   //       );
-  //     if (pair.body.provider)
+  //     }
+
+  //     if (pair.body.provider) {
   //       Vvveb.FontsManager.addFont(pair.body.provider, pair.body.name, body);
+  //     }
   //   } catch (e) {
   //     console.log("Error while pairing fonts ", e);
   //   }
 
-  //   // 2) write CSS variables
-  //   root.style.setProperty("--vvv-font-h", pair.heading.name);
-  //   root.style.setProperty("--vvv-font-b", pair.body.name);
+  //   // if (Vvveb?.Undo?.addMutation) {
+  //   //   Vvveb.Undo.addMutation({
+  //   //     type: "attributes",
+  //   //     target: root,
+  //   //     attributeName: "style",
+  //   //     oldValue: oldRootStyle,
+  //   //     newValue: root.getAttribute("style") || "",
+  //   //   });
+  //   //   console.log("hi amit love you");
 
-  //   // 3) make sure body class is present
-  //   this._ensureBodyClass();
+  //   //   Vvveb.Undo.addMutation({
+  //   //     type: "attributes",
+  //   // target: body,
+  //   //     attributeName: "class",
+  //   //     oldValue: oldBodyClass,
+  //   //     newValue: body.className,
+  //   //   });
+  //   //   console.log("hi amit love you 2");
+  //   // }
 
-  //   // 4) push undo mutations (style on :root + class on body)
-  //   if (Vvveb?.Undo?.addMutation) {
+  //   const newHeadContent = head.innerHTML;
+
+  //   if (Vvveb?.Undo?.addMutation && oldHeadContent != newHeadContent) {
   //     Vvveb.Undo.addMutation({
-  //       type: "attributes",
-  //       target: root,
-  //       attributeName: "style",
-  //       oldValue: oldRootStyle,
-  //       newValue: root.getAttribute("style") || "",
-  //     });
-
-  //     Vvveb.Undo.addMutation({
-  //       type: "attributes",
-  //       target: body,
-  //       attributeName: "class",
-  //       oldValue: oldBodyClass,
-  //       newValue: body.className,
-  //     });
+  //       type: "characterData",
+  //       target: head,
+  //       oldValue: oldHeadContent,
+  //       newValue: newHeadContent,
+  //     })
   //   }
   // },
 
-  // jayanti New updated code
   _applyFontPair(pair) {
     if (!this.doc || !pair) return;
 
-    const root = this.doc.documentElement;
-    const body = this.doc.body;
-    const head = this.doc.head;
+    const doc = this.doc || window.FrameDocument;
+    if (!doc || !doc.head) return;
 
-    const oldRootStyle = root.getAttribute("style") || "";
-    const oldBodyClass = body.className;
-    const oldHeadContent = head.innerHTML;
+    // Keep global font library alive even if iframe head was reloaded/replaced.
+    this._ensureGlobalFontLibrary(this.fontPairs || [], doc);
 
-    // make sure body class exists
-    this._ensureBodyClass();
+    const styleEl = this._ensureGlobalFontStyleEl(doc);
+    if (!styleEl) return;
 
-    // Persist everything into iframe head
+    const oldContent = styleEl.textContent || "";
+
+    // Only this changes on font pair selection.
+    // Undo records this style tag only, not the full head.
     this._syncGlobalFontHead(pair);
 
-    // optional: still register fonts for editor/runtime tracking
-    try {
-      if (pair.heading.provider) {
-        Vvveb.FontsManager.addFont(
-          pair.heading.provider,
-          pair.heading.name,
-          body
-        );
-      }
+    const newContent = styleEl.textContent || "";
 
-      if (pair.body.provider) {
-        Vvveb.FontsManager.addFont(pair.body.provider, pair.body.name, body);
-      }
-    } catch (e) {
-      console.log("Error while pairing fonts ", e);
-    }
-
-    // if (Vvveb?.Undo?.addMutation) {
-    //   Vvveb.Undo.addMutation({
-    //     type: "attributes",
-    //     target: root,
-    //     attributeName: "style",
-    //     oldValue: oldRootStyle,
-    //     newValue: root.getAttribute("style") || "",
-    //   });
-    //   console.log("hi amit love you");
-
-    //   Vvveb.Undo.addMutation({
-    //     type: "attributes",
-    // target: body,
-    //     attributeName: "class",
-    //     oldValue: oldBodyClass,
-    //     newValue: body.className,
-    //   });
-    //   console.log("hi amit love you 2");
-    // }
-
-    const newHeadContent = head.innerHTML;
-
-    if (Vvveb?.Undo?.addMutation && oldHeadContent != newHeadContent) {
+    if (Vvveb?.Undo?.addMutation && oldContent !== newContent) {
       Vvveb.Undo.addMutation({
         type: "characterData",
-        target: head,
-        oldValue: oldHeadContent,
-        newValue: newHeadContent,
-      })
+        target: styleEl,
+        oldValue: oldContent,
+        newValue: newContent,
+      });
+    }
+
+    if (Vvveb?.Builder?.setDirty) {
+      Vvveb.Builder.setDirty(true);
     }
   },
   _getVar(name) {
@@ -14994,7 +21037,7 @@ Vvveb.GlobalCustomVariable = {
     return Array.from(targets);
   },
 
-  _mutateLogo(container, mode, value, size = 48) {
+  _mutateLogo(container, mode, value, size = null) {
     const doc = container?.ownerDocument || document;
     const cleanText = (value || "").trim();
 
@@ -15010,8 +21053,35 @@ Vvveb.GlobalCustomVariable = {
     }
 
     if (mode === "image") {
-      const src = (value || "").trim();
-      let img = container.querySelector("img");
+      /*
+       * Preserve existing logo anchor.
+       *
+       * Example:
+       *
+       * <div data-logo="navbar">
+       *   <a href="/about">
+       *     <img>
+       *   </a>
+       * </div>
+       */
+      if (!container.matches?.("a")) {
+        const directAnchor =
+          container.querySelector?.(
+            ":scope > a"
+          );
+
+        if (directAnchor) {
+          container = directAnchor;
+        }
+      }
+
+      const src =
+        (value || "").trim();
+
+      let img =
+        container.querySelector("img");
+
+      // continue your CURRENT image-mode code here
 
       // if no img and no src, still allow resizing? -> NO, just return
       if (!img && !src) return;
@@ -15034,64 +21104,367 @@ Vvveb.GlobalCustomVariable = {
       img.style.display = "";
       return;
     }
-
     if (mode === "text") {
-      let span = container.querySelector(".logo-text");
+      let target = container;
 
-      // if span doesn't exist but container has plain text, convert it once
-      if (!span && !cleanText) {
-        // if there is existing text already, still allow resizing:
-        const existing = (container.textContent || "").trim();
-        if (!existing) return;
+      // If the logo container has a direct anchor, update the anchor itself.
+      // This preserves the original logo link instead of creating a span.
+      if (!target.matches?.("a")) {
+        const directAnchor = container.querySelector?.(":scope > a");
+        if (directAnchor) {
+          target = directAnchor;
+        }
       }
 
-      if (!span) {
-        const existing = cleanText || (container.textContent || "").trim();
-        removeAllExcept([]);
-        span = doc.createElement("span");
-        span.className = "logo-text";
-        span.textContent = existing;
-        container.appendChild(span);
+      // If an older saved version already has .logo-text inside it,
+      // update that existing element instead of creating another one.
+      const existingLogoText = target.matches?.(".logo-text")
+        ? target
+        : target.querySelector?.(":scope > .logo-text");
+
+      if (existingLogoText) {
+        target = existingLogoText;
       }
 
-      if (cleanText) span.textContent = cleanText;
+      const existingText = (target.textContent || "")
+        .replace(/\s+/g, " ")
+        .trim();
+      const finalText = cleanText || existingText;
+
+      if (!finalText) return;
+
+      // Do not replace the target tag.
+      // Only replace its inner value.
+      target.textContent = finalText;
+
+      // Add class and style on the same logo tag.
+      target.classList.add("logo-text");
 
       const s = Number(size || 24);
-      span.style.fontSize = s + "px";
-      span.style.lineHeight = "1.1";
+      target.style.fontSize = s + "px";
+      target.style.lineHeight = "1.1";
+
       return;
     }
   },
 
-  applyLogo({ mode, value, size }) {
-    const doc = this._getFrameDocument();
+  _getLogoContainers(doc = this._getFrameDocument()) {
     const targets = this._findLogoTargets(doc);
-    if (!targets.length) return;
+    if (!targets?.length) return [];
 
-    const getContainer = (el) => el.querySelector("h1,h2,h3,h4,h5,h6") || el;
+    const getContainer = (el) => {
+      if (!el || el.nodeType !== 1) return null;
 
-    // 1) capture old innerHTMLs (per target container)
-    const containers = targets.map(getContainer);
-    const oldHTMLs = containers.map((c) => c.innerHTML);
+      if (el.matches?.("h1,h2,h3,h4,h5,h6")) {
+        return el;
+      }
 
-    // 2) perform mutations
-    containers.forEach((el) => this._mutateLogo(el, mode, value, size));
+      return el.querySelector("h1,h2,h3,h4,h5,h6") || el;
+    };
 
-    // 3) push undo mutations (one per container)
-    if (Vvveb?.Undo?.addMutation) {
-      containers.forEach((container, i) => {
-        Vvveb.Undo.addMutation({
-          type: "characterData",
-          target: container,
-          oldValue: oldHTMLs[i],
-          newValue: container.innerHTML,
-        });
+    const containers = targets.map(getContainer).filter(Boolean);
+
+    // Remove exact duplicates
+    const unique = Array.from(new Set(containers));
+
+    // If both parent and child are selected, keep the child only.
+    // Example: div + h4 should become only h4.
+    return unique.filter((el) => {
+      return !unique.some((other) => {
+        return other !== el && el.contains(other);
       });
+    });
+  },
+
+  _getCommonLogoUndoRoot(containers) {
+    const doc = this._getFrameDocument();
+
+    if (!containers?.length) {
+      return doc?.body || null;
     }
 
-    // 4) mark dirty
-    if (Vvveb?.Builder?.setDirty) Vvveb.Builder.setDirty(true);
+    let root = containers[0];
+
+    while (root && root.nodeType === 1) {
+      const containsAll = containers.every((el) => {
+        return el === root || root.contains(el);
+      });
+
+      if (containsAll) return root;
+
+      root = root.parentElement;
+    }
+
+    return doc?.body || null;
   },
+
+  captureLogoSnapshot() {
+    const containers = this._getLogoContainers();
+    if (!containers.length) return null;
+
+    const target = this._getCommonLogoUndoRoot(containers);
+    if (!target) return null;
+
+    return {
+      target,
+      oldValue: target.innerHTML,
+    };
+  },
+
+  applyLogo({ mode, value, size, recordUndo = true }) {
+    const containers = this._getLogoContainers();
+    if (!containers.length) return;
+
+    const snapshot = recordUndo
+      ? this.captureLogoSnapshot()
+      : null;
+
+    // Perform the actual logo DOM changes
+    containers.forEach((el) =>
+      this._mutateLogo(el, mode, value, size)
+    );
+
+    // Add only one Undo mutation
+    if (
+      recordUndo &&
+      snapshot?.target &&
+      Vvveb?.Undo?.addMutation
+    ) {
+      const newValue =
+        snapshot.target.innerHTML ?? "";
+
+      const oldValue =
+        snapshot.oldValue ?? "";
+
+      if (oldValue !== newValue) {
+        Vvveb.Undo.addMutation({
+          type: "characterData",
+          target: snapshot.target,
+          oldValue,
+          newValue,
+        });
+      }
+    }
+
+    if (Vvveb?.Builder?.setDirty) {
+      Vvveb.Builder.setDirty(true);
+    }
+  },
+
+
+  // applyLogo({ mode, value, size }) {
+  //   const doc = this._getFrameDocument();
+  //   const targets = this._findLogoTargets(doc);
+  //   if (!targets.length) return;
+
+  //   const getContainer = (el) => el.querySelector("h1,h2,h3,h4,h5,h6") || el;
+
+  //   // 1) capture old innerHTMLs (per target container)
+  //   const containers = targets.map(getContainer);
+  //   const oldHTMLs = containers.map((c) => c.innerHTML);
+
+  //   // 2) perform mutations
+  //   containers.forEach((el) => this._mutateLogo(el, mode, value, size));
+
+  //   // 3) push undo mutations (one per container)
+  //   if (Vvveb?.Undo?.addMutation) {
+  //     containers.forEach((container, i) => {
+  //       Vvveb.Undo.addMutation({
+  //         type: "characterData",
+  //         target: container,
+  //         oldValue: oldHTMLs[i],
+  //         newValue: container.innerHTML,
+  //       });
+  //     });
+  //   }
+
+  //   // 4) mark dirty
+  //   if (Vvveb?.Builder?.setDirty) Vvveb.Builder.setDirty(true);
+  // },
+
+  getCurrentLogoUrl() {
+    const doc = this._getFrameDocument();
+    const targets = this._findLogoTargets(doc);
+
+    if (!targets?.length) {
+      return "/";
+    }
+
+    const navbarLogo = targets.find((logo) => {
+      if (!logo || logo.nodeType !== 1) {
+        return false;
+      }
+
+      const ownType = logo.getAttribute?.("data-logo");
+
+      if (ownType === "navbar") {
+        return true;
+      }
+
+      if (ownType === "footer") {
+        return false;
+      }
+
+      const logoParent = logo.closest?.("[data-logo]");
+      const parentType = logoParent?.getAttribute?.("data-logo");
+
+      if (parentType === "navbar") {
+        return true;
+      }
+
+      if (parentType === "footer") {
+        return false;
+      }
+
+      return !logo.closest?.("footer");
+    });
+
+    if (!navbarLogo) {
+      return "/";
+    }
+
+    const anchor =
+      navbarLogo.matches?.("a")
+        ? navbarLogo
+        : navbarLogo.querySelector?.(":scope > a") ||
+        navbarLogo.closest?.("a");
+
+    return anchor?.getAttribute("href") || "/";
+  },
+
+  applyLogoUrl(url) {
+    const doc = this._getFrameDocument();
+
+    const rawUrl =
+      String(url || "").trim();
+
+    let finalUrl =
+      rawUrl || "/";
+
+    const looksLikeDomain =
+      /^(?:www\.)?(?:[a-z0-9-]+\.)+[a-z]{2,}(?::\d+)?(?:[/?#].*)?$/i.test(
+        finalUrl
+      );
+
+    if (looksLikeDomain) {
+      finalUrl =
+        "https://" + finalUrl;
+    }
+
+    const targets =
+      this._findLogoTargets(doc);
+
+    if (!targets?.length) {
+      return false;
+    }
+
+    targets.forEach((logo) => {
+      if (!logo || logo.nodeType !== 1) {
+        return;
+      }
+
+      const ownType =
+        logo.getAttribute?.("data-logo");
+
+      const dataLogoParent =
+        logo.closest?.("[data-logo]");
+
+      const inheritedType =
+        dataLogoParent?.getAttribute?.(
+          "data-logo"
+        );
+
+      let logoType =
+        ownType ||
+        inheritedType ||
+        "";
+
+      if (!logoType) {
+        logoType =
+          logo.closest?.("footer")
+            ? "footer"
+            : "navbar";
+      }
+
+      let anchor =
+        logo.matches?.("a")
+          ? logo
+          : logo.querySelector?.(
+            ":scope > a"
+          ) ||
+          logo.closest?.("a");
+
+      /*
+       * FOOTER
+       * Update only when footer
+       * already has a link.
+       */
+      if (logoType === "footer") {
+        if (anchor) {
+          anchor.setAttribute(
+            "href",
+            finalUrl
+          );
+        }
+
+        return;
+      }
+
+      /*
+       * NAVBAR
+       * Navbar must always support URL.
+       */
+      if (!anchor) {
+        anchor =
+          doc.createElement("a");
+
+        anchor.setAttribute(
+          "href",
+          finalUrl
+        );
+
+        if (
+          logo.matches?.(
+            "img,span,strong,h1,h2,h3,h4,h5,h6"
+          )
+        ) {
+          const parent =
+            logo.parentNode;
+
+          if (parent) {
+            parent.insertBefore(
+              anchor,
+              logo
+            );
+
+            anchor.appendChild(
+              logo
+            );
+          }
+        } else {
+          while (logo.firstChild) {
+            anchor.appendChild(
+              logo.firstChild
+            );
+          }
+
+          logo.appendChild(anchor);
+        }
+      } else {
+        anchor.setAttribute(
+          "href",
+          finalUrl
+        );
+      }
+    });
+
+    if (Vvveb?.Builder?.setDirty) {
+      Vvveb.Builder.setDirty(true);
+    }
+
+    return true;
+  },
+
 
   getCurrentLogoImage() {
     const doc = this._getFrameDocument();
@@ -15102,123 +21475,497 @@ Vvveb.GlobalCustomVariable = {
       const container = t.querySelector("h1,h2,h3,h4,h5,h6") || t;
       const img = container.querySelector("img");
       const raw = img?.getAttribute("src");
+
       if (raw) {
         let abs = raw;
+
         try {
           abs = new URL(raw, doc.baseURI).href;
         } catch (e) { }
-        return { src: raw, absSrc: abs };
+
+        let size = 48;
+
+        try {
+          const computed = doc.defaultView.getComputedStyle(img);
+
+          size =
+            parseInt(img.style.height, 10) ||
+            parseInt(img.getAttribute("height"), 10) ||
+            parseInt(computed.height, 10) ||
+            parseInt(img.style.maxHeight, 10) ||
+            parseInt(computed.maxHeight, 10) ||
+            48;
+        } catch (e) { }
+
+        return {
+          src: raw,
+          absSrc: abs,
+          size,
+        };
       }
     }
+
     return null;
   },
 
   getCurrentLogoTextStyle() {
     const doc = this._getFrameDocument();
-    const targets = this._findLogoTargets(doc);
+    const containers = this._getLogoContainers?.() || [];
 
-    for (const t of targets) {
-      const container = t.querySelector("h1,h2,h3,h4,h5,h6") || t;
+    for (const container of containers) {
+      if (!container) continue;
 
-      // ✅ prefer our generated span
-      const span = container.querySelector(".logo-text");
-      if (span && span.textContent?.trim()) {
-        const fs = doc.defaultView.getComputedStyle(span).fontSize;
+      let target = container;
+
+      if (container.matches?.(".logo-text")) {
+        target = container;
+      } else {
+        const directLogoText = container.querySelector?.(":scope > .logo-text");
+        const directAnchor = container.querySelector?.(":scope > a");
+
+        if (directLogoText) {
+          target = directLogoText;
+        } else if (directAnchor) {
+          target = directAnchor;
+        }
+      }
+
+      const img = target.querySelector?.("img");
+      if (img) continue;
+
+      const txt = (target.textContent || "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      if (txt) {
+        const fs = doc.defaultView.getComputedStyle(target).fontSize;
+
         return {
-          text: span.textContent.trim(),
+          text: txt,
           fontSize: parseInt(fs, 10) || 24,
         };
       }
-
-      // ✅ fallback: if no span, use container text if it's mostly text
-      // const txt = (container.textContent || "").trim();
-      // if (txt) {
-      //   const fs = doc.defaultView.getComputedStyle(container).fontSize;
-      //   return {
-      //     text: txt,
-      //     fontSize: parseInt(fs, 10) || 24,
-      //   };
-      // }
     }
+
     return null;
   },
 
   _buildGoogleFontsHref(fonts = []) {
-    const cleanFonts = [...new Set((fonts || []).filter(Boolean))];
+    const cleanFonts = [...new Set((fonts || []).filter(Boolean))]
+      .map((font) => font.trim())
+      .filter(Boolean);
+
     if (!cleanFonts.length) return "";
 
+    const fontAxisMap = {
+      "Abril Fatface": "",
+      "DM Serif Display": "",
+      "Cormorant Garamond": "ital,wght@0,400;0,500;0,600;0,700;1,400;1,700",
+      "Crimson Text": "ital,wght@0,400;0,600;0,700;1,400;1,600;1,700",
+      "Merriweather": "wght@300;400;700;900",
+      "Lato": "wght@300;400;700;900",
+      "Quicksand": "wght@300;400;500;600;700",
+      "Josefin Sans": "wght@300;400;500;600;700",
+      "Playfair Display": "wght@400;500;600;700;800;900",
+      "Open Sans": "wght@300;400;500;600;700;800",
+      "Source Sans 3": "wght@300;400;500;600;700;800;900",
+      "Work Sans": "wght@300;400;500;600;700;800;900",
+      "Nunito": "wght@300;400;500;600;700;800;900",
+      "Nunito Sans": "wght@300;400;500;600;700;800;900",
+      "Poppins": "wght@300;400;500;600;700;800;900",
+      "Montserrat": "wght@300;400;500;600;700;800;900",
+      "Raleway": "wght@300;400;500;600;700;800;900",
+      "Inter": "wght@300;400;500;600;700;800;900",
+      "Mulish": "wght@300;400;500;600;700;800;900",
+      "Manrope": "wght@300;400;500;600;700;800",
+      "Barlow": "wght@300;400;500;600;700;800;900",
+      "Catamaran": "wght@300;400;500;600;700;800;900",
+      "Lora": "wght@400;500;600;700",
+      "Jost": "wght@300;400;500;600;700;800;900",
+      "Rosario": "wght@300;400;500;600;700",
+      "Rubik": "wght@300;400;500;600;700;800;900",
+      "EB Garamond": "wght@400;500;600;700;800",
+      // New fonts added
+      "Epunda Slab": "ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400",
+      "Epunda Sans": "ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400",
+      "Bitter": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,700",
+      "Archivo": "wght@300;400;500;600;700;800;900",
+      "IBM Plex Mono": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+      "DM Mono": "ital,wght@0,300;0,400;0,500;1,300;1,400;1,500",
+      "Geist Mono": "wght@300;400;500;600;700;800;900",
+      "Geist": "wght@300;400;500;600;700;800;900",
+      "Source Sans Pro": "ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700",
+      "Source Code Pro": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+      "JetBrains Mono": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,700",
+      "Crimson Pro": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+      "VT323": "",
+      "Karla": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,700",
+      "Inconsolata": "wght@300;400;500;600;700;800;900",
+      "Chivo Mono": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400",
+      "Instrument Sans": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+      "Instrument Serif": "ital@0;1",
+      "Special Gothic Condensed One": "",
+      "Special Gothic Expanded One": "",
+      "Special Gothic": "wght@300;400;500;600;700",
+      "Staatliches": "",
+      "SUSE Mono": "wght@300;400;500;600;700;800",
+      "SUSE": "wght@300;400;500;600;700;800",
+      "TikTok Sans": "wght@300;400;500;600;700;800;900",
+      "Unbounded": "wght@300;400;500;600;700;800;900",
+      "Albert Sans": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400",
+      "Urbanist": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400",
+      "Voltaire": "",
+      "Bricolage Grotesque": "wght@300;400;500;600;700;800",
+      "BioRhyme": "wght@300;400;500;700;800",
+      "Ubuntu": "ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,700",
+      "Alumni Sans": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400",
+      "Libre Franklin": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400",
+      "Libre Baskerville": "ital,wght@0,400;0,700;1,400",
+      "Eczar": "wght@400;500;600;700;800",
+      "Vend Sans": "wght@300;400;500;600;700;800;900",
+      "Yantramanav": "wght@300;400;500;700;900",
+      "Zen Maru Gothic": "wght@300;400;500;700;900",
+      "Zalando Sans": "wght@300;400;500;600;700;800;900",
+      "Zalando Sans Expanded": "wght@300;400;500;600;700;800;900",
+      "Gloock": "",
+      "PT Serif": "ital,wght@0,400;0,700;1,400;1,700",
+      "Alfa Slab One": "",
+      "Gentium Book Plus": "ital,wght@0,400;0,700;1,400;1,700",
+      "Cardo": "ital,wght@0,400;0,700;1,400",
+      "Roboto Serif": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+      "Alegreya": "ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700",
+      "Alegreya SC": "ital,wght@0,400;0,700;1,400",
+      "Alegreya Sans": "ital,wght@0,300;0,400;0,500;0,700;0,800;0,900;1,300;1,400",
+      "Alegreya Sans SC": "ital,wght@0,300;0,400;0,500;0,700;0,800;0,900;1,300;1,400",
+      "Lusitana": "wght@400;700",
+      "Lustria": "",
+      "Ovo": "",
+      "Brawler": "wght@400;700",
+      "Yellowtail": "",
+      "Ysabeau Infant": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400",
+      "Ysabeau SC": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400",
+      "Ysabeau": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400",
+      "Zain": "wght@300;400;700;800;900",
+      "Zen Kaku Gothic Antique": "wght@300;400;500;700;900",
+      "Zen Kaku Gothic New": "wght@300;400;500;700;900",
+      "Oswald": "wght@300;400;500;600;700",
+      "Teko": "wght@300;400;500;600;700",
+      "Hind": "wght@300;400;500;600;700",
+      "Roboto": "ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,700",
+      "Palanquin Dark": "wght@400;500;600;700",
+      "Palanquin": "wght@300;400;500;600;700",
+      "PT Sans": "ital,wght@0,400;0,700;1,400;1,700",
+      "Nunito": "wght@300;400;500;600;700;800;900",
+      // Ubuntu family
+      "Ubuntu Sans Mono": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+      "Ubuntu Sans": "ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,700",
+      "Ubuntu Condensed": "",
+      "Ubuntu Mono": "ital,wght@0,400;0,700;1,400;1,700",
+
+      // Red Hat
+      "Red Hat Mono": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+
+      // PT family
+      "PT Sans Narrow": "ital,wght@0,400;0,700;1,400",
+      "PT Sans Caption": "wght@400;700",
+
+      // Playfair
+      "Playfair Display SC": "ital,wght@0,400;0,700;0,900;1,400",
+      "Playfair": "ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900",
+
+      // Noto
+      "Noto Serif Display": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+      "Noto Serif": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+      "Noto Sans": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+
+      // Fira
+      "Fira Mono": "wght@400;500;700",
+
+      // Encode Sans
+      "Encode Sans Expanded": "wght@300;400;500;600;700;800;900",
+      "Encode Sans Condensed": "wght@300;400;500;600;700;800;900",
+
+      // Barlow Semi Condensed
+      "Barlow Semi Condensed": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+
+      // IBM Plex family
+      "IBM Plex Sans Condensed": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+      "IBM Plex Serif": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+      "IBM Plex Sans": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+
+      // Source Serif 4
+      "Source Serif 4": "ital,opsz,wght@0,8..60,300..900;1,8..60,300..900",
+
+      // Reddit & Roboto family
+      "Reddit Mono": "wght@300;400;500;600;700;800;900",
+      "Roboto Mono": "ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700",
+    };
+
     const families = cleanFonts
-      .map(
-        (font) =>
-          `family=${font.replace(/ /g, "+")}:ital,wght@0,100..900;1,100..900`
-      )
+      .map((font) => {
+        const family = font.replace(/\s+/g, "+");
+        const axis = fontAxisMap[font];
+
+        return axis ? `family=${family}:${axis}` : `family=${family}`;
+      })
       .join("&");
 
     return `https://fonts.googleapis.com/css2?${families}&display=swap`;
+  },
+
+  _getFontsFromPairs(fontPairs = []) {
+    const fonts = new Set();
+
+    fontPairs.forEach((pair) => {
+      if (pair?.heading?.name) fonts.add(pair.heading.name);
+      if (pair?.body?.name) fonts.add(pair.body.name);
+    });
+
+    return Array.from(fonts);
+  },
+
+  _ensureGlobalFontLibrary(fontPairs = [], doc = this.doc || window.FrameDocument) {
+    if (!doc || !doc.head) return;
+
+    const fonts = this._getFontsFromPairs(fontPairs);
+    const href = this._buildGoogleFontsHref(fonts);
+
+    if (!href) return;
+
+    // Remove old single-pair global font link if it exists from earlier versions
+    const oldSinglePairLink = doc.getElementById("vvv-global-font-link");
+    if (oldSinglePairLink) {
+      oldSinglePairLink.remove();
+    }
+
+    let linkEl = doc.getElementById("vvv-global-font-library-link");
+
+    if (!linkEl) {
+      linkEl = doc.createElement("link");
+      linkEl.id = "vvv-global-font-library-link";
+      linkEl.rel = "stylesheet";
+      linkEl.setAttribute("data-vvv-global-font-library", "1");
+      doc.head.appendChild(linkEl);
+    }
+
+    if (linkEl.getAttribute("href") !== href) {
+      linkEl.setAttribute("href", href);
+    }
   },
 
   _syncGlobalFontHead(pair) {
     const doc = this.doc || window.FrameDocument;
     if (!doc || !doc.head || !pair) return;
 
-    const head = doc.head;
-    const root = doc.documentElement;
-
     const headingFont = pair?.heading?.name || "";
     const bodyFont = pair?.body?.name || "";
 
-    // 1) Persist Google font link in iframe head
-    const href = this._buildGoogleFontsHref([headingFont, bodyFont]);
+    const styleEl = this._ensureGlobalFontStyleEl(doc);
+    if (!styleEl) return;
 
-    let linkEl = doc.getElementById("vvv-global-font-link");
-    if (!linkEl) {
-      linkEl = doc.createElement("link");
-      linkEl.id = "vvv-global-font-link";
-      linkEl.rel = "stylesheet";
-      head.appendChild(linkEl);
-    }
-    linkEl.href = href;
+    styleEl.textContent = `
+:root {
+  --vvv-font-h: '${headingFont}';
+  --vvv-font-b: '${bodyFont}';
+}
 
-    // 2) Persist global font CSS in iframe head
+body,
+body p,
+body li,
+body a,
+body span,
+body button,
+body input,
+body textarea,
+body select {
+  font-family: var(--vvv-font-b), sans-serif !important;
+}
+
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6 {
+  font-family: var(--vvv-font-h), sans-serif !important;
+}
+  `.trim();
+  },
+
+  _ensureGlobalFontStyleEl(doc = this.doc || window.FrameDocument) {
+    if (!doc || !doc.head) return null;
+
     let styleEl = doc.getElementById("vvv-global-style");
+
     if (!styleEl) {
       styleEl = doc.createElement("style");
       styleEl.id = "vvv-global-style";
       styleEl.setAttribute("data-vvv-global", "1");
-      head.appendChild(styleEl);
+      // Append to end of body so font vars are last in cascade order.
+      (doc.body || doc.head).appendChild(styleEl);
     }
 
-    styleEl.textContent = `
-    :root {
-      --vvv-font-h: '${headingFont}';
-      --vvv-font-b: '${bodyFont}';
+    return styleEl;
+  },
+
+
+  serializeGlobalStyles() {
+    const doc = this.doc || window.FrameDocument;
+    const result = { version: 1, fonts: {}, colors: { vars: {} } };
+
+    // ── Fonts: read active item in font-pair list ──────────────────
+    try {
+      const listEl = document.getElementById("font-pair-list");
+      const activeItem = listEl?.querySelector(".vvv-font-pair-item.active");
+      const pairKey = activeItem?.dataset?.key || null;
+      const pair = pairKey ? (this.fontPairs || []).find((p) => p.key === pairKey) : null;
+
+      if (pair) {
+        result.fonts = {
+          enabled: true,
+          pairKey: pair.key,
+          heading: pair.heading,
+          body: pair.body,
+        };
+      } else {
+        // Fallback: infer from CSS variables currently in the iframe
+        const cs = doc?.defaultView?.getComputedStyle(doc.documentElement);
+        const headingFont = (cs?.getPropertyValue("--vvv-font-h") || "")
+          .trim()
+          .replace(/^['"]|['"]$/g, "");
+        const bodyFont = (cs?.getPropertyValue("--vvv-font-b") || "")
+          .trim()
+          .replace(/^['"]|['"]$/g, "");
+        if (headingFont || bodyFont) {
+          result.fonts = {
+            enabled: true,
+            heading: headingFont ? { name: headingFont, provider: "google" } : null,
+            body: bodyFont ? { name: bodyFont, provider: "google" } : null,
+          };
+        }
+      }
+    } catch (e) { }
+
+    // ── Colors: read known CSS variables from iframe root ──────────
+    const KNOWN_VARS = [
+      "--zigrow-primary-50",
+      "--zigrow-primary-100",
+      "--zigrow-primary-200",
+      "--zigrow-primary-300",
+      "--zigrow-primary-400",
+      "--zigrow-primary-500",
+      "--zigrow-primary-600",
+      "--zigrow-primary-700",
+      "--zigrow-primary-800",
+      "--zigrow-primary-900",
+      "--zigrow-heading-color",
+      "--zigrow-subheading-color",
+      "--zigrow-bg-light",
+      "--zigrow-bg-muted",
+      "--zigrow-bg-contrast",
+      "--zigrow-primary-color",
+      "--zigrow-primary-color-hover",
+      "--zigrow-primary-color-active",
+      "--zigrow-primary-color-disabled",
+      "--zigrow-border-color",
+      "--primary-colors",
+      "--secondary-colors",
+      "--territory-colors",
+    ];
+
+    try {
+      const cs = doc?.defaultView?.getComputedStyle(doc.documentElement);
+      if (cs) {
+        const vars = {};
+        KNOWN_VARS.forEach((v) => {
+          const val = (cs.getPropertyValue(v) || "").trim();
+          if (val) vars[v] = val;
+        });
+        result.colors.vars = vars;
+      }
+    } catch (e) { }
+
+    return result;
+  },
+
+  applyGlobalStyles(globalStyles, doc, options = {}) {
+    if (!globalStyles) return;
+
+    doc = doc || this.doc || window.FrameDocument;
+    if (!doc || !doc.head) return;
+
+    // Update internal doc reference for helpers
+    this.doc = doc;
+
+    // Persist state
+    window.__zigrowGlobalStyles = globalStyles;
+    // Remove stale runtime palette style so it cannot override the latest global styles
+    doc.querySelectorAll("#dynamic-palette-style").forEach(el => el.remove());
+
+    // ── 1. Colors: inject CSS variables into a dedicated style tag ──
+    const colorVars = globalStyles?.colors?.vars;
+    if (colorVars && typeof colorVars === "object") {
+      const keys = Object.keys(colorVars);
+      if (keys.length > 0) {
+        let styleEl = doc.getElementById("zigrow-template-global-style");
+        if (!styleEl) {
+          styleEl = doc.createElement("style");
+          styleEl.id = "zigrow-template-global-style";
+          styleEl.setAttribute("data-zigrow-global-style", "1");
+          // Append to end of body so this :root block is LAST in cascade order,
+          // overriding any page-specific palette styles in the body.
+          (doc.body || doc.head).appendChild(styleEl);
+        }
+        const varLines = keys
+          .filter(
+            (k) =>
+              typeof k === "string" &&
+              k.startsWith("--") &&
+              typeof colorVars[k] === "string" &&
+              colorVars[k].trim() !== ""
+          )
+          .map((k) => `  ${k}: ${colorVars[k]};`);
+        if (varLines.length > 0) {
+          styleEl.textContent = `:root {\n${varLines.join("\n")}\n}`;
+        }
+      }
     }
 
-    body,
-    body p,
-    body li,
-    body a,
-    body span,
-    body button,
-    body input,
-    body textarea,
-    body select {
-      font-family: var(--vvv-font-b) !important;
+    // ── 2. Fonts: ensure font library + sync head style el ──────────
+    const heading = globalStyles?.fonts?.heading;
+    const body = globalStyles?.fonts?.body;
+    if (heading || body) {
+      const pair = {
+        key: globalStyles?.fonts?.pairKey || null,
+        heading: heading || { name: "", provider: "google" },
+        body: body || { name: "", provider: "google" },
+      };
+      this._ensureGlobalFontLibrary(this.fontPairs || [], doc);
+      if (pair.heading?.name || pair.body?.name) {
+        this._syncGlobalFontHead(pair);
+      }
+      // Add body class
+      try {
+        if (doc.body && !doc.body.classList.contains("vvv-global-font-on")) {
+          doc.body.classList.add("vvv-global-font-on");
+        }
+      } catch (e) { }
     }
 
-    body h1,
-    body h2,
-    body h3,
-    body h4,
-    body h5,
-    body h6 {
-      font-family: var(--vvv-font-h) !important;
-    } 
-  `.trim();
-
-    // Optional: keep inline vars too for compatibility
-    // root.style.setProperty("--vvv-font-h", `'${headingFont}'`);
-    // root.style.setProperty("--vvv-font-b", `'${bodyFont}'`);
+    // ── 3. UI sync: highlight active font pair in list ──────────────
+    const pairKey = globalStyles?.fonts?.pairKey;
+    if (pairKey) {
+      try {
+        const listEl = document.getElementById("font-pair-list");
+        if (listEl) {
+          listEl
+            .querySelectorAll(".vvv-font-pair-item.active")
+            .forEach((el) => el.classList.remove("active"));
+          const targetItem = listEl.querySelector(`[data-key="${pairKey}"]`);
+          if (targetItem) targetItem.classList.add("active");
+        }
+      } catch (e) { }
+    }
   },
 };
 
@@ -15228,6 +21975,9 @@ Vvveb.GlobalCustomSteps = {
   steps: {},
   inited: false,
   _logoBound: false,
+  _lastTextLogoSize: null,
+  _lastImageLogoSize: null,
+  _logoUndoSession: null,
 
   init() {
     if (this.inited) return;
@@ -15253,11 +22003,11 @@ Vvveb.GlobalCustomSteps = {
       }
     });
 
-    window.addEventListener("blur", () => {
-      if (document.activeElement.tagName === "IFRAME") {
-        this.close();
-      }
-    });
+    // window.addEventListener("blur", () => {
+    //   if (document.activeElement.tagName === "IFRAME") {
+    //     this.close();
+    //   }
+    // });
 
     $("open-global-style")?.addEventListener("click", () => this.open());
     $("global-style-close").addEventListener("click", () => this.close());
@@ -15286,7 +22036,6 @@ Vvveb.GlobalCustomSteps = {
     $("open-global-colors")?.addEventListener("click", () => {
       this.openStep("colors");
     });
-
     $("open-global-animation")?.addEventListener("click", () => {
       this.openStep("animations");
     });
@@ -15330,6 +22079,7 @@ Vvveb.GlobalCustomSteps = {
     if (backBtn) backBtn.style.display = "inline-block";
     if (key === "logo") {
       this._initLogoUI();
+      this._syncLogoUIFromTemplate()
     }
   },
 
@@ -15358,6 +22108,15 @@ Vvveb.GlobalCustomSteps = {
 
   close() {
     if (!this.panel) return;
+
+    const wasOpen =
+      this.panel.classList.contains("is-open") ||
+      this.panel.style.display !== "none";
+
+    if (wasOpen) {
+      this._commitLogoUndoSession();
+    }
+
     this.panel.classList.remove("is-open");
     setTimeout(() => {
       this.panel.style.display = "none";
@@ -15365,9 +22124,105 @@ Vvveb.GlobalCustomSteps = {
     }, 150);
   },
 
+  _beginLogoUndoSession() {
+    if (this._logoUndoSession) return;
+
+    let snapshot =
+      Vvveb.GlobalCustomVariable
+        ?.captureLogoSnapshot?.();
+
+    if (!snapshot?.target) return;
+
+    let target = snapshot.target;
+
+    /*
+     * IMPORTANT FOR LOGO URL:
+     *
+     * If the captured logo itself is inside an anchor,
+     * capture the PARENT OF THE ANCHOR.
+     *
+     * href changes happen on <a> itself, so anchor.innerHTML
+     * would remain unchanged and Undo would miss the change.
+     */
+    const anchor =
+      target.matches?.("a")
+        ? target
+        : target.closest?.("a");
+
+    if (anchor?.parentElement) {
+      target = anchor.parentElement;
+    } else if (
+      target.matches?.(
+        "img,span,strong,h1,h2,h3,h4,h5,h6"
+      ) &&
+      target.parentElement
+    ) {
+      /*
+       * No anchor yet.
+       * Capture parent because applyLogoUrl()
+       * may create a new <a> wrapper.
+       */
+      target = target.parentElement;
+    }
+
+    this._logoUndoSession = {
+      target,
+      oldValue: target.innerHTML,
+    };
+  },
+
+  _commitLogoUndoSession() {
+    const snapshot = this._logoUndoSession;
+    this._logoUndoSession = null;
+
+    if (!snapshot?.target || !Vvveb?.Undo?.addMutation) return;
+
+    const target = snapshot.target;
+
+    if (!target.isConnected) return;
+
+    const oldValue = snapshot.oldValue ?? "";
+    const newValue = target.innerHTML ?? "";
+
+    if (oldValue === newValue) return;
+
+    Vvveb.Undo.addMutation({
+      type: "characterData",
+      target,
+      oldValue,
+      newValue,
+    });
+
+    if (Vvveb?.Builder?.setDirty) {
+      Vvveb.Builder.setDirty(true);
+    }
+  },
+
+  _applyLogoFromPanel(payload, options = {}) {
+    this._beginLogoUndoSession();
+
+    Vvveb.GlobalCustomVariable.applyLogo({
+      ...payload,
+      recordUndo: false,
+    });
+
+    if (options.commitNow === true) {
+      this._commitLogoUndoSession();
+    }
+  },
+
+  _applyLogoUrlFromPanel(value) {
+    this._beginLogoUndoSession();
+
+    Vvveb.GlobalCustomVariable
+      .applyLogoUrl(value);
+  },
+
   // open logo UI steps
   _initLogoUI() {
-    if (this._logoBound) return;
+    if (this._logoBound) {
+      return;
+    }
     this._logoBound = true;
 
     const $ = (id) => document.getElementById(id);
@@ -15392,6 +22247,52 @@ Vvveb.GlobalCustomSteps = {
     const sizeValue = $("logo-size-value");
     const textSizeSlider = $("logo-text-size-slider");
     const textSizeValue = $("logo-text-size-value");
+    const logoUrlInput = $("global-logo-url");
+    const logoUrlHint = $("global-logo-url-hint");
+
+    function updateLogoUrlHint(value) {
+      if (!logoUrlHint) return;
+
+      const url =
+        String(value || "").trim();
+
+      if (!url || url === "/") {
+        logoUrlHint.textContent =
+          "Link to a page, section, or another website.";
+        return;
+      }
+
+      if (url.startsWith("#")) {
+        logoUrlHint.textContent =
+          "Section on this page";
+        return;
+      }
+
+      if (
+        url.startsWith("//") ||
+        /^https?:\/\//i.test(url) ||
+        /^(?:www\.)?(?:[a-z0-9-]+\.)+[a-z]{2,}(?::\d+)?(?:[/?#].*)?$/i.test(
+          url
+        )
+      ) {
+        logoUrlHint.textContent =
+          "External website";
+        return;
+      }
+
+      if (url.startsWith("/")) {
+        logoUrlHint.textContent =
+          "Page on this website";
+        return;
+      }
+
+      logoUrlHint.textContent =
+        "Use /page, #section, or a website like example.com";
+    }
+
+    this._updateLogoUrlHint =
+      updateLogoUrlHint;
+
 
     function setInfo(msg) {
       if (infoEl) infoEl.textContent = msg || "No image selected.";
@@ -15404,14 +22305,32 @@ Vvveb.GlobalCustomSteps = {
       setInfo((current.src || "").split("/").pop());
     }
     const curText = Vvveb.GlobalCustomVariable.getCurrentLogoTextStyle?.();
-    if (curText) {
-      if (textEl && !textEl.value) textEl.value = curText.text;
 
-      if (textSizeSlider) textSizeSlider.value = String(curText.fontSize || 24);
+    if (logoUrlInput) {
+      logoUrlInput.value =
+        Vvveb.GlobalCustomVariable
+          .getCurrentLogoUrl?.() ||
+        "/";
+
+      updateLogoUrlHint(
+        logoUrlInput.value
+      );
+    }
+    if (curText) {
+      if (textEl) textEl.value = curText.text;
+
+      if (textSizeSlider)
+        textSizeSlider.value = String(curText.fontSize || 24);
       if (textSizeValue)
         textSizeValue.textContent = String(curText.fontSize || 24);
     }
 
+
+
+    this._lastTextLogoSize = Number(
+      textSizeSlider?.value || curText?.fontSize || 24,
+    );
+    this._lastImageLogoSize = Number(sizeSlider?.value || 48);
     // ✅ decide initial mode based on what exists in iframe
     const hasImg = !!current?.absSrc;
     const hasText = !!curText?.text;
@@ -15422,6 +22341,8 @@ Vvveb.GlobalCustomSteps = {
     if (!hasImg && hasText && srcTextRadio) srcTextRadio.checked = true;
     if (!hasImg && hasText && srcImageRadio) srcImageRadio.checked = false;
 
+    const logoSteps = this;
+
     function refreshLogoPreview() {
       const useImage = !!srcImageRadio?.checked;
 
@@ -15431,7 +22352,9 @@ Vvveb.GlobalCustomSteps = {
       if (imgWrap) imgWrap.style.display = useImage ? "block" : "none";
 
       if (useImage) {
-        const size = sizeSlider ? sizeSlider.value : 48;
+        const size = Number(
+          sizeSlider?.value || logoSteps._lastImageLogoSize || 48,
+        );
         const previewSrc =
           imgEl?.dataset?.src || imgEl?.src || current?.absSrc || "";
 
@@ -15451,18 +22374,20 @@ Vvveb.GlobalCustomSteps = {
         }
       } else {
         const inputVal = (textEl?.value || "").trim();
-        const currentText =
-          Vvveb.GlobalCustomVariable.getCurrentLogoTextStyle?.()?.text || "";
-        const showText = inputVal || currentText;
+        const showText = inputVal;
 
         preview?.classList.add("vvv-text-mode");
         preview?.classList.remove("vvv-image-mode");
 
         if (textPreview) {
           textPreview.textContent = showText || "Logo"; // ✅ last fallback
-          const ts = Number(textSizeSlider?.value || 24);
+          const ts = Number(
+            textSizeSlider?.value ||
+            logoSteps._lastTextLogoSize ||
+            24,
+          );
           textPreview.style.fontSize = ts + "px";
-          textPreview.style.lineHeight = "1.1";
+          // textPreview.style.lineHeight = "1.1";
           textPreview.style.display = "inline-block";
         }
         if (imgEl) imgEl.style.display = "none";
@@ -15473,35 +22398,43 @@ Vvveb.GlobalCustomSteps = {
     // ✅ Media Gallery
     openBtn?.addEventListener("click", () => {
       try {
-        if (!window.Vvveb.MediaModal) {
-          Vvveb.MediaModal = new MediaModal(true);
-          Vvveb.MediaModal.mediaPath = window.mediaPath;
+        if (!window.Vvveb?.NewMediaModal) {
+          setInfo("New media gallery not available");
+          return;
         }
 
-        //Current changes : 13-2-26 start
-        Vvveb.MediaModal.open(null, (imgData) => {
-          const payload =
-            typeof imgData === "string" ? { src: imgData } : imgData || {};
-          const imgUrl = payload.src;
-          //Current changes : 13-2-26 ends
-          if (!imgUrl) return;
+        Vvveb.NewMediaModal.open(imgEl || null, {
+          mode: "background-image",
+          type: "image",
+          source: "upload",
+          title: "Change global logo",
+          subtitle: "Choose an image to use as your website logo.",
+          onApply: (media) => {
+            const imgUrl = media && (media.url || media.src);
+            if (!imgUrl) return;
 
-          if (imgEl) {
-            imgEl.src = imgUrl;
-            imgEl.dataset.src = imgUrl;
-          }
+            setInfo(imgUrl.split("/").pop() || imgUrl);
 
-          setInfo(imgUrl.split("/").pop() || imgUrl);
+            if (srcImageRadio) srcImageRadio.checked = true;
 
-          // ✅ force image mode
-          if (srcImageRadio) srcImageRadio.checked = true;
+            const imageSize = Number(
+              sizeSlider?.value || this._lastImageLogoSize || 48,
+            );
+            this._lastImageLogoSize = imageSize;
 
-          refreshLogoPreview();
+            this._applyLogoFromPanel(
+              {
+                mode: "image",
+                value: imgUrl,
+                size: imageSize,
+              },
+              {
+                commitNow: true,
+              },
+            );
 
-          Vvveb.GlobalCustomVariable.applyLogo({
-            mode: "image",
-            value: imgUrl,
-          });
+            refreshLogoPreview();
+          },
         });
       } catch (e) {
         setInfo("Media gallery not available");
@@ -15519,34 +22452,74 @@ Vvveb.GlobalCustomSteps = {
 
       // if you want: fallback to text mode apply
       const val = (textEl?.value || "").trim();
-      Vvveb.GlobalCustomVariable.applyLogo({ mode: "text", value: val });
+      const textSize = Number(
+        textSizeSlider?.value || this._lastTextLogoSize || 24,
+      );
+      this._lastTextLogoSize = textSize;
+
+      this._applyLogoFromPanel({
+        mode: "text",
+        value: val,
+        size: textSize,
+      });
     });
 
-    // ✅ radio toggles apply instantly
     srcImageRadio?.addEventListener("change", () => {
+      this._lastTextLogoSize = Number(
+        textSizeSlider?.value || this._lastTextLogoSize || 24,
+      );
+
+      const src = imgEl?.dataset?.src || imgEl?.src || "";
+      const imageSize = Number(
+        sizeSlider?.value || this._lastImageLogoSize || 48,
+      );
+      this._lastImageLogoSize = imageSize;
+
       refreshLogoPreview();
-      if (imgEl?.src) {
-        Vvveb.GlobalCustomVariable.applyLogo({
+
+      if (src) {
+        this._applyLogoFromPanel({
           mode: "image",
-          value: imgEl.src,
+          value: src,
+          size: imageSize,
         });
       }
     });
 
     srcTextRadio?.addEventListener("change", () => {
+      this._lastImageLogoSize = Number(
+        sizeSlider?.value || this._lastImageLogoSize || 48,
+      );
+
+      const textSize = Number(
+        this._lastTextLogoSize || textSizeSlider?.value || 24,
+      );
+
+      if (textSizeSlider) textSizeSlider.value = String(textSize);
+      if (textSizeValue) textSizeValue.textContent = String(textSize);
+
+      this._lastTextLogoSize = textSize;
+
       refreshLogoPreview();
+
       const val = (textEl?.value || "").trim();
-      Vvveb.GlobalCustomVariable.applyLogo({ mode: "text", value: val });
+
+      this._applyLogoFromPanel({
+        mode: "text",
+        value: val,
+        size: textSize,
+      });
     });
 
     sizeSlider?.addEventListener("input", () => {
       const size = Number(sizeSlider.value || 48);
       if (sizeValue) sizeValue.textContent = String(size);
+      this._lastImageLogoSize = size;
 
       refreshLogoPreview();
 
       const src = imgEl?.dataset?.src || imgEl?.src || "";
-      Vvveb.GlobalCustomVariable.applyLogo({
+      this._applyLogoFromPanel({
         mode: "image",
         value: src,
         size,
@@ -15556,11 +22529,12 @@ Vvveb.GlobalCustomSteps = {
     textSizeSlider?.addEventListener("input", () => {
       const ts = Number(textSizeSlider.value || 24);
       if (textSizeValue) textSizeValue.textContent = String(ts);
+      this._lastTextLogoSize = ts;
 
       refreshLogoPreview();
 
       const val = (textEl?.value || "").trim();
-      Vvveb.GlobalCustomVariable.applyLogo({
+      this._applyLogoFromPanel({
         mode: "text",
         value: val,
         size: ts,
@@ -15572,8 +22546,11 @@ Vvveb.GlobalCustomSteps = {
       refreshLogoPreview();
       if (srcTextRadio?.checked) {
         const val = (textEl?.value || "").trim();
-        const ts = Number(textSizeSlider?.value || 24);
-        Vvveb.GlobalCustomVariable.applyLogo({
+        const ts = Number(
+          textSizeSlider?.value || this._lastTextLogoSize || 24,
+        );
+        this._lastTextLogoSize = ts;
+        this._applyLogoFromPanel({
           mode: "text",
           value: val,
           size: ts,
@@ -15581,9 +22558,32 @@ Vvveb.GlobalCustomSteps = {
       }
     });
 
+    logoUrlInput?.addEventListener(
+      "input",
+      () => {
+        const value =
+          String(
+            logoUrlInput.value || ""
+          ).trim() || "/";
+
+        updateLogoUrlHint(
+          logoUrlInput.value
+        );
+
+        this._applyLogoUrlFromPanel(
+          value
+        );
+      }
+    );
+
+    logoUrlInput?.addEventListener("change", () => {
+      this._commitLogoUndoSession();
+    });
+
     // ✅ first render
     refreshLogoPreview();
   },
+
 
   _setLogoMode(mode) {
     const imgRadio = document.getElementById("logo-src-image");
@@ -15606,6 +22606,120 @@ Vvveb.GlobalCustomSteps = {
     this.open();
     this.openStep("logo");
     this._setLogoMode(mode);
+  },
+
+  _syncLogoUIFromTemplate() {
+    const $ = (id) => document.getElementById(id);
+
+    const srcImageRadio = $("logo-src-image");
+    const srcTextRadio = $("logo-src-text");
+
+    const imgWrap = $("logo-image-panel");
+    const textWrap = $("logo-text-panel");
+
+    const imgEl = $("global-logo-img");
+    const textEl = $("global-logo-text");
+    const textPreview = $("global-logo-fallback");
+
+    const sizeSlider = $("logo-size-slider");
+    const sizeValue = $("logo-size-value");
+    const textSizeSlider = $("logo-text-size-slider");
+    const textSizeValue = $("logo-text-size-value");
+
+    const logoUrlInput = $("global-logo-url");
+
+    const preview = $("global-logo-preview");
+    const infoEl = $("logo-selected-info");
+
+    const currentImage = Vvveb.GlobalCustomVariable.getCurrentLogoImage?.();
+    const currentText =
+      Vvveb.GlobalCustomVariable.getCurrentLogoTextStyle?.();
+
+    const hasImage = !!currentImage?.absSrc;
+    const hasText = !!currentText?.text;
+
+    // Prefer image mode only when the actual template has an image logo.
+    // Otherwise show text mode when the template has text logo.
+    if (hasImage) {
+      if (srcImageRadio) srcImageRadio.checked = true;
+      if (srcTextRadio) srcTextRadio.checked = false;
+    } else if (hasText) {
+      if (srcTextRadio) srcTextRadio.checked = true;
+      if (srcImageRadio) srcImageRadio.checked = false;
+    }
+
+    const useImage = !!srcImageRadio?.checked;
+
+    if (imgWrap) imgWrap.style.display = useImage ? "block" : "none";
+    if (textWrap) textWrap.style.display = useImage ? "none" : "block";
+
+    if (hasImage && imgEl) {
+      imgEl.src = currentImage.absSrc;
+      imgEl.dataset.src = currentImage.src || currentImage.absSrc;
+      const size = Number(currentImage.size || 48);
+      this._lastImageLogoSize = size;
+
+      if (sizeSlider) sizeSlider.value = String(size);
+      if (sizeValue) sizeValue.textContent = String(size);
+      imgEl.style.display = "inline-block";
+      imgEl.style.maxHeight = size + "px";
+      imgEl.style.width = "auto";
+
+      if (infoEl) {
+        infoEl.textContent =
+          (currentImage.src || currentImage.absSrc)
+            .split("/")
+            .pop() || "Image logo selected.";
+      }
+    }
+
+    if (!hasImage && imgEl) {
+      imgEl.removeAttribute("src");
+      delete imgEl.dataset.src;
+      imgEl.style.display = "none";
+
+      if (infoEl) infoEl.textContent = "No image selected.";
+    }
+
+    if (hasText) {
+      if (textEl) textEl.value = currentText.text;
+
+      const fontSize = Number(currentText.fontSize || 24);
+      this._lastTextLogoSize = fontSize;
+
+      if (textSizeSlider) textSizeSlider.value = String(fontSize);
+      if (textSizeValue) textSizeValue.textContent = String(fontSize);
+
+      if (textPreview) {
+        textPreview.textContent = currentText.text;
+        textPreview.style.fontSize = fontSize + "px";
+
+        textPreview.style.display = useImage ? "none" : "inline-block";
+      }
+    } else {
+      if (textEl) textEl.value = "";
+
+      if (textPreview) {
+        textPreview.textContent = "Logo";
+        textPreview.style.display = useImage ? "none" : "inline-block";
+      }
+    }
+
+    if (sizeValue && sizeSlider) {
+      sizeValue.textContent = String(sizeSlider.value || 48);
+    }
+
+    if (logoUrlInput) {
+      logoUrlInput.value =
+        Vvveb.GlobalCustomVariable.getCurrentLogoUrl?.() || "/";
+
+      this._updateLogoUrlHint?.(
+        logoUrlInput.value
+      );
+    }
+
+    preview?.classList.toggle("vvv-image-mode", useImage);
+    preview?.classList.toggle("vvv-text-mode", !useImage);
   },
 
   // _bindOutside() {
@@ -15894,6 +23008,65 @@ document.querySelectorAll(".palette-card").forEach((card) => {
     card.classList.add("active");
 
     Vvveb.GlobalCustomVariable.applyPalette();
+    // Update global styles state after palette change
+    window.__zigrowGlobalStyles =
+      Vvveb.GlobalCustomVariable.serializeGlobalStyles?.()
+      ?? window.__zigrowGlobalStyles;
+
+    requestAnimationFrame(function () {
+      document.dispatchEvent(new CustomEvent("zigrow:global-colors-updated"));
+
+      const frameDoc =
+        Vvveb?.Builder?.iframe?.contentDocument ||
+        window.FrameDocument ||
+        document;
+
+      const frameWin = frameDoc?.defaultView || window;
+      const root = frameDoc?.documentElement;
+
+      const chips = document.querySelectorAll(
+        "#section-editor .zg-se-brand-color"
+      );
+
+      const vars = [
+        "--primary-colors",
+        "--secondary-colors",
+        "--territory-colors",
+      ];
+
+      chips.forEach(function (chip, index) {
+        const varName = vars[index];
+        if (!varName) return;
+
+        let value = "";
+
+        try {
+          value =
+            frameWin.getComputedStyle(root).getPropertyValue(varName).trim() ||
+            "";
+        } catch (e) { }
+
+        const trimmedValue = (value || "").trim();
+
+        if (!trimmedValue) return;
+
+        const parsedColor =
+          _sectionCssColorToHexAlpha(
+            trimmedValue,
+          );
+
+        const finalColor =
+          parsedColor?.hex || null;
+
+        if (!finalColor) return;
+
+        chip.style.setProperty("--zg-color", finalColor.toUpperCase());
+        chip.setAttribute("data-color", finalColor.toUpperCase());
+        chip.setAttribute("title", finalColor.toUpperCase());
+      });
+    });
+
+
     if (Vvveb?.Builder?.setDirty) Vvveb.Builder.setDirty(true);
   });
 });
@@ -15926,6 +23099,35 @@ document.querySelectorAll(".palette-card").forEach((card) => {
   });
 })();
 
+
+// ── Global styles: re-apply saved global font/color on every iframe load ──
+window.addEventListener("vvveb.iframe.loaded", function (event) {
+  try {
+    const doc = event.detail || window.FrameDocument;
+    if (window.__zigrowGlobalStyles && Vvveb.GlobalCustomVariable?.applyGlobalStyles) {
+      Vvveb.GlobalCustomVariable.applyGlobalStyles(
+        window.__zigrowGlobalStyles,
+        doc,
+        { silent: true }
+      );
+    }
+  } catch (e) { }
+});
+
+// Rebuild Link Editor button styles after initial load and page switching.
+// Synced navbar/footer buttons already contain data-link-style-id and
+// data-btn-* attributes, so their CSS can be safely regenerated per page.
+window.addEventListener("vvveb.iframe.loaded", function () {
+  try {
+    if (
+      Vvveb.LinkEditor &&
+      typeof Vvveb.LinkEditor._rebuildButtonStyles === "function"
+    ) {
+      Vvveb.LinkEditor._rebuildButtonStyles();
+    }
+  } catch (e) { }
+});
+
 // ---------- Custom Icon Font Awesome Library ----------//
 Vvveb.IconCustomLibrary = {
   modal: null,
@@ -15939,6 +23141,8 @@ Vvveb.IconCustomLibrary = {
   _pageSize: 180,
   _loadingEl: null,
   _loadMoreBtn: null,
+  _outsideCloseBound: false,
+  _frameOutsideCloseBound: false,
 
   init() {
     this.modal = document.getElementById("icon-popup");
@@ -15953,54 +23157,31 @@ Vvveb.IconCustomLibrary = {
     // style tabs
     this.modal.querySelectorAll("#fa-style-tabs .segbtn").forEach((btn) => {
       btn.addEventListener("click", () => {
-        this.modal
-          .querySelectorAll("#fa-style-tabs .segbtn")
-          .forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        this.activeStyle = btn.dataset.style;
+        const style =
+          btn.dataset.style || "all";
+
+        this._activateStyleTab(style);
+
         this._page = 0;
-        this.render(this.search?.value?.trim().toLowerCase() || "");
+
+        this.render(
+          this.search?.value?.trim().toLowerCase() || ""
+        );
       });
     });
-
     // search
-    // smart search: auto-switch styles based on results/intent
     this.search?.addEventListener("input", (e) => {
-      const q = e.target.value.trim().toLowerCase();
+      const q =
+        e.target.value.trim().toLowerCase();
+
       this._page = 0;
 
-      if (this._faList) {
-        const count = (style) =>
-          this._faList.filter(
-            (it) => it.style === style && (!q || it.search.includes(q))
-          ).length;
-
-        const cSolid = count("solid");
-        const cRegular = count("regular");
-        const cBrands = count("brands");
-
-        // 1) brand intent? jump to brands if it has hits
-        if (
-          q &&
-          this.activeStyle !== "brands" &&
-          this._looksLikeBrand?.(q) &&
-          cBrands > 0
-        ) {
-          this._activateStyleTab("brands");
-        } else {
-          // 2) otherwise: if current style has 0 hits, go where hits exist
-          if (this.activeStyle === "solid" && cSolid === 0) {
-            if (cBrands > 0) this._activateStyleTab("brands");
-            else if (cRegular > 0) this._activateStyleTab("regular");
-          } else if (this.activeStyle === "brands" && cBrands === 0) {
-            // your specific ask: brands → regular if regular has icon
-            if (cRegular > 0) this._activateStyleTab("regular");
-            else if (cSolid > 0) this._activateStyleTab("solid");
-          } else if (this.activeStyle === "regular" && cRegular === 0) {
-            if (cSolid > 0) this._activateStyleTab("solid");
-            else if (cBrands > 0) this._activateStyleTab("brands");
-          }
-        }
+      /*
+       * Search should show all matching results first.
+       * User can manually refine using Solid / Regular / Brands.
+       */
+      if (q) {
+        this._activateStyleTab("all");
       }
 
       this.render(q);
@@ -16012,6 +23193,46 @@ Vvveb.IconCustomLibrary = {
     document
       .getElementById("icon-close-btn-2")
       ?.addEventListener("click", close);
+
+
+    this._bindOutsideClose();
+
+    if (!this.modal.__outsideCloseBound) {
+      this.modal.__outsideCloseBound = true;
+
+      document.addEventListener(
+        "pointerdown",
+        (e) => {
+          if (!this.modal || this.modal.style.display === "none") return;
+
+          const iconSettingsPopup = document.getElementById("icon-settings-popup");
+
+          // Do not close the icon library when interacting with icon settings.
+          if (
+            iconSettingsPopup &&
+            iconSettingsPopup.style.display === "flex" &&
+            iconSettingsPopup.contains(e.target)
+          ) {
+            return;
+          }
+
+          // Click inside icon library should not close it.
+          if (this.modal.contains(e.target)) {
+            return;
+          }
+
+          this.close();
+        },
+        true
+      );
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (!this.modal || this.modal.style.display === "none") return;
+
+        this.close();
+      });
+    }
 
     // load more
     // this._loadMoreBtn?.addEventListener("click", () => {
@@ -16049,7 +23270,11 @@ Vvveb.IconCustomLibrary = {
 
         const filtered = (this._faList || []).filter(
           (it) =>
-            (this.activeStyle ? it.style === this.activeStyle : true) &&
+            (
+              this.activeStyle === "all" ||
+              !this.activeStyle ||
+              it.style === this.activeStyle
+            ) &&
             (!qq || it.search.includes(qq))
         );
 
@@ -16071,13 +23296,10 @@ Vvveb.IconCustomLibrary = {
     if (!this.modal) this.init();
     if (!this.modal || !this.selectedEl) return;
 
-    this.activeStyle = this._detectStyle(this.selectedEl); // solid/regular/brands
-    // activate corresponding segmented tab
-    this.modal
-      .querySelectorAll("#fa-style-tabs .segbtn")
-      .forEach((b) =>
-        b.classList.toggle("active", b.dataset.style === this.activeStyle)
-      );
+    this.activeStyle =
+      this._detectStyle(this.selectedEl);
+
+    this._activateStyleTab(this.activeStyle);
 
     await this.ensureFALoaded();
     this._page = 0;
@@ -16184,47 +23406,154 @@ Vvveb.IconCustomLibrary = {
   },
 
   render(q, append = false) {
-    if (!this._faList) return;
-    const qq = (q || "").toLowerCase().trim();
+    if (!this._faList || !this.grid) return;
 
-    // filter + count
-    const filtered = this._faList.filter(
-      (it) =>
-        (this.activeStyle ? it.style === this.activeStyle : true) &&
-        (!qq || it.search.includes(qq))
-    );
+    const qq =
+      (q || "").toLowerCase().trim();
+
+    const isAll =
+      this.activeStyle === "all" ||
+      !this.activeStyle;
+
+    const matchesSearch = (it) =>
+      !qq || it.search.includes(qq);
+
+    const filtered =
+      this._faList.filter((it) => {
+        const styleMatch =
+          isAll || it.style === this.activeStyle;
+
+        return styleMatch && matchesSearch(it);
+      });
+
+    this._updateTabCounts(qq);
     this._updateHeader(filtered.length);
 
-    // pagination
-    const end = Math.min(filtered.length, (this._page + 1) * this._pageSize);
-    const slice = filtered.slice(0, end);
+    const tabs =
+      this.modal?.querySelector("#fa-style-tabs");
 
-    if (!append) this.grid.innerHTML = "";
-    const html = slice
-      .slice(append ? this.grid.children.length : 0)
-      .map(
-        (it) => `
-    <button class="icon-item" role="listitem" data-cls="${it.cls}" title="${it.label}">
-      <i class="${it.cls}" aria-hidden="true"></i>
-      <small>${it.label}</small>
-    </button>
-  `
-      )
-      .join("");
+    if (tabs) {
+      tabs.classList.toggle("has-search", Boolean(qq));
+    }
+
+    const end =
+      Math.min(
+        filtered.length,
+        (this._page + 1) * this._pageSize
+      );
+
+    const slice =
+      filtered.slice(0, end);
+
+    if (!append) {
+      this.grid.innerHTML = "";
+    }
+
+    const startIndex =
+      append ? this.grid.children.length : 0;
+
+    const html =
+      slice
+        .slice(startIndex)
+        .map((it) => {
+          const styleLabel =
+            it.style === "brands"
+              ? "Brands"
+              : it.style === "regular"
+                ? "Regular"
+                : "Solid";
+
+          return `
+          <button
+            class="icon-item"
+            role="listitem"
+            data-cls="${it.cls}"
+            title="${it.label} • ${styleLabel}"
+          >
+            <i class="${it.cls}" aria-hidden="true"></i>
+            ${isAll && qq
+              ? `<span class="icon-result-style">${styleLabel}</span>`
+              : ""
+            }
+            <small>${it.label}</small>
+          </button>
+        `;
+        })
+        .join("");
+
     this.grid.insertAdjacentHTML("beforeend", html);
 
-    // bind once
     this.grid.querySelectorAll(".icon-item").forEach((btn) => {
       if (btn.__bound) return;
+
       btn.__bound = true;
+
       btn.addEventListener("click", () =>
         this.apply(btn.getAttribute("data-cls"))
       );
     });
 
-    // load more toggle
-    this._loadMoreBtn.style.display =
-      end < filtered.length ? "inline-block" : "none";
+    if (this._loadMoreBtn) {
+      this._loadMoreBtn.style.display = "none";
+    }
+  },
+
+  _updateTabCounts(q = "") {
+    if (!this.modal || !this._faList) return;
+
+    const qq =
+      String(q || "").toLowerCase().trim();
+
+    const count = (style) => {
+      return this._faList.filter((it) => {
+        const styleMatch =
+          style === "all" || it.style === style;
+
+        const searchMatch =
+          !qq || it.search.includes(qq);
+
+        return styleMatch && searchMatch;
+      }).length;
+    };
+
+    const counts = {
+      all: count("all"),
+      solid: count("solid"),
+      regular: count("regular"),
+      brands: count("brands"),
+    };
+
+    Object.entries(counts).forEach(([style, value]) => {
+      const countEl =
+        this.modal.querySelector(
+          `[data-count-for="${style}"]`
+        );
+
+      if (!countEl) return;
+
+      countEl.textContent =
+        value > 999 ? "999+" : String(value);
+    });
+
+    this.modal
+      .querySelectorAll("#fa-style-tabs .segbtn")
+      .forEach((btn) => {
+        const style =
+          btn.dataset.style || "all";
+
+        const countValue =
+          counts[style] || 0;
+
+        btn.classList.toggle(
+          "has-results",
+          countValue > 0
+        );
+
+        btn.classList.toggle(
+          "no-results",
+          Boolean(qq) && countValue === 0
+        );
+      });
   },
 
   apply(newClasses) {
@@ -16277,14 +23606,25 @@ Vvveb.IconCustomLibrary = {
   },
 
   _updateHeader(total) {
+    const style =
+      this.activeStyle || "all";
+
     const styleLabel =
-      this.activeStyle.charAt(0).toUpperCase() + this.activeStyle.slice(1);
+      style === "all"
+        ? "All"
+        : style.charAt(0).toUpperCase() + style.slice(1);
+
     if (this._packChip) {
-      this._packChip.innerHTML = `<i class="fa-brands fa-font-awesome" aria-hidden="true"></i>
-      <span class="chip-text">Font Awesome • ${styleLabel}</span>`;
+      this._packChip.innerHTML = `
+      <i class="fa-brands fa-font-awesome" aria-hidden="true"></i>
+      <span class="chip-text">Font Awesome • ${styleLabel}</span>
+    `;
     }
-    if (this._countEl)
-      this._countEl.textContent = `${(total || 0).toLocaleString()} icons`;
+
+    if (this._countEl) {
+      this._countEl.textContent =
+        `${(total || 0).toLocaleString()} icons`;
+    }
   },
 
   _toggleLoading(on) {
@@ -16292,12 +23632,26 @@ Vvveb.IconCustomLibrary = {
     this._loadingEl.style.display = on ? "flex" : "none";
   },
 
-  _activateStyleTab(style) {
+  _activateStyleTab(style = "all") {
     this.activeStyle = style;
-    const tabs = this.modal?.querySelectorAll("#fa-style-tabs .segbtn");
-    tabs?.forEach((b) =>
-      b.classList.toggle("active", b.dataset.style === style)
-    );
+
+    if (this.modal) {
+      this.modal.setAttribute("data-icon-style", style)
+    }
+
+    const tabs =
+      this.modal?.querySelectorAll("#fa-style-tabs .segbtn");
+
+    tabs?.forEach((btn) => {
+      const isActive =
+        btn.dataset.style === style;
+
+      btn.classList.toggle("active", isActive);
+      btn.setAttribute(
+        "aria-selected",
+        isActive ? "true" : "false"
+      );
+    });
   },
 
   _looksLikeBrand(q) {
@@ -16328,18 +23682,468 @@ Vvveb.IconCustomLibrary = {
     ];
     return brands.some((b) => q.includes(b));
   },
+
+  _bindOutsideClose() {
+    if (this._outsideCloseBound) return;
+    this._outsideCloseBound = true;
+
+    const isOpen = () => {
+      if (!this.modal) return false;
+
+      const display = this.modal.style.display || "";
+      return display !== "" && display !== "none";
+    };
+
+    const closeFromParentDocument = (e) => {
+      if (!isOpen()) return;
+
+      // Click inside icon library should not close it.
+      if (this.modal.contains(e.target)) return;
+
+      this.close();
+    };
+
+    const closeFromIframeDocument = () => {
+      if (!isOpen()) return;
+
+      // Any click inside the builder iframe is outside the parent popup.
+      this.close();
+    };
+
+    document.addEventListener("pointerdown", closeFromParentDocument, true);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if (!isOpen()) return;
+
+      this.close();
+    });
+
+    const bindIframeOutsideClick = () => {
+      const frameDoc =
+        Vvveb?.Builder?.iframe?.contentDocument ||
+        window.FrameDocument;
+
+      if (!frameDoc || frameDoc.__zigrowIconLibraryOutsideCloseBound) return;
+
+      frameDoc.__zigrowIconLibraryOutsideCloseBound = true;
+
+      frameDoc.addEventListener(
+        "pointerdown",
+        closeFromIframeDocument,
+        true
+      );
+    };
+
+    bindIframeOutsideClick();
+
+    window.addEventListener("vvveb.iframe.loaded", bindIframeOutsideClick);
+  },
+};
+
+/* =========================================================
+   Zigrow Icon Element Resolver
+   Phase 1
+
+   Rules:
+   - Only HTML <i> elements are supported as icons.
+   - Parent <a>, <span>, or <div> may redirect to the icon.
+   - The real editor target always remains the <i> element.
+   - Mixed-content parents are not treated as icon controls.
+========================================================= */
+Vvveb.IconElementResolver = {
+  allowedWrapperTags: new Set(["a", "span", "div", "p"]),
+
+  maxWrapperDepth: 6,
+
+  isIconElement(el) {
+    return !!(
+      el &&
+      el.nodeType === 1 &&
+      el.tagName &&
+      el.tagName.toLowerCase() === "i"
+    );
+  },
+
+  _isBuilderHelper(el) {
+    if (!el || el.nodeType !== 1) return false;
+
+    return !!el.matches?.(
+      `[data-vvveb-helpers],
+       [data-builder-only="true"],
+       .vvveb-add-link-helper,
+       .vvveb-add-btn-text,
+       .vvveb-add-btn-plus`
+    );
+  },
+
+  _findSingleIcon(source) {
+    if (!source || source.nodeType !== 1) return null;
+
+    if (this.isIconElement(source)) {
+      return source;
+    }
+
+    const icons = source.querySelectorAll?.("i") || [];
+
+    return icons.length === 1 ? icons[0] : null;
+  },
+
+  _isTransparentColor(value) {
+    const color = String(value || "")
+      .replace(/\s+/g, "")
+      .toLowerCase();
+
+    return (
+      !color ||
+      color === "transparent" ||
+      color === "rgba(0,0,0,0)" ||
+      /rgba\([^,]+,[^,]+,[^,]+,0(?:\.0+)?\)/.test(color)
+    );
+  },
+
+  _isCompactSurface(el) {
+    if (!el || el.nodeType !== 1) return false;
+
+    const rect = el.getBoundingClientRect?.();
+
+    if (!rect) return true;
+
+    const width = rect.width || 0;
+    const height = rect.height || 0;
+
+    /*
+     * Elements without a calculated size may not have rendered yet.
+     * Allow them temporarily so the resolver still works while loading.
+     */
+    if (width <= 0 || height <= 0) {
+      return true;
+    }
+
+    /*
+     * Prevent large layout containers from becoming icon controls.
+     */
+    return width <= 240 && height <= 240;
+  },
+
+  _isIconOnlyWrapper(wrapper, branch) {
+    if (!wrapper || wrapper.nodeType !== 1 || !branch) {
+      return false;
+    }
+
+    const tag = (wrapper.tagName || "").toLowerCase();
+
+    if (!this.allowedWrapperTags.has(tag)) {
+      return false;
+    }
+
+    if (wrapper.hasAttribute("data-logo")) {
+      return false;
+    }
+
+    /*
+     * Do not redirect clicks from large layout containers.
+     */
+    if (!this._isCompactSurface(wrapper)) {
+      return false;
+    }
+
+    for (const node of wrapper.childNodes) {
+      /*
+       * The current icon branch is allowed.
+       */
+      if (node === branch) {
+        continue;
+      }
+
+      /*
+       * Empty whitespace is allowed.
+       * Meaningful text makes this a mixed-content element.
+       */
+      if (node.nodeType === 3) {
+        if ((node.textContent || "").trim()) {
+          return false;
+        }
+
+        continue;
+      }
+
+      if (node.nodeType !== 1) {
+        continue;
+      }
+
+      /*
+       * Ignore builder-only helper elements.
+       */
+      if (this._isBuilderHelper(node)) {
+        continue;
+      }
+
+      /*
+       * Another real element means this is not icon-only.
+       */
+      return false;
+    }
+
+    return true;
+  },
+
+  _hasVisualSurface(el) {
+    if (
+      !el ||
+      el.nodeType !== 1 ||
+      !this._isCompactSurface(el)
+    ) {
+      return false;
+    }
+
+    const win = el.ownerDocument?.defaultView || window;
+    const style = win.getComputedStyle(el);
+
+    const backgroundColor = style.backgroundColor || "";
+    const backgroundImage = style.backgroundImage || "none";
+
+    const padding =
+      (parseFloat(style.paddingTop) || 0) +
+      (parseFloat(style.paddingRight) || 0) +
+      (parseFloat(style.paddingBottom) || 0) +
+      (parseFloat(style.paddingLeft) || 0);
+
+    const borderWidth =
+      (parseFloat(style.borderTopWidth) || 0) +
+      (parseFloat(style.borderRightWidth) || 0) +
+      (parseFloat(style.borderBottomWidth) || 0) +
+      (parseFloat(style.borderLeftWidth) || 0);
+
+    const borderRadius = Math.max(
+      parseFloat(style.borderTopLeftRadius) || 0,
+      parseFloat(style.borderTopRightRadius) || 0,
+      parseFloat(style.borderBottomRightRadius) || 0,
+      parseFloat(style.borderBottomLeftRadius) || 0
+    );
+
+    const hasManagedLayout = [
+      "flex",
+      "inline-flex",
+      "grid",
+      "inline-grid",
+    ].includes(style.display);
+
+    const hasExplicitSize = !!(
+      el.style.width ||
+      el.style.height ||
+      el.style.minWidth ||
+      el.style.minHeight
+    );
+
+    return (
+      !this._isTransparentColor(backgroundColor) ||
+      backgroundImage !== "none" ||
+      padding > 0 ||
+      borderWidth > 0 ||
+      borderRadius > 0 ||
+      hasManagedLayout ||
+      hasExplicitSize
+    );
+  },
+
+  resolveFromClickTarget(target) {
+    let current =
+      target && target.nodeType === 1
+        ? target
+        : target?.parentElement || null;
+
+    let depth = 0;
+
+    while (current && depth <= this.maxWrapperDepth) {
+      const tag = (current.tagName || "").toLowerCase();
+
+      if (
+        this.isIconElement(current) ||
+        this.allowedWrapperTags.has(tag)
+      ) {
+        const context = this.resolve(current);
+
+        if (context?.iconEl) {
+          return context;
+        }
+      }
+
+      current = current.parentElement;
+      depth += 1;
+    }
+
+    return null;
+  },
+
+  resolve(source) {
+    if (!source || source.nodeType !== 1) {
+      return null;
+    }
+
+    /*
+     * Source may be:
+     * - the <i> itself
+     * - an icon-only <span>
+     * - an icon-only <div>
+     * - an icon-only <a>
+     */
+    const iconEl = this._findSingleIcon(source);
+
+    if (!iconEl) {
+      return null;
+    }
+
+    const wrapperChain = [];
+
+    let branch = iconEl;
+    let parent = iconEl.parentElement;
+    let depth = 0;
+
+    /*
+     * Walk outward only through safe icon-only wrappers.
+     */
+    while (parent && depth < this.maxWrapperDepth) {
+      if (!this._isIconOnlyWrapper(parent, branch)) {
+        break;
+      }
+
+      wrapperChain.push(parent);
+
+      branch = parent;
+      parent = parent.parentElement;
+      depth += 1;
+    }
+
+    /*
+     * Reject an outer clicked element if it is not part of the
+     * verified icon-only wrapper chain.
+     *
+     * Directly clicking the <i> is always valid.
+     */
+    const sourceIsValid =
+      source === iconEl ||
+      wrapperChain.includes(source);
+
+    if (!sourceIsValid) {
+      return null;
+    }
+
+    const directWrapper = wrapperChain[0] || null;
+
+    const iconOnlyParent =
+      wrapperChain[wrapperChain.length - 1] || null;
+
+    /*
+     * Find the nearest anchor for social URL editing.
+     */
+    const linkEl =
+      wrapperChain.find(
+        (wrapper) =>
+          wrapper.tagName?.toLowerCase() === "a"
+      ) ||
+      iconEl.closest?.("a") ||
+      null;
+
+    /*
+     * Prefer an already-styled wrapper as the future
+     * background-color surface.
+     */
+    const styledSurface = wrapperChain.find((wrapper) =>
+      this._hasVisualSurface(wrapper)
+    );
+
+    /*
+     * When no existing styled surface exists, prefer an
+     * icon-only anchor because it usually represents the
+     * complete social-icon clickable area.
+     */
+    const compactLink = wrapperChain.find(
+      (wrapper) =>
+        wrapper.tagName?.toLowerCase() === "a" &&
+        this._isCompactSurface(wrapper)
+    );
+
+    /*
+     * Otherwise use the nearest compact wrapper.
+     */
+    const compactWrapper = wrapperChain.find((wrapper) =>
+      this._isCompactSurface(wrapper)
+    );
+
+    const surfaceEl =
+      styledSurface ||
+      compactLink ||
+      compactWrapper ||
+      iconEl;
+
+    return {
+      clickedEl: source,
+
+      /*
+       * The actual builder and Icon Editor target.
+       */
+      iconEl,
+
+      /*
+       * Immediate valid wrapper around the icon.
+       */
+      directWrapper,
+
+      /*
+       * Outermost verified icon-only wrapper.
+       */
+      iconOnlyParent,
+
+      /*
+       * Element whose full area may trigger icon selection.
+       */
+      interactionEl: iconOnlyParent || iconEl,
+
+      /*
+       * Future background-color target.
+       */
+      surfaceEl,
+
+      /*
+       * Parent anchor used for social URL editing.
+       */
+      linkEl,
+
+      wrapperChain,
+
+      isIconOnlyControl: wrapperChain.length > 0,
+    };
+  },
 };
 
 Vvveb.IconSettings = {
   modal: null,
   target: null,
+  iconContext: null,
   _bound: false,
 
   stagedColor: null,
   stagedSize: null,
+
+  stagedHoverColor: null,
+  hoverColorInput: null,
+  hoverColorSwatch: null,
+
+  stagedBackgroundColor: null,
+  backgroundColorInput: null,
+  backgroundColorSwatch: null,
+  backgroundSurfaceEl: null,
+
+  _originalBackgroundSurfaceStyle: null,
+  _backgroundColorTouched: false,
+  _originalHoverColor: null,
   _originalFontSize: null,
   _baseFontSize: null, // for size calculations
   _sizeTouched: false,
+  _colorTouched: false,
+  _hoverColorTouched: false,
+  _iconClassTouched: false,
 
   // additional staged properties for other attributes if needed
   stagedIconClass: null,
@@ -16349,10 +24153,80 @@ Vvveb.IconSettings = {
 
   linkRow: null,
   linkInput: null,
+  linkLabel: null,
+  linkHelp: null,
+  urlRow: null,
+  whatsappRow: null,
+  whatsappCountry: null,
+  whatsappNumber: null,
   linkEl: null,
+  _linkMode: "url",
+  _linkTouched: false,
   _originalHref: null,
   _originalTarget: null,
+  _originalRel: null,
   _originalLinkInputValue: null,
+  _originalWhatsappCountry: null,
+  _originalWhatsappNumber: null,
+
+  phoneCountryRules: [
+    {
+      code: "91",
+      iso: "IN",
+      name: "India",
+      flag: "🇮🇳",
+      min: 10,
+      max: 10,
+      mobileRegex: /^[6-9]\d{9}$/,
+      example: "9876543210",
+    },
+    {
+      code: "1",
+      iso: "US",
+      name: "USA / Canada",
+      flag: "🇺🇸",
+      min: 10,
+      max: 10,
+      mobileRegex: /^[2-9]\d{2}[2-9]\d{6}$/,
+      example: "2125551234",
+    },
+    {
+      code: "44",
+      iso: "GB",
+      name: "UK",
+      flag: "🇬🇧",
+      min: 10,
+      max: 10,
+      mobileRegex: /^7\d{9}$/,
+      example: "7123456789",
+      allowLeadingZero: true,
+    },
+    {
+      code: "61",
+      iso: "AU",
+      name: "Australia",
+      flag: "🇦🇺",
+      min: 9,
+      max: 9,
+      mobileRegex: /^4\d{8}$/,
+      example: "412345678",
+      allowLeadingZero: true,
+    },
+
+
+    {
+      code: "33",
+      iso: "FR",
+      name: "France",
+      flag: "🇫🇷",
+      min: 9,
+      max: 9,
+      mobileRegex: /^[67]\d{8}$/,
+      example: "612345678",
+      allowLeadingZero: true,
+    },
+
+  ],
 
   init() {
     if (this._bound) {
@@ -16363,11 +24237,59 @@ Vvveb.IconSettings = {
 
     this.colorInput = document.getElementById("icon-settings-color-input");
     this.colorSwatch = document.getElementById("icon-settings-color-swatch");
+    this.backgroundColorInput = document.getElementById(
+      "icon-settings-background-color-input"
+    );
+
+    this.backgroundColorSwatch = document.getElementById(
+      "icon-settings-background-color-swatch"
+    );
     this.sizeGroup = document.getElementById("icon-settings-size-group");
     this.chooseBtn = document.getElementById("icon-settings-choose-icon");
     this.previewEl = document.getElementById("icon-settings-preview");
     this.linkRow = document.getElementById("icon-settings-link-row");
     this.linkInput = document.getElementById("icon-settings-link-input");
+
+    this.linkLabel = document.getElementById("icon-settings-link-label");
+    this.linkHelp = document.getElementById("icon-settings-link-help");
+    this.urlRow = document.getElementById("icon-settings-url-row");
+    this.whatsappRow = document.getElementById("icon-settings-whatsapp-row");
+    this.whatsappCountry = document.getElementById("icon-settings-whatsapp-country");
+    this.whatsappNumber = document.getElementById("icon-settings-whatsapp-number");
+
+    this._syncWhatsappCountryOptions?.();
+
+    this.linkInput?.setAttribute("inputmode", "url");
+    this.linkInput?.setAttribute("autocomplete", "url");
+
+    this.whatsappNumber?.setAttribute("inputmode", "tel");
+    this.whatsappNumber?.setAttribute("autocomplete", "tel-national");
+
+    this.linkInput?.addEventListener("input", () => {
+      this._linkTouched = true;
+      this.clearValidationError?.();
+    });
+
+    this.whatsappNumber?.addEventListener("input", () => {
+      this._linkTouched = true;
+      this.clearValidationError?.();
+    });
+
+    this.whatsappCountry?.addEventListener("change", () => {
+      this._linkTouched = true;
+      this.clearValidationError?.();
+      this._updateWhatsappPlaceholder?.();
+    });
+
+    this.linkInput?.addEventListener("change", () => {
+      this._linkTouched = true;
+      this.clearValidationError?.();
+    });
+
+    this.whatsappNumber?.addEventListener("change", () => {
+      this._linkTouched = true;
+      this.clearValidationError?.();
+    });
 
     // To close the modal
     const cancel = () => this.cancel();
@@ -16380,27 +24302,38 @@ Vvveb.IconSettings = {
       .getElementById("icon-settings-cancel")
       ?.addEventListener("click", cancel);
 
-    document
-      .querySelector(".vvv-icon-modal__backdrop[data-dismiss='icon-settings']")
-      ?.addEventListener("click", () => {
-        console.log("outsideclick");
-        cancel();
-      });
+    const iconSettingsDialog = this.modal.querySelector(".vvv-icon-modal__dialog");
+    const iconSettingsBackdrop = this.modal.querySelector(
+      ".vvv-icon-modal__backdrop[data-dismiss='icon-settings']"
+    );
 
-    // to close the modal whenever we click outside
-    document.addEventListener("click", (e) => {
-      // Modal open nahi ho to ignore
+    iconSettingsBackdrop?.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      cancel();
+    });
+
+    this.modal.addEventListener("pointerdown", (e) => {
+      if (this.modal.style.display !== "flex") return;
+
+      const clickedInsideDialog = iconSettingsDialog?.contains(e.target);
+
+      if (!clickedInsideDialog) {
+        e.preventDefault();
+        e.stopPropagation();
+        cancel();
+      }
+    });
+
+    iconSettingsDialog?.addEventListener("pointerdown", (e) => {
+      e.stopPropagation();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
       if (!this.modal || this.modal.style.display !== "flex") return;
 
-      if (this.modal.contains(e.target)) return;
-
-      const iconLib = document.getElementById("icon-popup");
-      if (iconLib && iconLib.contains(e.target)) {
-        return;
-      }
-
-      // Otherwise → outside click → close modal
-      this.cancel();
+      cancel();
     });
 
     document
@@ -16417,15 +24350,68 @@ Vvveb.IconSettings = {
     });
 
     // Color
+    // Color
     this.colorInput?.addEventListener("input", (e) => {
       const color = e.target.value;
+
       this.stagedColor = color;
+      this._colorTouched = true;
+
       if (this.colorSwatch) {
         this.colorSwatch.style.backgroundColor = color;
       }
+
       this._updatePreview();
     });
 
+    this.backgroundColorInput?.addEventListener(
+      "input",
+      (e) => {
+        const color = e.target.value;
+
+        this.stagedBackgroundColor = color;
+        this._backgroundColorTouched = true;
+
+        if (this.backgroundColorSwatch) {
+          this.backgroundColorSwatch.style.backgroundColor =
+            color;
+        }
+
+        /*
+         * Only update the modal preview.
+         * Do not modify the template until Apply is clicked.
+         */
+        this._updatePreview();
+      }
+    );
+
+    this.backgroundColorSwatch?.addEventListener(
+      "click",
+      () => {
+        this.backgroundColorInput?.click();
+      }
+    );
+
+
+    this.hoverColorInput = document.getElementById("icon-settings-hover-color-input");
+    this.hoverColorSwatch = document.getElementById("icon-settings-hover-color-swatch");
+
+    this.hoverColorInput?.addEventListener("input", (e) => {
+      const color = e.target.value;
+
+      this.stagedHoverColor = color;
+      this._hoverColorTouched = true;
+
+      if (this.hoverColorSwatch) {
+        this.hoverColorSwatch.style.backgroundColor = color;
+      }
+
+      this._updatePreview();
+    });
+
+    this.hoverColorSwatch?.addEventListener("click", () => {
+      this.hoverColorInput?.click();
+    });
     // Color - Swatch color -> open native color input
     this.colorSwatch?.addEventListener("click", () => {
       this.colorInput?.click();
@@ -16445,17 +24431,44 @@ Vvveb.IconSettings = {
       this._updatePreview();
     });
 
+    this._bindUndoRedoHoverRefresh?.()
     this._bound = true;
   },
 
   open(el) {
     this.init();
-    this.target = el || Vvveb?.Builder?.selectedEl || null;
-    if (!this.modal || !this.target) return;
 
-    window.Vvveb?.Builder?.selectNode?.(this.target);
-    const iconEl = this._getIconElement();
-    if (!iconEl) return;
+    const requestedTarget =
+      el ||
+      Vvveb?.Builder?.selectedEl ||
+      null;
+
+    const iconContext =
+      Vvveb.IconElementResolver?.resolve?.(
+        requestedTarget
+      );
+
+    if (!this.modal || !iconContext?.iconEl) {
+      this.target = null;
+      this.iconContext = null;
+      return;
+    }
+
+    /*
+     * Store the complete icon relationship.
+     */
+    this.iconContext = iconContext;
+
+    /*
+     * The real target must always be the <i>.
+     */
+    this.target = iconContext.iconEl;
+
+    window.Vvveb?.Builder?.selectNode?.(
+      this.target
+    );
+
+    const iconEl = this.target;
 
     // Save original style here for Undo
     this._originalClass = iconEl.getAttribute("class") || "";
@@ -16463,6 +24476,13 @@ Vvveb.IconSettings = {
     this._hasColorChange = false;
     this._originalFontSize = iconEl.style.fontSize || "";
     this._sizeTouched = false;
+
+
+    this._colorTouched = false;
+    this._hoverColorTouched = false;
+    this._backgroundColorTouched = false;
+    this._linkTouched = false;
+    this._iconClassTouched = false;
 
     // Add this line to save the original icon class for potential undo/restore
     this.stagedIconClass = iconEl.getAttribute("class") || "";
@@ -16477,6 +24497,47 @@ Vvveb.IconSettings = {
 
     const hex = this._rgbToHex(currentColor);
     this.stagedColor = hex;
+
+    const currentHoverColor =
+      iconEl.getAttribute("data-zg-icon-hover-color") || hex;
+
+    this._originalHoverColor =
+      iconEl.getAttribute("data-zg-icon-hover-color") || "";
+
+    this.stagedHoverColor = this._rgbToHex(currentHoverColor);
+
+    if (this.hoverColorInput) {
+      this.hoverColorInput.value = this.stagedHoverColor;
+    }
+
+    if (this.hoverColorSwatch) {
+      this.hoverColorSwatch.style.background = this.stagedHoverColor;
+    }
+
+    const backgroundSurface =
+      this._getBackgroundSurface(iconEl);
+
+    this.backgroundSurfaceEl = backgroundSurface;
+
+    this._originalBackgroundSurfaceStyle =
+      backgroundSurface?.getAttribute("style") || "";
+
+    const backgroundHex =
+      this._readSurfaceBackgroundColor(
+        backgroundSurface
+      );
+
+    this.stagedBackgroundColor = backgroundHex;
+
+    if (this.backgroundColorInput) {
+      this.backgroundColorInput.value =
+        backgroundHex;
+    }
+
+    if (this.backgroundColorSwatch) {
+      this.backgroundColorSwatch.style.backgroundColor =
+        backgroundHex;
+    }
 
     this._baseFontSize = this._getPersistentBaseSize(iconEl); // for relative size calculations
 
@@ -16496,30 +24557,79 @@ Vvveb.IconSettings = {
     this._updatePreview();
 
     const linkEl =
-      this.target.tagName === "A"
-        ? this.target
-        : this.target.closest("a");
-    this.linkEl = linkEl || null;
+      this.iconContext?.linkEl ||
+      this.target.closest?.("a") ||
+      null;
+
+    this.linkEl = linkEl;
 
     if (this.linkRow) {
       if (this.linkEl) {
         this.linkRow.style.display = "";
-        const href = (this.linkEl.getAttribute("href") || "").trim();
-        this._originalHref = href;
+        const rawHref =
+          this.linkEl.getAttribute("href");
+
+        this._originalHref = rawHref;
+
+        const href =
+          String(rawHref || "").trim();
         this._originalTarget =
           this.linkEl.getAttribute("target") || null;
+        this._originalRel = this.linkEl.getAttribute("rel") || null;
 
-        const showValue =
-          !href || href === "#" || href.startsWith("#") ? "" : href;
-        this._originalLinkInputValue = showValue;
 
-        if (this.linkInput) this.linkInput.value = showValue;
+        const isWhatsapp = this._isWhatsappLink(iconEl, this.linkEl);
+
+        if (isWhatsapp) {
+          this._setLinkEditorMode("whatsapp");
+          this._originalWhatsappCountry = null;
+          this._originalWhatsappNumber = null;
+          const data = this._readWhatsappData(this.linkEl);
+
+          this._setWhatsappCountryValue(data.countryCode || "91");
+
+          if (this.whatsappNumber) {
+            this.whatsappNumber.value = data.number || "";
+          }
+
+          this._originalWhatsappCountry = data.countryCode || "91";
+          this._originalWhatsappNumber = data.number || "";
+
+          // Keep the old generic input clean when WhatsApp mode is active
+          this._originalLinkInputValue = "";
+          if (this.linkInput) this.linkInput.value = "";
+        } else {
+          this._setLinkEditorMode("url");
+
+          const showValue =
+            !href || href === "#" || href.startsWith("#") ? "" : href;
+
+          this._originalLinkInputValue = showValue;
+
+          if (this.linkInput) {
+            this.linkInput.value = showValue;
+          }
+
+          this._originalWhatsappCountry = null;
+          this._originalWhatsappNumber = null;
+
+          this._setWhatsappCountryValue("91");
+          if (this.whatsappNumber) this.whatsappNumber.value = "";
+        }
       } else {
         this.linkRow.style.display = "none";
+
+        this.linkEl = null;
+        this._linkMode = "url";
         this._originalHref = null;
         this._originalTarget = null;
         this._originalLinkInputValue = "";
+        this._originalWhatsappCountry = null;
+        this._originalWhatsappNumber = null;
+
         if (this.linkInput) this.linkInput.value = "";
+        this._setWhatsappCountryValue("91");
+        if (this.whatsappNumber) this.whatsappNumber.value = "";
       }
     }
 
@@ -16531,11 +24641,20 @@ Vvveb.IconSettings = {
     if (this.previewEl) this.previewEl.innerHTML = "";
 
     this.target = null;
+    this.iconContext = null;
     this.stagedColor = null;
+    this.backgroundSurfaceEl = null;
+    this.stagedBackgroundColor = null;
+    this._originalBackgroundSurfaceStyle = null;
+    this._backgroundColorTouched = false;
     this.stagedSize = null;
+    this.stagedHoverColor = null;
+    this._originalHoverColor = null;
     this._originalFontSize = null;
     this._sizeTouched = false;
     this._baseFontSize = null;
+    this._colorTouched = false;
+    this._hoverColorTouched = false;
     // Add stagedIconClass reset here to ensure it doesn't carry over to the next icon edit session
     this.stagedIconClass = null;
     this._originalClass = null;
@@ -16545,31 +24664,136 @@ Vvveb.IconSettings = {
     this.linkEl = null;
     this._originalHref = null;
     this._originalTarget = null;
+    this._originalRel = null;
     this._originalLinkInputValue = null;
-    if (this.linkInput) this.linkInput.value = "";
+    if (this.linkInput) {
+      this.linkInput.value = "";
+    }
+
+    this._linkMode = "url";
+    this._linkTouched = false;
+    this._iconClassTouched = false;
+    this._originalWhatsappCountry = null;
+    this._originalWhatsappNumber = null;
+
+    if (this.whatsappNumber) {
+      this.whatsappNumber.value = "";
+    }
+
+    this._setWhatsappCountryValue?.("91");
+    this.clearValidationError?.();
+  },
+
+  _getAtomicUndoHost(
+    iconEl,
+    backgroundSurface,
+    linkEl,
+    visualWrapper
+  ) {
+    if (!iconEl?.isConnected) {
+      return null;
+    }
+
+    const context =
+      Vvveb.IconElementResolver?.resolve?.(iconEl);
+
+    const outerIconControl =
+      context?.iconOnlyParent ||
+      linkEl ||
+      backgroundSurface ||
+      visualWrapper ||
+      iconEl;
+
+    const host =
+      outerIconControl?.parentElement ||
+      iconEl.parentElement ||
+      null;
+
+    if (!host?.isConnected) {
+      return null;
+    }
+
+    return host;
   },
 
   apply() {
+
+
+
+
+
     if (!this.target) {
       this.close();
       return;
     }
 
     const el = this._getIconElement();
+
     if (!el) {
       this.close();
       return;
     }
-    const undoTarget = this.linkEl || el.parentElement || el;
-    const undoOldHtml = undoTarget ? undoTarget.parentElement.outerHTML : "";
 
-    const oldClass = el.getAttribute("class");
-    const oldStyle = el.getAttribute("style");
-    const oldInnerHtml = el.parentElement.innerHTML;
-    // console.log("oldInnerHtml: ", oldInnerHtml);
+    if (!this.validateBeforeApply()) {
+      return;
+    }
 
-    if (this.stagedIconClass && this.stagedIconClass.trim()) {
-      const parts = (oldClass || "").split(/\s+/).filter(Boolean);
+    /*
+     * Resolve elements without modifying them.
+     * The old snapshot must be captured before any style,
+     * class, data attribute, URL or wrapper change.
+     */
+    const context =
+      Vvveb.IconElementResolver?.resolve?.(el);
+
+    const visualWrapper =
+      context?.directWrapper ||
+      null;
+
+    const backgroundSurface =
+      this._getBackgroundSurface(el);
+
+    const groupedUndoParent =
+      this._getAtomicUndoHost(
+        el,
+        backgroundSurface,
+        this.linkEl,
+        visualWrapper
+      );
+
+    if (!groupedUndoParent) {
+      console.warn(
+        "[IconSettings] Atomic undo host was not found."
+      );
+
+      return;
+    }
+
+    const groupedUndoOldHtml =
+      groupedUndoParent.innerHTML;
+
+    const oldClass = el.getAttribute("class") || "";
+    const oldStyle = el.getAttribute("style") || "";
+    const oldHoverColor = el.getAttribute("data-zg-icon-hover-color");
+    const oldBaseSize = el.getAttribute("data-vvveb-icon-base-size");
+
+    const oldHref = this.linkEl?.getAttribute("href") || "";
+    const oldTarget = this.linkEl?.getAttribute("target");
+    const oldRel = this.linkEl?.getAttribute("rel");
+
+
+    const oldLinkType = this.linkEl?.getAttribute("data-link-type");
+    const oldCountryCode = this.linkEl?.getAttribute("data-country-code");
+    const oldWhatsappNumber = this.linkEl?.getAttribute("data-whatsapp-number");
+    const oldTitle = this.linkEl?.getAttribute("title");
+    const oldAriaLabel = this.linkEl?.getAttribute("aria-label");
+
+    if (
+      this._iconClassTouched &&
+      this.stagedIconClass &&
+      this.stagedIconClass.trim()
+    ) {
+      const parts = oldClass.split(/\s+/).filter(Boolean);
 
       const keep = parts.filter(
         (c) =>
@@ -16578,17 +24802,36 @@ Vvveb.IconSettings = {
           /^text-\w+/.test(c) ||
           /^d-\w+/.test(c) ||
           /^float-\w+/.test(c) ||
-          /^(fa|la)-(xs|sm|lg|\d+x)$/.test(c)
+          /^(fa|la)-(xs|sm|lg|\d+x)$/.test(c),
       );
 
       el.setAttribute(
         "class",
-        [...keep, ...this.stagedIconClass.split(/\s+/).filter(Boolean)].join(" ")
+        [
+          ...keep,
+          ...this.stagedIconClass.split(/\s+/).filter(Boolean),
+        ].join(" "),
       );
     }
 
-    if (this.stagedColor) {
+    if (this.stagedColor && this._colorTouched) {
       el.style.color = this.stagedColor;
+    }
+
+    if (
+      this.stagedBackgroundColor &&
+      this._backgroundColorTouched
+    ) {
+      this._applySmartIconBackground(
+        backgroundSurface,
+        el,
+        this.stagedBackgroundColor
+      );
+    }
+
+    if (this.stagedHoverColor && this._hoverColorTouched) {
+      ensureVvvebId(el);
+      el.setAttribute("data-zg-icon-hover-color", this.stagedHoverColor);
     }
 
     const sizeClasses = [
@@ -16607,147 +24850,355 @@ Vvveb.IconSettings = {
       "fa-10x",
     ];
 
-    let newClass = el.getAttribute("class") || "";
-
     if (this._sizeTouched) {
-      const base = parseFloat(this._getPersistentBaseSize(el)) || 16;
+      const base =
+        parseFloat(
+          this._getPersistentBaseSize(el, true)
+        ) || 16;
 
-      if (this.stagedSize === "original") {
-        el.style.fontSize = `${Math.round(base)}px`;
-      } else {
-        el.style.fontSize = this._getRelativeFontSize(
+      const nextFontSize =
+        this._getRelativeFontSize(
           this.stagedSize,
-          base,
+          base
         );
+
+      const nextFontSizePx =
+        parseFloat(nextFontSize) || base;
+
+      const surface =
+        this._getBackgroundSurface(el);
+
+      let shouldScaleIconBox = false;
+      let surfaceStyle = null;
+
+      if (
+        surface &&
+        surface !== el &&
+        surface.contains?.(el)
+      ) {
+        const icons =
+          surface.querySelectorAll(
+            "i[data-icon], i[class*='bi-'], i[class*='fa-']"
+          );
+
+        const text =
+          String(surface.textContent || "")
+            .replace(/\s+/g, "")
+            .trim();
+
+        const isSafeSingleIconSurface =
+          icons.length === 1 &&
+          icons[0] === el &&
+          !text;
+
+        const win =
+          surface.ownerDocument?.defaultView ||
+          window;
+
+        surfaceStyle =
+          win.getComputedStyle(surface);
+
+        const width =
+          parseFloat(surfaceStyle.width) || 0;
+
+        const height =
+          parseFloat(surfaceStyle.height) || 0;
+
+        const padding =
+          (parseFloat(surfaceStyle.paddingTop) || 0) +
+          (parseFloat(surfaceStyle.paddingRight) || 0) +
+          (parseFloat(surfaceStyle.paddingBottom) || 0) +
+          (parseFloat(surfaceStyle.paddingLeft) || 0);
+
+        const radius =
+          Math.max(
+            parseFloat(
+              surfaceStyle.borderTopLeftRadius
+            ) || 0,
+            parseFloat(
+              surfaceStyle.borderTopRightRadius
+            ) || 0,
+            parseFloat(
+              surfaceStyle.borderBottomRightRadius
+            ) || 0,
+            parseFloat(
+              surfaceStyle.borderBottomLeftRadius
+            ) || 0
+          );
+
+        const hasRealIconBox =
+          width > 0 &&
+          height > 0 &&
+          (
+            padding > 0 ||
+            radius > 0 ||
+            surfaceStyle.display === "flex" ||
+            surfaceStyle.display === "inline-flex"
+          );
+        shouldScaleIconBox =
+          isSafeSingleIconSurface &&
+          hasRealIconBox;
+
+        if (shouldScaleIconBox) {
+          /*
+           * Capture the original wrapper box once.
+           * This is important because future size changes
+           * should scale from the first real box, not from
+           * the previously scaled box.
+           */
+          if (
+            !surface.hasAttribute(
+              "data-zg-icon-box-base-width"
+            )
+          ) {
+            surface.setAttribute(
+              "data-zg-icon-box-base-width",
+              String(width)
+            );
+
+            surface.setAttribute(
+              "data-zg-icon-box-base-height",
+              String(height)
+            );
+
+            surface.setAttribute(
+              "data-zg-icon-box-base-padding-top",
+              String(parseFloat(surfaceStyle.paddingTop) || 0)
+            );
+
+            surface.setAttribute(
+              "data-zg-icon-box-base-padding-right",
+              String(parseFloat(surfaceStyle.paddingRight) || 0)
+            );
+
+            surface.setAttribute(
+              "data-zg-icon-box-base-padding-bottom",
+              String(parseFloat(surfaceStyle.paddingBottom) || 0)
+            );
+
+            surface.setAttribute(
+              "data-zg-icon-box-base-padding-left",
+              String(parseFloat(surfaceStyle.paddingLeft) || 0)
+            );
+          }
+        }
       }
 
-      const parts = (el.getAttribute("class") || "")
-        .split(/\s+/)
-        .filter(Boolean)
-        .filter((c) => !sizeClasses.includes(c));
+      /*
+       * Always change the actual icon size.
+       */
+      el.style.fontSize = nextFontSize;
 
-      newClass = parts.join(" ");
-      el.className = newClass;
+      /*
+       * Only scale safe icon-only boxes.
+       * Never scale wrappers that contain text.
+       */
+      if (shouldScaleIconBox) {
+        const scale =
+          base > 0
+            ? nextFontSizePx / base
+            : 1;
+
+        const safeScale =
+          Math.max(
+            0.5,
+            Math.min(1.75, scale)
+          );
+
+        const getBase = (attr, fallback = 0) =>
+          parseFloat(
+            surface.getAttribute(attr)
+          ) || fallback;
+
+        const px = (value) =>
+          `${Math.max(0, Math.round(value))}px`;
+
+        surface.style.width =
+          px(
+            getBase(
+              "data-zg-icon-box-base-width"
+            ) * safeScale
+          );
+
+        surface.style.height =
+          px(
+            getBase(
+              "data-zg-icon-box-base-height"
+            ) * safeScale
+          );
+
+        surface.style.paddingTop =
+          px(
+            getBase(
+              "data-zg-icon-box-base-padding-top"
+            ) * safeScale
+          );
+
+        surface.style.paddingRight =
+          px(
+            getBase(
+              "data-zg-icon-box-base-padding-right"
+            ) * safeScale
+          );
+
+        surface.style.paddingBottom =
+          px(
+            getBase(
+              "data-zg-icon-box-base-padding-bottom"
+            ) * safeScale
+          );
+
+        surface.style.paddingLeft =
+          px(
+            getBase(
+              "data-zg-icon-box-base-padding-left"
+            ) * safeScale
+          );
+
+        surface.style.boxSizing = "border-box";
+
+        if (
+          surfaceStyle?.display !== "flex" &&
+          surfaceStyle?.display !== "inline-flex"
+        ) {
+          surface.style.display = "inline-flex";
+          surface.style.alignItems = "center";
+          surface.style.justifyContent = "center";
+          surface.style.lineHeight = "1";
+          surface.style.verticalAlign = "middle";
+        }
+      }
     }
 
-    const newStyle = el.getAttribute("style") || "";
-    // console.log("Hey, Amit this 13937 and here is the element", el);
+    const currentUrlValue =
+      String(
+        this.linkInput?.value || ""
+      ).trim();
 
-    // if (oldStyle !== newStyle && Vvveb?.Undo?.addMutation) {
-    //   Vvveb.Undo.addMutation({
-    //     type: "attributes",
-    //     target: el,
-    //     attributeName: "style",
-    //     oldValue: oldStyle,
-    //     newValue: newStyle,
-    //   });
-    // }
-    // if (oldClass !== newClass && Vvveb?.Undo?.addMutation) {
-    //   Vvveb.Undo.addMutation({
-    //     type: "attributes",
-    //     target: el,
-    //     attributeName: "class",
-    //     oldValue: oldClass,
-    //     newValue: newClass,
-    //   });
-    // }
-    const newInnerHtml = el.parentElement.innerHTML;
-    // console.log("newInnerHtml: ", newInnerHtml);
+    const originalUrlValue =
+      String(
+        this._originalLinkInputValue || ""
+      ).trim();
 
-    if (this.linkRow.style.display == "none" && Vvveb?.Undo?.addMutation && oldInnerHtml != newInnerHtml) {
-      Vvveb.Undo.addMutation({
-        type: "characterData",
-        target: el.parentElement,
-        oldValue: oldInnerHtml,
-        newValue: newInnerHtml,
-      });
-    }
+    const currentWhatsappCountry =
+      this._getSelectedWhatsappCountryCode();
 
-    // 🔗 NEW: apply link from input to <a>
-    // 🔗 Apply social link (static https://)
-    if (
-      this.linkInput &&
+    const currentWhatsappNumber =
+      this._sanitizePhonePart(
+        this.whatsappNumber?.value || ""
+      );
+
+    const shouldApplyLink =
       this.linkEl &&
       this.linkRow &&
-      this.linkRow.style.display !== "none"
-    ) {
-      const rawInput = (this.linkInput.value || "").trim();
-      const originalInput = (this._originalLinkInputValue || "").trim();
+      this.linkRow.style.display !== "none" &&
+      (
+        this._linkMode === "whatsapp"
+          ? true
+          : currentUrlValue.length > 0
+      );
 
-      if (rawInput !== originalInput) {
-        const oldHref =
-          this._originalHref ??
-          this.linkEl.getAttribute("href") ??
-          "";
-        const oldTarget =
-          this._originalTarget ?? this.linkEl.getAttribute("target");
 
-        let href = (this.linkInput.value || "").trim();
+    if (shouldApplyLink) {
+      if (this._linkMode === "whatsapp") {
+        const result = this._validateWhatsappNumber(
+          this.whatsappNumber?.value,
+          this._getSelectedWhatsappCountryCode(),
+        );
 
-        if (!href || /^#+$/.test(href)) {
-          this.linkEl.removeAttribute("href");
-          this.linkEl.removeAttribute("target");
-        } else {
-          if (
-            !/^https?:\/\//i.test(href) &&
-            !href.startsWith("/") &&
-            !href.startsWith("mailto:") &&
-            !href.startsWith("tel:")
-          ) {
-            href = "https://" + href;
-          }
-
-          this.linkEl.setAttribute("href", href);
-          this.linkEl.setAttribute("target", "_blank");
+        if (!result.valid) {
+          this.showValidationError(this.whatsappNumber, result.message);
+          return;
         }
 
-        if (href) {
-          this.linkEl.setAttribute("href", href);
-          this.linkEl.setAttribute("target", "_blank");
-        } else {
-          this.linkEl.removeAttribute("href");
-          this.linkEl.removeAttribute("target");
+        this.linkEl.setAttribute("href", `https://wa.me/${result.waNumber}`);
+        this.linkEl.setAttribute("target", "_blank");
+        this.linkEl.setAttribute("rel", "noopener noreferrer");
+
+        this.linkEl.setAttribute("data-link-type", "whatsapp");
+        this.linkEl.setAttribute("data-country-code", result.countryCode);
+        this.linkEl.setAttribute("data-whatsapp-number", result.localNumber);
+
+        if (!this.linkEl.getAttribute("title")) {
+          this.linkEl.setAttribute("title", "Chat on WhatsApp");
         }
 
-        const finalHref = this.linkEl.getAttribute("href") || "";
-        const finalTarget = this.linkEl.getAttribute("target");
+        if (!this.linkEl.getAttribute("aria-label")) {
+          this.linkEl.setAttribute("aria-label", "Chat on WhatsApp");
+        }
+      } else if (this.linkInput) {
+        const result = this._validateSocialUrl(this.linkInput.value);
 
-        // if (Vvveb?.Undo?.addMutation) {
-        //     if (oldHref !== finalHref) {
-        //         Vvveb.Undo.addMutation({
-        //             type: "attributes",
-        //             target: this.linkEl,
-        //             attributeName: "href",
-        //             oldValue: oldHref,
-        //             newValue: finalHref,
-        //         });
-        //     }
-        //     if (oldTarget !== finalTarget) {
-        //         Vvveb.Undo.addMutation({
-        //             type: "attributes",
-        //             target: this.linkEl,
-        //             attributeName: "target",
-        //             oldValue: oldTarget,
-        //             newValue: finalTarget,
-        //         });
-        //     }
-        // }
-      }
+        if (!result.valid) {
+          this.showValidationError(this.linkInput, result.message);
+          return;
+        }
 
-      const undoNewHtml = undoTarget ? undoTarget.parentElement.outerHTML : "";
+        this.linkEl.setAttribute("href", result.value);
+        this.linkEl.setAttribute("target", "_blank");
+        this.linkEl.setAttribute("rel", "noopener noreferrer");
 
-      if (Vvveb?.Undo?.addMutation && undoOldHtml !== undoNewHtml) {
-        Vvveb.Undo.addMutation({
-          type: "characterData",
-          target: undoTarget.parentElement,
-          oldValue: undoOldHtml,
-          newValue: undoNewHtml,
-        });
+        this.linkEl.removeAttribute("data-link-type");
+        this.linkEl.removeAttribute("data-country-code");
+        this.linkEl.removeAttribute("data-whatsapp-number");
+
+        if (this.linkEl.getAttribute("title") === "Chat on WhatsApp") {
+          this.linkEl.removeAttribute("title");
+        }
+
+        if (this.linkEl.getAttribute("aria-label") === "Chat on WhatsApp") {
+          this.linkEl.removeAttribute("aria-label");
+        }
       }
     }
+    this._rebuildIconHoverStyles();
+
+
+
+    const newClass = el.getAttribute("class") || "";
+    const newStyle = el.getAttribute("style") || "";
+    const newBackgroundSurfaceStyle =
+      backgroundSurface?.getAttribute("style") ||
+      "";
+    const newHoverColor = el.getAttribute("data-zg-icon-hover-color");
+    const newBaseSize = el.getAttribute("data-vvveb-icon-base-size");
+
+    const newHref = this.linkEl?.getAttribute("href") || "";
+    const newTarget = this.linkEl?.getAttribute("target");
+    const newRel = this.linkEl?.getAttribute("rel");
+    const newLinkType = this.linkEl?.getAttribute("data-link-type");
+    const newCountryCode = this.linkEl?.getAttribute("data-country-code");
+    const newWhatsappNumber = this.linkEl?.getAttribute("data-whatsapp-number");
+    const newTitle = this.linkEl?.getAttribute("title");
+    const newAriaLabel = this.linkEl?.getAttribute("aria-label");
+
+    const groupedUndoNewHtml =
+      groupedUndoParent.innerHTML;
+
+    const hasChanged =
+      groupedUndoOldHtml !== groupedUndoNewHtml;
+
+    if (
+      hasChanged &&
+      Vvveb?.Undo?.addMutation
+    ) {
+      Vvveb.Undo.addMutation({
+        type: "characterData",
+        target: groupedUndoParent,
+        oldValue: groupedUndoOldHtml,
+        newValue: groupedUndoNewHtml,
+      });
+
+      Vvveb?.Builder?.setDirty?.(true);
+    }
+
+    setTimeout(() => {
+      this._rebuildIconHoverStyles();
+    }, 0);
 
     this.close();
   },
+
 
   cancel() {
 
@@ -16765,32 +25216,51 @@ Vvveb.IconSettings = {
       }
     }
 
-    if (this.target) {
-      if (this._originalClass != null) {
-        this.target.setAttribute("class", this._originalClass);
+    if (iconEl) {
+      if (this._originalHoverColor) {
+        iconEl.setAttribute("data-zg-icon-hover-color", this._originalHoverColor);
+      } else {
+        iconEl.removeAttribute("data-zg-icon-hover-color");
       }
-      if (this._originalStyle != null) {
-        if (this._originalStyle) {
-          this.target.setAttribute("style", this._originalStyle);
-        } else {
-          this.target.removeAttribute("style");
-        }
-      }
+
+      this._rebuildIconHoverStyles?.();
     }
+
+    // if (this.target) {
+    //   if (this._originalClass != null) {
+    //     this.target.setAttribute("class", this._originalClass);
+    //   }
+    //   if (this._originalStyle != null) {
+    //     if (this._originalStyle) {
+    //       this.target.setAttribute("style", this._originalStyle);
+    //     } else {
+    //       this.target.removeAttribute("style");
+    //     }
+    //   }
+    // }
     // 🔗 NEW: restore link href/target
     if (this.linkEl) {
-      if (this._originalHref != null) {
-        if (this._originalHref) {
-          this.linkEl.setAttribute("href", this._originalHref);
-        } else {
-          this.linkEl.removeAttribute("href");
-        }
+      if (this._originalHref === null) {
+        this.linkEl.removeAttribute("href");
+      } else {
+        this.linkEl.setAttribute(
+          "href",
+          this._originalHref
+        );
       }
       if (this._originalTarget != null) {
         if (this._originalTarget) {
           this.linkEl.setAttribute("target", this._originalTarget);
         } else {
           this.linkEl.removeAttribute("target");
+        }
+      }
+
+      if (this._originalRel != null) {
+        if (this._originalRel) {
+          this.linkEl.setAttribute("rel", this._originalRel);
+        } else {
+          this.linkEl.removeAttribute("rel");
         }
       }
     }
@@ -16801,8 +25271,377 @@ Vvveb.IconSettings = {
     if (!this.target) return;
 
     this.stagedIconClass = newClass || "";
+    this._iconClassTouched = true;
     this._updatePreview();
   },
+
+  _getBackgroundSurface(iconEl = null) {
+    const icon =
+      iconEl ||
+      this._getIconElement();
+
+    if (!icon) {
+      return null;
+    }
+
+    const context =
+      Vvveb.IconElementResolver?.resolve?.(
+        icon
+      );
+
+    if (context) {
+      this.iconContext = context;
+    }
+
+    /*
+     * Do not trust only context.surfaceEl.
+     * Sometimes resolver returns the <i> itself.
+     * For icon-box cases, we need to find the nearest
+     * safe single-icon wrapper.
+     */
+    const candidates = [
+      context?.directWrapper,
+      context?.surfaceEl,
+      context?.iconOnlyParent,
+      icon.parentElement,
+      icon,
+    ].filter(Boolean);
+
+    const allowedSurfaceTags =
+      new Set(["a", "button", "span", "div"]);
+
+    let surface = icon;
+
+    for (const candidate of candidates) {
+      if (!candidate) continue;
+
+      if (candidate === icon) {
+        surface = icon;
+        break;
+      }
+
+      if (!candidate.contains?.(icon)) {
+        continue;
+      }
+
+      const tag =
+        candidate.tagName?.toLowerCase();
+
+      /*
+       * Do not use <p>, <li>, h-tags, etc. as icon box.
+       * They are text/content wrappers.
+       */
+      if (!allowedSurfaceTags.has(tag)) {
+        continue;
+      }
+
+      const icons =
+        candidate.querySelectorAll(
+          "i[data-icon], i[class*='bi-'], i[class*='fa-']"
+        );
+
+      const text =
+        String(candidate.textContent || "")
+          .replace(/\s+/g, "")
+          .trim();
+
+      const isSafeSingleIconSurface =
+        icons.length === 1 &&
+        icons[0] === icon &&
+        !text;
+
+      if (isSafeSingleIconSurface) {
+        surface = candidate;
+        break;
+      }
+    }
+
+    this.backgroundSurfaceEl = surface;
+
+    return surface;
+  },
+
+  _isTransparentBackground(value) {
+    const color = String(value || "")
+      .replace(/\s+/g, "")
+      .toLowerCase();
+
+    return (
+      !color ||
+      color === "transparent" ||
+      color === "rgba(0,0,0,0)" ||
+      /rgba\([^,]+,[^,]+,[^,]+,0(?:\.0+)?\)/.test(
+        color
+      )
+    );
+  },
+
+  _readSurfaceBackgroundColor(surfaceEl) {
+    if (!surfaceEl) {
+      return "#ffffff";
+    }
+
+    const win =
+      surfaceEl.ownerDocument?.defaultView ||
+      window;
+
+    const computed =
+      win.getComputedStyle(surfaceEl);
+
+    const backgroundColor =
+      computed.backgroundColor ||
+      "";
+
+    /*
+     * A native color input cannot display transparent.
+     * White is only used as the picker display value.
+     * It will not be applied unless the user changes it.
+     */
+    if (
+      this._isTransparentBackground(
+        backgroundColor
+      )
+    ) {
+      return "#ffffff";
+    }
+
+    return this._rgbToHex(backgroundColor);
+  },
+
+  _applySmartIconBackground(
+    surfaceEl,
+    iconEl,
+    color
+  ) {
+    if (!surfaceEl || !iconEl || !color) {
+      return;
+    }
+
+    /*
+     * Apply only the requested background color.
+     * Do not resize wrapper.
+     * Do not clean wrapper.
+     * Do not generate width, height, min-size or padding.
+     */
+    surfaceEl.style.backgroundColor = color;
+
+    const win =
+      surfaceEl.ownerDocument?.defaultView ||
+      window;
+
+    const computed =
+      win.getComputedStyle(surfaceEl);
+
+    const padding =
+      (parseFloat(computed.paddingTop) || 0) +
+      (parseFloat(computed.paddingRight) || 0) +
+      (parseFloat(computed.paddingBottom) || 0) +
+      (parseFloat(computed.paddingLeft) || 0);
+
+    const hasRadius =
+      Math.max(
+        parseFloat(
+          computed.borderTopLeftRadius
+        ) || 0,
+        parseFloat(
+          computed.borderTopRightRadius
+        ) || 0,
+        parseFloat(
+          computed.borderBottomRightRadius
+        ) || 0,
+        parseFloat(
+          computed.borderBottomLeftRadius
+        ) || 0
+      ) > 0;
+
+    const hasInlineSize =
+      Boolean(
+        surfaceEl.style.width ||
+        surfaceEl.style.height ||
+        surfaceEl.style.minWidth ||
+        surfaceEl.style.minHeight
+      );
+
+    /*
+     * Only add minimal defaults when the surface has
+     * no icon-box styling at all.
+     */
+    if (
+      padding <= 0 &&
+      !hasRadius &&
+      !hasInlineSize
+    ) {
+      surfaceEl.style.display = "inline-flex";
+      surfaceEl.style.alignItems = "center";
+      surfaceEl.style.justifyContent = "center";
+      surfaceEl.style.boxSizing = "border-box";
+      surfaceEl.style.lineHeight = "1";
+      surfaceEl.style.verticalAlign = "middle";
+      surfaceEl.style.padding = "0.45em";
+
+      const tag =
+        surfaceEl.tagName?.toLowerCase();
+
+      surfaceEl.style.borderRadius =
+        tag === "a" || tag === "button"
+          ? "50%"
+          : "0.45em";
+    }
+  },
+
+  _getIconScale(sizeKey) {
+    if (sizeKey === "smaller") return 0.5;
+    if (sizeKey === "larger") return 1.5;
+    return 1;
+  },
+
+  _syncIconVisualWrapper(iconEl, sizeKey = null) {
+    if (!iconEl || !iconEl.parentElement) return null;
+
+    const wrapper = iconEl.parentElement;
+    const tag = (wrapper.tagName || "").toLowerCase();
+
+    const blockedParents = [
+      "html",
+      "body",
+      "section",
+      "header",
+      "footer",
+      "nav",
+      "ul",
+      "ol",
+      "li",
+      "main",
+      "article",
+      "form",
+      "table",
+      "tbody",
+      "thead",
+      "tr",
+      "td",
+      "th",
+    ];
+
+    if (blockedParents.includes(tag)) return null;
+
+    const hasVisibleText = Array.from(wrapper.childNodes).some((node) => {
+      return node.nodeType === 3 && node.textContent.trim().length > 0;
+    });
+
+    const hasOtherRealElement = Array.from(wrapper.children).some((child) => {
+      if (child === iconEl) return false;
+      if (child.hasAttribute("data-vvveb-helpers")) return false;
+      return true;
+    });
+
+    if (hasVisibleText || hasOtherRealElement) return null;
+
+    const doc = wrapper.ownerDocument;
+    const win = doc.defaultView || window;
+
+    const getSize = () => {
+      const computed = win.getComputedStyle(wrapper);
+      const rect = wrapper.getBoundingClientRect();
+
+      return {
+        width: rect.width || parseFloat(computed.width) || 0,
+        height: rect.height || parseFloat(computed.height) || 0,
+        paddingTop: parseFloat(computed.paddingTop) || 0,
+        paddingRight: parseFloat(computed.paddingRight) || 0,
+        paddingBottom: parseFloat(computed.paddingBottom) || 0,
+        paddingLeft: parseFloat(computed.paddingLeft) || 0,
+      };
+    };
+
+    const currentSize = getSize();
+
+    if (currentSize.width <= 0 || currentSize.height <= 0) return null;
+    if (currentSize.width > 220 || currentSize.height > 220) return null;
+
+    if (!sizeKey) return wrapper;
+
+    const scale = this._getIconScale(sizeKey);
+    const baseIconSize = parseFloat(this._getPersistentBaseSize(iconEl)) || 16;
+
+    const hasStoredWrapperBase =
+      wrapper.hasAttribute("data-vvveb-icon-wrapper-width") ||
+      wrapper.hasAttribute("data-vvveb-icon-wrapper-height");
+
+    let baseSize = currentSize;
+
+    if (hasStoredWrapperBase) {
+      const oldIconFontSize = iconEl.style.fontSize;
+
+      const oldWrapperWidth = wrapper.style.width;
+      const oldWrapperHeight = wrapper.style.height;
+      const oldWrapperPaddingTop = wrapper.style.paddingTop;
+      const oldWrapperPaddingRight = wrapper.style.paddingRight;
+      const oldWrapperPaddingBottom = wrapper.style.paddingBottom;
+      const oldWrapperPaddingLeft = wrapper.style.paddingLeft;
+      const oldWrapperBoxSizing = wrapper.style.boxSizing;
+      const oldWrapperDisplay = wrapper.style.display;
+      const oldWrapperAlignItems = wrapper.style.alignItems;
+      const oldWrapperJustifyContent = wrapper.style.justifyContent;
+      const oldWrapperLineHeight = wrapper.style.lineHeight;
+
+      iconEl.style.fontSize = `${Math.round(baseIconSize)}px`;
+
+      wrapper.style.width = "";
+      wrapper.style.height = "";
+      wrapper.style.paddingTop = "";
+      wrapper.style.paddingRight = "";
+      wrapper.style.paddingBottom = "";
+      wrapper.style.paddingLeft = "";
+      wrapper.style.boxSizing = "";
+      wrapper.style.display = "";
+      wrapper.style.alignItems = "";
+      wrapper.style.justifyContent = "";
+      wrapper.style.lineHeight = "";
+
+      baseSize = getSize();
+
+      iconEl.style.fontSize = oldIconFontSize;
+
+      wrapper.style.width = oldWrapperWidth;
+      wrapper.style.height = oldWrapperHeight;
+      wrapper.style.paddingTop = oldWrapperPaddingTop;
+      wrapper.style.paddingRight = oldWrapperPaddingRight;
+      wrapper.style.paddingBottom = oldWrapperPaddingBottom;
+      wrapper.style.paddingLeft = oldWrapperPaddingLeft;
+      wrapper.style.boxSizing = oldWrapperBoxSizing;
+      wrapper.style.display = oldWrapperDisplay;
+      wrapper.style.alignItems = oldWrapperAlignItems;
+      wrapper.style.justifyContent = oldWrapperJustifyContent;
+      wrapper.style.lineHeight = oldWrapperLineHeight;
+    }
+
+    if (baseSize.width <= 0 || baseSize.height <= 0) return wrapper;
+    if (baseSize.width > 220 || baseSize.height > 220) return wrapper;
+
+    wrapper.setAttribute("data-vvveb-icon-wrapper-width", String(baseSize.width));
+    wrapper.setAttribute("data-vvveb-icon-wrapper-height", String(baseSize.height));
+    wrapper.setAttribute("data-vvveb-icon-wrapper-padding-top", String(baseSize.paddingTop));
+    wrapper.setAttribute("data-vvveb-icon-wrapper-padding-right", String(baseSize.paddingRight));
+    wrapper.setAttribute("data-vvveb-icon-wrapper-padding-bottom", String(baseSize.paddingBottom));
+    wrapper.setAttribute("data-vvveb-icon-wrapper-padding-left", String(baseSize.paddingLeft));
+
+    wrapper.style.width = `${Math.round(baseSize.width * scale)}px`;
+    wrapper.style.height = `${Math.round(baseSize.height * scale)}px`;
+    wrapper.style.paddingTop = `${Math.round(baseSize.paddingTop * scale)}px`;
+    wrapper.style.paddingRight = `${Math.round(baseSize.paddingRight * scale)}px`;
+    wrapper.style.paddingBottom = `${Math.round(baseSize.paddingBottom * scale)}px`;
+    wrapper.style.paddingLeft = `${Math.round(baseSize.paddingLeft * scale)}px`;
+
+    wrapper.style.boxSizing = "border-box";
+    wrapper.style.display = "inline-flex";
+    wrapper.style.alignItems = "center";
+    wrapper.style.justifyContent = "center";
+    wrapper.style.lineHeight = "1";
+
+    return wrapper;
+  },
+
+
   _rgbToHex(rgb) {
     if (!rgb) return "#000000";
 
@@ -16854,16 +25693,10 @@ Vvveb.IconSettings = {
     return color;
   },
 
-  _getRelativeFontSize(sizeKey) {
-    const base = parseFloat(this._baseFontSize) || 16;
+  _getRelativeFontSize(sizeKey, baseSize = null) {
+    const base = parseFloat(baseSize || this._baseFontSize) || 16;
+    const scale = this._getIconScale(sizeKey);
 
-    const scaleMap = {
-      smaller: 0.5,
-      original: 1,
-      larger: 1.5,
-    };
-
-    const scale = scaleMap[sizeKey] || 1;
     return `${Math.round(base * scale)}px`;
   },
 
@@ -16886,19 +25719,41 @@ Vvveb.IconSettings = {
     if (near(current, larger)) return "larger";
     return "original";
   },
+
   _getIconElement() {
-    if (!this.target) return null;
-    return this.target.matches("i")
-      ? this.target
-      : this.target.querySelector("i");
+    /*
+     * Use the cached context while its icon is still
+     * connected to the template DOM.
+     */
+    if (this.iconContext?.iconEl?.isConnected) {
+      return this.iconContext.iconEl;
+    }
+
+    if (!this.target) {
+      return null;
+    }
+
+    /*
+     * Re-resolve when the DOM has changed because of
+     * undo, redo, replacement, or another builder action.
+     */
+    const context =
+      Vvveb.IconElementResolver?.resolve?.(
+        this.target
+      );
+
+    this.iconContext = context || null;
+
+    return context?.iconEl || null;
   },
 
-  _getPersistentBaseSize(iconEl) {
+  _getPersistentBaseSize(iconEl, persist = false) {
     if (!iconEl) return 16;
 
     const saved = parseFloat(
-      iconEl.getAttribute("data-vvveb-icon-base-size"),
+      iconEl.getAttribute("data-vvveb-icon-base-size")
     );
+
     if (!Number.isNaN(saved) && saved > 0) {
       return saved;
     }
@@ -16908,32 +25763,39 @@ Vvveb.IconSettings = {
     const computed = win.getComputedStyle(iconEl);
     const base = parseFloat(computed.fontSize) || 16;
 
-    iconEl.setAttribute("data-vvveb-icon-base-size", String(base));
+    /*
+     * Reading the size while opening the editor must not
+     * modify the template.
+     */
+    if (persist) {
+      iconEl.setAttribute(
+        "data-vvveb-icon-base-size",
+        String(base)
+      );
+    }
+
     return base;
   },
+
   _updatePreview() {
     if (!this.previewEl || !this.target) return;
 
     this.previewEl.innerHTML = "";
+    const source = this._getIconElement();
 
-    const source = this.target.matches("i")
-      ? this.target
-      : this.target.querySelector("i");
-
-    let iconEl;
+    let iconEl = null;
 
     if (source) {
-      const cls = this.stagedIconClass || source.className || "";
+      iconEl = source.cloneNode(true);
 
-      const isFA = /\bfa-\w+/.test(cls) || /\bfa[srb]?\b/.test(cls);
-
-      if (isFA) {
-        iconEl = source.cloneNode(true);
-        iconEl.className = cls;
-      } else {
-        iconEl = document.createElement("i");
-        iconEl.className = "fa-solid fa-circle-question";
+      // If user selected a new Font Awesome icon from picker,
+      // preview that staged class. Otherwise keep the real icon class.
+      if (this.stagedIconClass && iconEl.tagName?.toLowerCase() === "i") {
+        iconEl.className = this.stagedIconClass;
       }
+    } else if (this.stagedIconClass) {
+      iconEl = document.createElement("i");
+      iconEl.className = this.stagedIconClass;
     } else {
       iconEl = document.createElement("i");
       iconEl.className = "fa-solid fa-circle-question";
@@ -16942,11 +25804,16 @@ Vvveb.IconSettings = {
     // cleanup
     iconEl.removeAttribute("id");
     iconEl.removeAttribute("data-dbl-action");
+    iconEl.removeAttribute("contenteditable");
     iconEl.style.pointerEvents = "none";
     iconEl.style.margin = "0";
 
     if (this.stagedColor) {
       iconEl.style.color = this.stagedColor;
+    }
+
+    if (this.stagedHoverColor) {
+      iconEl.setAttribute("title", "Hover color: " + this.stagedHoverColor);
     }
 
     if (this.stagedSize) {
@@ -16955,9 +25822,7 @@ Vvveb.IconSettings = {
       if (this.stagedSize === "original") {
         iconEl.style.fontSize = `${Math.round(base)}px`;
       } else {
-        iconEl.style.fontSize = this._getRelativeFontSize(
-          this.stagedSize,
-        );
+        iconEl.style.fontSize = this._getRelativeFontSize(this.stagedSize);
       }
     }
 
@@ -16977,7 +25842,7 @@ Vvveb.IconSettings = {
       "fa-10x",
     ];
 
-    if (iconEl.className) {
+    if (iconEl.className && typeof iconEl.className === "string") {
       iconEl.className = iconEl.className
         .split(/\s+/)
         .filter(Boolean)
@@ -16985,7 +25850,605 @@ Vvveb.IconSettings = {
         .join(" ");
     }
 
-    this.previewEl.appendChild(iconEl);
+    const previewSurface =
+      document.createElement("span");
+
+    previewSurface.style.display = "inline-flex";
+    previewSurface.style.alignItems = "center";
+    previewSurface.style.justifyContent = "center";
+    previewSurface.style.boxSizing = "border-box";
+    previewSurface.style.padding = "6px";
+    previewSurface.style.borderRadius = "6px";
+    previewSurface.style.lineHeight = "1";
+
+    if (this.stagedBackgroundColor) {
+      previewSurface.style.backgroundColor =
+        this.stagedBackgroundColor;
+    }
+
+    previewSurface.appendChild(iconEl);
+    this.previewEl.appendChild(previewSurface);
+  },
+
+  _getFrameDoc() {
+    return (
+      window.FrameDocument ||
+      Vvveb?.Builder?.iframe?.contentDocument ||
+      document
+    );
+  },
+
+  _getIconHoverStyleEl() {
+    const doc = this._getFrameDoc();
+    if (!doc) return null;
+
+    let styleEl = doc.getElementById("zg-icon-hover-styles");
+
+    if (!styleEl) {
+      styleEl = doc.createElement("style");
+      styleEl.id = "zg-icon-hover-styles";
+      doc.head.appendChild(styleEl);
+    }
+
+    return styleEl;
+  },
+
+  _rebuildIconHoverStyles() {
+    const doc = this._getFrameDoc();
+    const styleEl = this._getIconHoverStyleEl();
+
+    if (!doc || !styleEl) return;
+
+    const rules = [];
+
+    doc.querySelectorAll(
+      "[data-zg-icon-hover-color][data-vvveb-id]",
+    ).forEach((icon) => {
+      const id = icon.getAttribute("data-vvveb-id");
+      const hoverColor = icon.getAttribute("data-zg-icon-hover-color");
+
+      if (!id || !hoverColor) return;
+
+      rules.push(`
+[data-vvveb-id="${id}"]:hover {
+  color: ${hoverColor} !important;
+}`);
+    });
+
+    styleEl.textContent = rules.join("\n");
+  },
+
+  _bindUndoRedoHoverRefresh() {
+    if (this._hoverUndoRedoBound) return;
+    this._hoverUndoRedoBound = true;
+
+    const refresh = () => {
+      setTimeout(() => {
+        this._rebuildIconHoverStyles();
+
+        /*
+         * Atomic innerHTML restoration recreates DOM nodes.
+         * Remove references to the previous disconnected icon.
+         */
+        const selected =
+          Vvveb?.Builder?.selectedEl;
+
+        if (
+          selected &&
+          !selected.isConnected
+        ) {
+          Vvveb.Builder.selectedEl = null;
+
+          const selectBox =
+            document.getElementById(
+              "select-box"
+            );
+
+          const selectActions =
+            document.getElementById(
+              "select-actions"
+            );
+
+          if (selectBox) {
+            selectBox.style.display = "none";
+          }
+
+          if (selectActions) {
+            selectActions.style.display =
+              "none";
+          }
+        }
+
+        Vvveb?.TreeList
+          ?.loadComponents?.();
+
+        const frameDoc =
+          this._getFrameDoc();
+
+        if (
+          frameDoc &&
+          typeof rehydrateBuilderHelpers ===
+          "function"
+        ) {
+          rehydrateBuilderHelpers(frameDoc);
+        }
+      }, 0);
+    };
+
+    document.addEventListener("vvveb.undo.restore", refresh);
+
+    const doc = this._getFrameDoc();
+    doc?.addEventListener?.("vvveb.undo.restore", refresh);
+
+    if (window.Vvveb?.Undo) {
+      ["undo", "redo"].forEach((method) => {
+        if (typeof Vvveb.Undo[method] !== "function") return;
+        if (Vvveb.Undo[method].__zgHoverWrapped) return;
+
+        const original = Vvveb.Undo[method].bind(Vvveb.Undo);
+
+        Vvveb.Undo[method] = function (...args) {
+          const result = original(...args);
+          refresh();
+          return result;
+        };
+
+        Vvveb.Undo[method].__zgHoverWrapped = true;
+      });
+    }
+  },
+
+  // whatsapp social url input helpers
+  _setLinkEditorMode(mode = "url") {
+    this._linkMode = mode;
+
+    const isWhatsapp = mode === "whatsapp";
+
+    if (this.linkLabel) {
+      this.linkLabel.textContent = isWhatsapp ? "WhatsApp Number" : "Social media URL";
+    }
+
+    if (this.urlRow) {
+      this.urlRow.style.display = isWhatsapp ? "none" : "block";
+    }
+
+    if (this.whatsappRow) {
+      this.whatsappRow.style.display = isWhatsapp ? "block" : "none";
+    }
+
+    this.clearValidationError()
+    this._updateWhatsappPlaceholder?.()
+  },
+
+  clearValidationError() {
+    if (!this.modal) return;
+
+    this.modal
+      .querySelectorAll(".icon-settings-field-error")
+      .forEach((el) => el.remove());
+
+    this.modal.querySelectorAll(".icon-settings-invalid").forEach((el) => {
+      el.classList.remove("icon-settings-invalid");
+    });
+  },
+
+  showValidationError(input, message) {
+    if (!input) return;
+
+    input.classList.add("icon-settings-invalid");
+
+    const error = document.createElement("div");
+    error.className = "icon-settings-field-error";
+    error.textContent = message;
+    error.style.color = "#dc3545";
+    error.style.fontSize = "12px";
+    error.style.marginTop = "6px";
+    error.style.lineHeight = "1.35";
+
+    const parent =
+      input.closest(".vvv-phone, .form-row, .vvv-field, .vvv-icon-field") ||
+      input.parentElement ||
+      input;
+
+    parent.insertAdjacentElement("afterend", error);
+
+    if (typeof input.focus === "function") {
+      input.focus();
+    }
+  },
+
+  _validateSocialUrl(value) {
+    const rawValue = String(value || "").trim();
+
+    if (!rawValue) {
+      return {
+        valid: false,
+        value: "",
+        message: "Please enter a social media URL.",
+      };
+    }
+
+    if (/\s/.test(rawValue)) {
+      return {
+        valid: false,
+        value: "",
+        message: "URL cannot contain spaces.",
+      };
+    }
+
+    if (/^(javascript|data|vbscript|file):/i.test(rawValue)) {
+      return {
+        valid: false,
+        value: "",
+        message: "This type of URL is not allowed.",
+      };
+    }
+
+    if (/^mailto:/i.test(rawValue)) {
+      return {
+        valid: false,
+        value: "",
+        message: "Email links are not allowed here. Please enter a web URL.",
+      };
+    }
+
+    if (/^tel:/i.test(rawValue)) {
+      return {
+        valid: false,
+        value: "",
+        message: "Phone links are not allowed here. Please enter a web URL.",
+      };
+    }
+
+    if (rawValue.startsWith("#")) {
+      return {
+        valid: false,
+        value: "",
+        message: "Section links are not allowed here. Please enter a web URL.",
+      };
+    }
+
+    let urlValue = rawValue;
+
+    if (urlValue.startsWith("//")) {
+      urlValue = "https:" + urlValue;
+    }
+
+    if (!/^https?:\/\//i.test(urlValue)) {
+      urlValue = "https://" + urlValue;
+    }
+
+    try {
+      const parsed = new URL(urlValue);
+      const hostname = parsed.hostname.toLowerCase();
+
+      const isLocalhost = hostname === "localhost";
+
+      const isIPv4 =
+        /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/.test(
+          hostname
+        );
+
+      const isDomain =
+        /^(?=.{1,253}$)(?!-)([a-z0-9-]{1,63}\.)+[a-z]{2,63}$/i.test(hostname);
+
+      if (!["http:", "https:"].includes(parsed.protocol)) {
+        return {
+          valid: false,
+          value: "",
+          message: "Only http and https URLs are allowed.",
+        };
+      }
+
+      if (!isLocalhost && !isIPv4 && !isDomain) {
+        return {
+          valid: false,
+          value: "",
+          message: "Please enter a valid URL, like instagram.com/yourpage.",
+        };
+      }
+
+      return {
+        valid: true,
+        value: parsed.href,
+        message: "",
+      };
+    } catch (e) {
+      return {
+        valid: false,
+        value: "",
+        message: "Please enter a valid URL, like instagram.com/yourpage.",
+      };
+    }
+  },
+
+
+  _getPhoneCountryMeta(countryCode) {
+    const code = this._sanitizePhonePart(countryCode || "");
+    return (this.phoneCountryRules || []).find((item) => item.code === code) || null;
+  },
+
+  _normalizeLocalPhone(value, countryCode) {
+    const meta = this._getPhoneCountryMeta(countryCode);
+    const countryDigits = this._sanitizePhonePart(countryCode || "");
+    let digits = this._sanitizePhonePart(value || "");
+
+    if (countryDigits && digits.startsWith(countryDigits)) {
+      digits = digits.slice(countryDigits.length);
+    }
+
+    if (
+      meta &&
+      meta.allowLeadingZero &&
+      digits.startsWith("0") &&
+      digits.length === meta.max + 1
+    ) {
+      digits = digits.slice(1);
+    }
+
+    return digits;
+  },
+
+  _validateWhatsappNumber(value, countryCode) {
+    const countryDigits = this._sanitizePhonePart(countryCode || "");
+    const meta = this._getPhoneCountryMeta(countryDigits);
+    const localNumber = this._normalizeLocalPhone(value, countryDigits);
+
+    if (!countryDigits) {
+      return {
+        valid: false,
+        message: "Please select a country code.",
+      };
+    }
+
+    if (!localNumber) {
+      return {
+        valid: false,
+        message: "Please enter a WhatsApp number.",
+      };
+    }
+
+    if (!/^\d+$/.test(localNumber)) {
+      return {
+        valid: false,
+        message: "Please enter digits only.",
+      };
+    }
+
+    if (!meta) {
+      const fullNumber = countryDigits + localNumber;
+
+      if (fullNumber.length < 7 || fullNumber.length > 15) {
+        return {
+          valid: false,
+          message: "Please enter a valid WhatsApp number.",
+        };
+      }
+
+      return {
+        valid: true,
+        countryCode: countryDigits,
+        localNumber,
+        waNumber: fullNumber,
+      };
+    }
+
+    if (localNumber.length < meta.min || localNumber.length > meta.max) {
+      return {
+        valid: false,
+        message: `Please enter a valid ${meta.name} WhatsApp number. Example: ${meta.example}`,
+      };
+    }
+
+    if (meta.mobileRegex && !meta.mobileRegex.test(localNumber)) {
+      return {
+        valid: false,
+        message: `Please enter a valid ${meta.name} WhatsApp number. Example: ${meta.example}`,
+      };
+    }
+
+    return {
+      valid: true,
+      countryCode: countryDigits,
+      localNumber,
+      waNumber: countryDigits + localNumber,
+    };
+  },
+
+  _updateWhatsappPlaceholder() {
+    if (!this.whatsappNumber || !this.whatsappCountry) return;
+
+    const meta = this._getPhoneCountryMeta(
+      this._getSelectedWhatsappCountryCode()
+    );
+
+    if (meta?.example) {
+      this.whatsappNumber.setAttribute("placeholder", meta.example);
+    } else {
+      this.whatsappNumber.setAttribute("placeholder", "9876543210");
+    }
+  },
+
+  validateBeforeApply() {
+    this.clearValidationError();
+
+    if (
+      !this.linkEl ||
+      !this.linkRow ||
+      this.linkRow.style.display === "none"
+    ) {
+      return true;
+    }
+
+    if (this._linkMode === "whatsapp") {
+      const currentCountry =
+        this._getSelectedWhatsappCountryCode();
+
+      const result =
+        this._validateWhatsappNumber(
+          this.whatsappNumber?.value,
+          currentCountry
+        );
+
+      if (!result.valid) {
+        this.showValidationError(
+          this.whatsappNumber,
+          result.message
+        );
+
+        return false;
+      }
+
+      return true;
+    }
+
+    /*
+     * Social link mode:
+     * If the social URL field is visible, validate it every time.
+     *
+     * This prevents <a href="#"> or empty social links from
+     * applying silently when user clicks Apply.
+     */
+    const currentUrl =
+      String(
+        this.linkInput?.value || ""
+      ).trim();
+
+    const result =
+      this._validateSocialUrl(currentUrl);
+
+    if (!result.valid) {
+      this.showValidationError(
+        this.linkInput,
+        result.message
+      );
+
+      return false;
+    }
+
+    return true;
+  },
+
+  _sanitizePhonePart(value) {
+    return String(value || "").replace(/\D/g, "");
+  },
+
+  _syncWhatsappCountryOptions() {
+    if (!this.whatsappCountry || !Array.isArray(this.phoneCountryRules)) return;
+
+    const currentValue =
+      this._sanitizePhonePart(this.whatsappCountry.value || "91") || "91";
+
+    this.whatsappCountry.innerHTML = this.phoneCountryRules
+      .map((item) => {
+        return `<option value="${item.code}">${item.flag || ""} ${item.name} (+${item.code})</option>`;
+      })
+      .join("");
+
+    this._setWhatsappCountryValue(currentValue);
+  },
+
+  _getSelectedWhatsappCountryCode() {
+    if (!this.whatsappCountry) return "91";
+    return this._sanitizePhonePart(this.whatsappCountry.value || "91") || "91";
+  },
+
+  _setWhatsappCountryValue(countryCode) {
+    if (!this.whatsappCountry) return;
+
+    const code = this._sanitizePhonePart(countryCode || "91") || "91";
+
+    let matchedOption = null;
+
+    Array.from(this.whatsappCountry.options || []).forEach((option) => {
+      if (this._sanitizePhonePart(option.value) === code) {
+        matchedOption = option;
+      }
+    });
+
+    if (!matchedOption) {
+      this._ensureWhatsappCountryOption(code);
+
+      Array.from(this.whatsappCountry.options || []).forEach((option) => {
+        if (this._sanitizePhonePart(option.value) === code) {
+          matchedOption = option;
+        }
+      });
+    }
+
+    if (matchedOption) {
+      this.whatsappCountry.value = matchedOption.value;
+    }
+
+    this._updateWhatsappPlaceholder?.();
+  },
+
+  _ensureWhatsappCountryOption(countryCode) {
+    const code = this._sanitizePhonePart(countryCode || "");
+    if (!code || !this.whatsappCountry) return;
+
+    const exists = Array.from(this.whatsappCountry.options || []).some(
+      (option) => this._sanitizePhonePart(option.value) === code
+    );
+
+    if (!exists) {
+      const meta = this._getPhoneCountryMeta(code);
+
+      const option = document.createElement("option");
+      option.value = code;
+      option.textContent = meta
+        ? `${meta.flag || ""} ${meta.name} (+${code})`
+        : `+${code}`;
+
+      this.whatsappCountry.appendChild(option);
+    }
+  },
+
+  _isWhatsappLink(iconEl, linkEl) {
+    const iconClass = (iconEl?.getAttribute("class") || "").toLowerCase();
+    const href = (linkEl?.getAttribute("href") || "").toLowerCase();
+    const linkType = (linkEl?.getAttribute("data-link-type") || "").toLowerCase();
+
+    return (
+      linkType === "whatsapp" ||
+      iconClass.includes("whatsapp") ||
+      href.includes("wa.me/") ||
+      href.includes("api.whatsapp.com") ||
+      href.includes("whatsapp://")
+    );
+  },
+
+
+
+  _readWhatsappData(linkEl) {
+    let countryCode = this._sanitizePhonePart(linkEl?.getAttribute("data-country-code") || "91") || "91";
+    let number = this._sanitizePhonePart(linkEl?.getAttribute("data-whatsapp-number") || "");
+
+    if (!number) {
+      const href = linkEl?.getAttribute("href") || "";
+      const decodedHref = decodeURIComponent(href);
+      const match = decodedHref.match(/(?:wa\.me\/|phone=)(\+?\d+)/i);
+      const fullNumber = this._sanitizePhonePart(match?.[1] || "");
+
+      if (fullNumber) {
+        const knownCodes = (this.phoneCountryRules || [])
+          .map((item) => item.code)
+          .sort((a, b) => b.length - a.length);
+        const matchedCode = knownCodes.find((code) => fullNumber.startsWith(code));
+
+        if (matchedCode) {
+          countryCode = matchedCode;
+          number = fullNumber.slice(matchedCode.length);
+        } else if (fullNumber.length > 10) {
+          countryCode = fullNumber.slice(0, fullNumber.length - 10);
+          number = fullNumber.slice(-10);
+        } else {
+          number = fullNumber;
+        }
+      }
+    }
+
+    return { countryCode, number };
   },
 };
 
@@ -17324,6 +26787,8 @@ const CanvasInteractions = {
     tipClass: "ci-tip",
   },
 
+  iconSelector: "i, a, span, div, p",
+
   init(doc) {
     if (!doc || doc.__ciBound__) return;
     doc.__ciBound__ = true;
@@ -17397,6 +26862,17 @@ const CanvasInteractions = {
         if (Vvveb.Builder.isPreview == false) {
           const match = this._matchTarget(e.target);
           if (!match) return;
+
+          /*
+ * The second click belongs to a double-click.
+ * Do not schedule another single-click tooltip.
+ */
+          if (e.detail > 1) {
+            clearTimeout(this._clickTimer);
+            this._clickTimer = null;
+            return;
+          }
+
           if (
             e.target.closest(
               "[data-vvveb-helpers], .vvveb-add-link-helper, .vvveb-add-btn-text, .vvveb-add-btn-plus, .swiper-pagination-bullet"
@@ -17404,7 +26880,53 @@ const CanvasInteractions = {
           )
             return;
 
-          const { element, conf } = match;
+          const {
+            element,
+            interactionElement,
+            conf,
+          } = match;
+
+
+          const activeActionElement = this._activeCanvasActionElement;
+
+          const isSameActiveElement =
+            activeActionElement &&
+            activeActionElement.isConnected &&
+            element &&
+            element.isConnected &&
+            (
+              activeActionElement === element ||
+              activeActionElement.contains(element) ||
+              element.contains(activeActionElement)
+            );
+
+          const newMediaModalOpen =
+            window.Vvveb?.NewMediaModal &&
+            typeof window.Vvveb.NewMediaModal.isOpen === "function" &&
+            window.Vvveb.NewMediaModal.isOpen();
+
+          const linkPopup = document.getElementById("link-popup");
+          const linkPopupOpen =
+            linkPopup &&
+            window.getComputedStyle(linkPopup).display !== "none";
+
+          const sectionEditor = document.getElementById("section-editor");
+          const sectionEditorOpen =
+            sectionEditor &&
+            window.getComputedStyle(sectionEditor).display !== "none";
+
+          const actionIsCurrentlyOpen =
+            window.Vvveb?.WysiwygEditor?.isActive ||
+            newMediaModalOpen ||
+            linkPopupOpen ||
+            sectionEditorOpen;
+
+          if (isSameActiveElement && actionIsCurrentlyOpen) {
+            clearTimeout(this._clickTimer);
+            this._clickTimer = null;
+            this._hideTip();
+            return;
+          }
 
           // selection sync (optional)
           window.Vvveb?.Builder?.selectNode?.(element);
@@ -17415,7 +26937,7 @@ const CanvasInteractions = {
               element,
               conf.tip ||
               element.getAttribute("data-tip") ||
-              "Double click to edit"
+              "edit"
             );
           }, this.config.clickTapDelay);
         }
@@ -17430,6 +26952,8 @@ const CanvasInteractions = {
         if (Vvveb.Builder.isPreview == false) {
           const match = this._matchTarget(e.target);
           if (!match) return;
+          e.preventDefault();
+          e.stopPropagation();
 
           const { element, conf } = match;
 
@@ -17439,6 +26963,9 @@ const CanvasInteractions = {
 
           // also hide any visible tooltip immediately on double click
           this._hideTip();
+
+          // remember the element whose double-click action is active
+          this._activeCanvasActionElement = element;
 
           // selection sync (optional)
           window.Vvveb?.Builder?.selectNode?.(element);
@@ -17469,23 +26996,86 @@ const CanvasInteractions = {
   },
 
   _matchTarget(target) {
-    // 1) explicit selector registrations
-    for (const [selector, conf] of this._actions.entries()) {
-      let el = target.closest(selector);
-      if (!el) continue;
+    /*
+     * Icon interaction always has first priority.
+     *
+     * This prevents a P, SPAN, DIV, or A icon wrapper
+     * from being claimed by text or link interactions.
+     */
+    const iconContext =
+      Vvveb.IconElementResolver
+        ?.resolveFromClickTarget?.(target);
 
-      // optional resolver: allow action to choose *actual* target
-      if (typeof conf.resolveTarget === "function") {
-        el = conf.resolveTarget(el, target);
-        if (!el) continue; // resolver ne bola "is click ko ignore karo"
-      }
+    const iconConf =
+      this._actions.get(
+        this.iconSelector
+      );
 
-      return { element: el, conf };
+    if (
+      iconContext?.iconEl &&
+      iconConf
+    ) {
+      return {
+        /*
+         * Actual editor and builder target.
+         */
+        element: iconContext.iconEl,
+
+        /*
+         * Complete control used for tooltip positioning.
+         */
+        interactionElement:
+          iconContext.interactionEl ||
+          iconContext.iconEl,
+
+        context: iconContext,
+        conf: iconConf,
+      };
     }
 
-    // 2) fallback: data attributes allow ad-hoc usage without register()
-    const el = target.closest("[data-tip], [data-dbl-action]");
-    if (el) return { element: el, conf: {} };
+    /*
+     * Other registered interactions.
+     */
+    for (
+      const [selector, conf]
+      of this._actions.entries()
+    ) {
+      let el = target.closest(selector);
+
+      if (!el) continue;
+
+      if (
+        typeof conf.resolveTarget ===
+        "function"
+      ) {
+        el = conf.resolveTarget(
+          el,
+          target
+        );
+
+        if (!el) continue;
+      }
+
+      return {
+        element: el,
+        interactionElement: el,
+        context: null,
+        conf,
+      };
+    }
+
+    const el = target.closest(
+      "[data-tip], [data-dbl-action]"
+    );
+
+    if (el) {
+      return {
+        element: el,
+        interactionElement: el,
+        context: null,
+        conf: {},
+      };
+    }
 
     return null;
   },
@@ -17604,72 +27194,214 @@ window.addEventListener("vvveb.iframe.loaded", function () {
     },
   });
 
-  // 1) Icons: <i> elements -> open IconCustomLibrary
+  // 1) Icons: direct <i> clicks and icon-only parent clicks
   CanvasInteractions.register({
-    selector: "i",
-    tip: "Double click to change icon",
-    // onDblClick: (el) => Vvveb?.IconCustomLibrary?.open?.(el),
-    onDblClick: (el) => Vvveb?.IconSettings?.open?.(el),
+    selector:
+      CanvasInteractions.iconSelector,
+    tip: "Double click to edit icon",
+
+    resolveTarget(matchEl, originalTarget) {
+      const context =
+        Vvveb.IconElementResolver
+          ?.resolveFromClickTarget?.(originalTarget);
+
+      return context?.iconEl || null;
+    },
+
+    onDblClick(iconEl, event) {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+
+      Vvveb?.Builder?.selectNode?.(iconEl);
+      Vvveb?.TreeList?.selectComponent?.(iconEl);
+      Vvveb?.Builder?.loadNodeComponent?.(iconEl);
+
+      Vvveb?.IconSettings?.open?.(iconEl);
+    },
   });
 
+  // The whole process of canvas interactions was media pop-up directives. So I have commented the old code and added new code for media setting pop-up on double click of images.
+
   // 2) Images: <img> -> open image picker
+  // CanvasInteractions.register({
+  //   selector: "img",
+  //   tip: "Double click to replace image",
+  //   onDblClick: (imgEl) => {
+  //     try {
+  //       if (!Vvveb.MediaModal) {
+  //         Vvveb.MediaModal = new MediaModal(true);
+  //         Vvveb.MediaModal.mediaPath = window.mediaPath;
+  //       }
+
+  //       Vvveb.Builder?.selectNode?.(imgEl);
+  //       const oldSrc = imgEl.getAttribute("src") || "";
+  //       //Current changes : 13-2-26 start
+
+  //       Vvveb.MediaModal.open(null, function (imgData) {
+  //         const payload =
+  //           typeof imgData === "string" ? { src: imgData } : imgData || {};
+  //         if (!imgEl || imgEl.tagName !== "IMG" || !payload.src) return;
+
+  //         const hadTitle = imgEl.hasAttribute("title");
+  //         const oldTitle = imgEl.getAttribute("title");
+  //         const hadDesc = imgEl.hasAttribute("data-media-description");
+  //         const oldDesc = imgEl.getAttribute("data-media-description");
+
+  //         const currentSrc = imgEl.getAttribute("src") || ""; // Amit has added this
+  //         if (currentSrc !== payload.src) {
+  //           imgEl.setAttribute("src", payload.src);
+
+  //           console.log("Called attributes on 10533");
+
+  //           Vvveb?.Undo?.addMutation?.({
+  //             type: "attributes",
+  //             target: imgEl,
+  //             attributeName: "src",
+  //             oldValue: oldSrc,
+  //             newValue: payload.src,
+  //           });
+  //         }
+
+  //         if (payload.alt !== undefined)
+  //           imgEl.setAttribute("alt", payload.alt || "");
+  //         if (hadTitle) {
+  //           imgEl.setAttribute("title", oldTitle || "");
+  //         } else {
+  //           imgEl.removeAttribute("title");
+  //         }
+  //         if (hadDesc) {
+  //           imgEl.setAttribute("data-media-description", oldDesc || "");
+  //         } else {
+  //           imgEl.removeAttribute("data-media-description");
+  //         }
+
+  //         //Current changes : 13-2-26 ends
+  //         Vvveb.Builder?.selectNode?.(imgEl);
+  //       });
+  //     } catch (error) {
+  //       console.error("Media gallery not available", error);
+  //     }
+  //   },
+  // });
+
+  // New process of canvas interaction for media setting popup 
   CanvasInteractions.register({
-    selector: "img",
+    selector: "img:not([src$='.gif']):not([src*='.gif?']):not([data-gif-loop='true']):not([data-gif-hover='true'])",
     tip: "Double click to replace image",
-    onDblClick: (imgEl) => {
+    onDblClick: function (imgEl, e) {
       try {
-        if (!Vvveb.MediaModal) {
-          Vvveb.MediaModal = new MediaModal(true);
-          Vvveb.MediaModal.mediaPath = window.mediaPath;
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!window.Vvveb || !Vvveb.NewMediaModal) {
+          console.warn("Vvveb.NewMediaModal is not available");
+          return;
         }
 
-        Vvveb.Builder?.selectNode?.(imgEl);
-        const oldSrc = imgEl.getAttribute("src") || "";
-        //Current changes : 13-2-26 start
+        if (Vvveb.Builder && typeof Vvveb.Builder.selectNode === "function") {
+          Vvveb.Builder.selectNode(imgEl);
+        }
 
-        Vvveb.MediaModal.open(null, function (imgData) {
-          const payload =
-            typeof imgData === "string" ? { src: imgData } : imgData || {};
-          if (!imgEl || imgEl.tagName !== "IMG" || !payload.src) return;
+        Vvveb.NewMediaModal.open(imgEl, { type: "image" });
+      } catch (err) {
+        console.error("Failed to open NewMediaModal for image:", err);
+      }
+    },
+  });
 
-          const hadTitle = imgEl.hasAttribute("title");
-          const oldTitle = imgEl.getAttribute("title");
-          const hadDesc = imgEl.hasAttribute("data-media-description");
-          const oldDesc = imgEl.getAttribute("data-media-description");
+  CanvasInteractions.register({
+    selector: "video, source, iframe[data-media-embed='video'], [data-media-overlay='video']",
+    tip: "Double click to edit video",
 
-          const currentSrc = imgEl.getAttribute("src") || ""; // Amit has added this
-          if (currentSrc !== payload.src) {
-            imgEl.setAttribute("src", payload.src);
+    resolveTarget(matchEl, originalTarget) {
+      let el = originalTarget;
+      const doc = originalTarget.ownerDocument;
 
-            console.log("Called attributes on 10533");
+      while (el && el !== doc && el !== doc.documentElement) {
+        if (el.nodeType === 1) {
+          if (el.matches?.("[data-media-overlay='video']")) {
+            if (el._mediaTarget) return el._mediaTarget;
 
-            Vvveb?.Undo?.addMutation?.({
-              type: "attributes",
-              target: imgEl,
-              attributeName: "src",
-              oldValue: oldSrc,
-              newValue: payload.src,
-            });
+            const id = el.getAttribute("data-media-target-id");
+            if (id) {
+              const target =
+                resolveVvvebTargetById(id) ||
+                doc.querySelector(`[data-vvveb-id="${id}"]`);
+              if (target) return target;
+            }
           }
 
-          if (payload.alt !== undefined)
-            imgEl.setAttribute("alt", payload.alt || "");
-          if (hadTitle) {
-            imgEl.setAttribute("title", oldTitle || "");
-          } else {
-            imgEl.removeAttribute("title");
+          if (el.tagName) {
+            const tag = el.tagName.toLowerCase();
+
+            if (tag === "video") {
+              return el;
+            }
+
+            if (tag === "iframe" && el.matches?.("[data-media-embed='video']")) {
+              return el;
+            }
+
+            if (tag === "source" && el.closest("video")) {
+              return el.closest("video");
+            }
           }
-          if (hadDesc) {
-            imgEl.setAttribute("data-media-description", oldDesc || "");
-          } else {
-            imgEl.removeAttribute("data-media-description");
+        }
+
+        el = el.parentElement;
+      }
+
+      return null;
+    },
+
+    onDblClick(mediaEl, e) {
+      try {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!window.Vvveb || !Vvveb.NewMediaModal) {
+          console.warn("Vvveb.NewMediaModal is not available");
+          return;
+        }
+
+        if (Vvveb.Builder && typeof Vvveb.Builder.selectNode === "function") {
+          Vvveb.Builder.selectNode(mediaEl);
+
+          if (typeof Vvveb.Builder.loadNodeComponent === "function") {
+            Vvveb.Builder.loadNodeComponent(mediaEl);
           }
 
-          //Current changes : 13-2-26 ends
-          Vvveb.Builder?.selectNode?.(imgEl);
-        });
-      } catch (error) {
-        console.error("Media gallery not available", error);
+          enableIframeVideoResizeControls(mediaEl);
+        }
+
+        Vvveb.NewMediaModal.open(mediaEl, { type: "video" });
+      } catch (err) {
+        console.error("Failed to open NewMediaModal for embed/video:", err);
+      }
+    },
+  });
+
+  CanvasInteractions.register({
+    selector: "img[src$='.gif'], img[src*='.gif?'], img[data-gif-loop='true'], img[data-gif-hover='true']",
+    tip: "Double click to edit GIF",
+
+    onDblClick: function (gifEl, e) {
+      try {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!window.Vvveb || !Vvveb.NewMediaModal) {
+          console.warn("Vvveb.NewMediaModal is not available");
+          return;
+        }
+
+        if (Vvveb.Builder && typeof Vvveb.Builder.selectNode === "function") {
+          Vvveb.Builder.selectNode(gifEl);
+        }
+
+        Vvveb.NewMediaModal.open(gifEl, { type: "gif" });
+      } catch (err) {
+        console.error("Failed to open NewMediaModal for GIF:", err);
       }
     },
   });
@@ -17678,6 +27410,25 @@ window.addEventListener("vvveb.iframe.loaded", function () {
   CanvasInteractions.register({
     selector: "a[data-btn]",
     tip: "Double click to edit button",
+
+    resolveTarget(matchEl, originalTarget) {
+      const iconContext =
+        Vvveb.IconElementResolver
+          ?.resolveFromClickTarget?.(originalTarget);
+
+      if (iconContext?.iconEl) {
+        return null;
+      }
+
+      if (matchEl.hasAttribute("data-zg-image-link")) return null;
+
+      const clickedImg = originalTarget?.closest?.("img");
+      if (clickedImg && matchEl.contains(clickedImg)) return null;
+
+      return matchEl;
+    },
+
+
     onDblClick: (el) => {
       try {
         console.log("[BTN DblClick] opening LinkEditor for:", el);
@@ -17687,11 +27438,88 @@ window.addEventListener("vvveb.iframe.loaded", function () {
       }
     },
   });
+
   //   4) Links -> open link editor
+  // Header/Nav/Footer text links -> open Link Editor
   CanvasInteractions.register({
-    selector: ".nav-link:not([data-btn]) .nav-link, nav a",
+    selector: `
+    nav a:not([data-btn]),
+    footer ul a:not([data-btn]),
+    footer ol a:not([data-btn]),
+    [data-section="footer"] ul a:not([data-btn]),
+    [data-section="footer"] ol a:not([data-btn]),
+    [data-section="footer-section"] ul a:not([data-btn]),
+    [data-section="footer-section"] ol a:not([data-btn]),
+    #footer ul a:not([data-btn]),
+    #footer ol a:not([data-btn]),
+    #footer-section ul a:not([data-btn]),
+    #footer-section ol a:not([data-btn])
+  `,
     tip: "Double click to edit link",
-    onDblClick: (el) => Vvveb?.LinkEditor?.open?.(el),
+
+    resolveTarget(matchEl, originalTarget) {
+      const iconContext =
+        Vvveb.IconElementResolver
+          ?.resolveFromClickTarget?.(originalTarget);
+
+      if (iconContext?.iconEl) {
+        return null;
+      }
+      if (
+        matchEl &&
+        matchEl.tagName &&
+        matchEl.tagName.toLowerCase() === "a" &&
+        (
+          matchEl.hasAttribute("data-zg-image-link") ||
+          matchEl.querySelector(":scope > img") ||
+          matchEl.querySelector("picture img")
+        )
+      ) {
+        return null;
+      }
+
+      const clickedImg = originalTarget?.closest?.("img");
+      if (clickedImg && matchEl.contains(clickedImg)) {
+        return null;
+      }
+
+      return matchEl;
+    },
+
+    onDblClick: (el, event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (
+        el.closest(
+          "[data-vvveb-helpers], .vvveb-add-link-helper, .vvveb-add-btn-text, .vvveb-add-btn-plus"
+        )
+      ) {
+        return;
+      }
+
+      if (
+        el.tagName &&
+        el.tagName.toLowerCase() === "a" &&
+        (
+          el.hasAttribute("data-zg-image-link") ||
+          el.querySelector(":scope > img") ||
+          el.querySelector("picture img")
+        )
+      ) {
+        const img = el.querySelector(":scope > img") || el.querySelector("img");
+
+        if (img) {
+          Vvveb?.Builder?.selectNode?.(img);
+          Vvveb?.NewMediaModal?.open?.(img, { type: "image" });
+        }
+
+        return;
+      }
+
+      Vvveb?.Builder?.selectNode?.(el);
+      Vvveb?.LinkEditor?.open?.(el);
+    },
   });
 
   //   3) Headings & paragraphs -> open text editor
@@ -17699,7 +27527,36 @@ window.addEventListener("vvveb.iframe.loaded", function () {
     selector:
       "h1,h2,h3,h4,h5,h6,p,span:not(.vvveb-add-btn-text):not(.vvveb-add-btn-plus),a:not([data-btn]), li:not(nav li, .navbar li, .nav li), blockquote, small, button:not(.vvveb-add-link-btn):not(form button)",
     tip: "Double click to edit text",
-    // onDblClick: (el) => Vvveb?.WysiwygEditor?.edit?.(el),
+
+    resolveTarget(matchEl, originalTarget) {
+      const iconContext =
+        Vvveb.IconElementResolver
+          ?.resolveFromClickTarget?.(originalTarget);
+
+      if (iconContext?.iconEl) {
+        return null;
+      }
+      if (
+        matchEl &&
+        matchEl.tagName &&
+        matchEl.tagName.toLowerCase() === "a" &&
+        (
+          matchEl.hasAttribute("data-zg-image-link") ||
+          matchEl.querySelector(":scope > img") ||
+          matchEl.querySelector("picture img")
+        )
+      ) {
+        return null;
+      }
+
+      const clickedImg = originalTarget?.closest?.("img");
+      if (clickedImg && matchEl.contains?.(clickedImg)) {
+        return null;
+      }
+
+      return matchEl;
+    },
+
     onDblClick: (el, event) => {
       if (
         el &&
@@ -17707,29 +27564,47 @@ window.addEventListener("vvveb.iframe.loaded", function () {
           "[data-vvveb-helpers], .vvveb-add-link-helper, .vvveb-add-btn-text, .vvveb-add-btn-plus"
         )
       ) {
-        return; // do nothing for builder helpers
+        return;
       }
-      // Capture the original event
-      // We stop the event immediately to prevent the browser's native action
+
+      if (
+        el &&
+        el.tagName &&
+        el.tagName.toLowerCase() === "a" &&
+        (
+          el.hasAttribute("data-zg-image-link") ||
+          el.querySelector(":scope > img") ||
+          el.querySelector("picture img")
+        )
+      ) {
+        const img = el.querySelector(":scope > img") || el.querySelector("img");
+
+        if (img) {
+          event.stopPropagation();
+          event.preventDefault();
+
+          Vvveb?.Builder?.selectNode?.(img);
+          Vvveb?.NewMediaModal?.open?.(img, { type: "image" });
+        }
+
+        return;
+      }
+
       event.stopPropagation();
       event.preventDefault();
 
-      // --- The Zero-Flash Tweak (Must be done first) ---
-      // Temporarily apply the no-select style inline on the element
       const oldUserSelect = el.style.userSelect;
       el.style.userSelect = "none";
       el.style.webkitUserSelect = "none";
 
-      // Store coordinates and the element
       if (Vvveb?.WysiwygEditor) {
         Vvveb.WysiwygEditor._lastDblClickCoords = {
           x: event.clientX,
           y: event.clientY,
           iframe: Vvveb.Builder.iframe,
-          oldUserSelect: oldUserSelect, // Pass the original style for restoration
+          oldUserSelect: oldUserSelect,
         };
 
-        // Manually run the editing setup
         Vvveb.WysiwygEditor.edit(el);
       }
     },
@@ -17844,11 +27719,15 @@ window.applySelectActions = function (node) {
   const STORAGE_KEY = "vvveb.insert.gridcols";
 
   function applyCols(cols) {
-    // ❗ sirf insert-modal ke andar koi blocks-host target karo
     const host = document.querySelector("#insert-modal #blocks-host");
     if (!host) return;
+
     host.classList.remove("cols-3", "cols-4");
     host.classList.add("cols-" + (cols === "4" ? "4" : "3"));
+
+    if (typeof window.zgApplyInsertPanelLayoutMode === "function") {
+      setTimeout(window.zgApplyInsertPanelLayoutMode, 0);
+    }
   }
 
   function setButtonState(wrapper, cols) {
