@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Zigrow — Social Influencer Hero</title>
+
+    <!-- Bootstrap (utilities only are fine) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Compiled CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <section class="influencer-hero mx-auto">
+      <div class="container">
+        <div class="hero-wrap p-4">
+          <!-- Text side -->
+          <div class="hero-copy">
+            <h4 class="hero-subtitle">Social Media Influencer</h4>
+
+            <!-- Static first part + typing only for last 2 words -->
+            <h1 class="hero-title" aria-live="polite">
+              Connect to grow <br />
+              <span class="type-holder">
+                <span id="typewriter"></span>
+                <span class="cursor" aria-hidden="true"></span>
+              </span>
+            </h1>
+
+            <p class="hero-sub">
+              Find and connect with influencers, vloggers, journalists,
+              podcasters and more who fit your social media goals across niches
+            </p>
+
+            <div class="cta-row">
+              <a href="tel:+919876543210" class="btn-pill primary">
+                <i class="bi bi-telephone-forward-fill"></i> Call Now
+              </a>
+            </div>
+
+            <div class="social-icons">
+              <a href="#"><i class="bi bi-facebook"></i></a>
+              <a href="#"><i class="bi bi-instagram"></i></a>
+              <a href="#"><i class="bi bi-youtube"></i></a>
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-whatsapp"></i></a>
+            </div>
+          </div>
+
+          <!-- Visual side -->
+          <div class="hero-visual">
+            <div class="blob"></div>
+
+            <figure class="photo">
+              <img
+                src="assets/image/webcard-hero.webp"
+                alt="Happy creator recording selfie"
+              />
+            </figure>
+
+            <!-- Floating chips -->
+            <div class="chip chip-sm chip-twitter" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                class="ico"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M22.46 6c-.77.35-1.6.58-2.46.69a4.23 4.23 0 0 0 1.86-2.33 8.48 8.48 0 0 1-2.68 1.03A4.22 4.22 0 0 0 12 8.23c0 .33.04.66.11.97a11.97 11.97 0 0 1-8.7-4.41 4.23 4.23 0 0 0 1.31 5.64 4.16 4.16 0 0 1-1.91-.53v.05a4.23 4.23 0 0 0 3.39 4.14 4.27 4.27 0 0 1-1.9.07 4.24 4.24 0 0 0 3.95 2.94A8.48 8.48 0 0 1 2 18.57 11.95 11.95 0 0 0 8.29 20c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.36-.01-.54A8.35 8.35 0 0 0 22.46 6z"
+                />
+              </svg>
+            </div>
+
+            <div
+              class="chip chip-lg chip-counter"
+              role="status"
+              aria-live="polite"
+            >
+              <img
+                class="avatar"
+                src="https://i.pravatar.cc/80?img=12"
+                alt="avatar"
+              />
+              <div class="count">
+                <strong>5212</strong>
+                <span>Followers</span>
+              </div>
+            </div>
+
+            <!-- NEW: Name chip (bottom-left under the image) -->
+            <div
+              class="chip chip-md chip-name"
+              role="group"
+              aria-label="Profile name"
+            >
+              <div class="meta">
+                <strong class="name">Arun</strong>
+                <span class="role"> Social Influencer</span>
+              </div>
+            </div>
+            <!-- /NEW -->
+
+            <div class="chip chip-mini group-avatars" aria-hidden="true">
+              <img src="https://i.pravatar.cc/40?img=7" alt="u1" />
+              <img src="https://i.pravatar.cc/40?img=11" alt="u2" />
+              <img src="https://i.pravatar.cc/40?img=5" alt="u3" />
+              <img src="https://i.pravatar.cc/40?img=21" alt="u4" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>

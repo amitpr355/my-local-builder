@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elektrnqs</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hamburgers@1.2.1/dist/hamburgers.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/customutility.css" />
+  <link rel="icon" href="assets/images/logo.png" />
+</head>
+
+<body>
+  <div class="container-fluid top-bar">
+    <div class="container">
+      <div class="row g-0 align-items-center py-3-style px-2-style top-bar-div">
+        <div class="col-12 col-md-6 d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-start gap-3 contact-info">
+          <div>
+            <i class="fas fa-envelope" data-icon="fa-envelope"></i>
+            <a href="mailto:Hello@mail.com">yourname@domainname.com
+            </a>
+          </div>
+          <div>
+            <i class="fas fa-phone" data-icon="fa-phone"></i>
+            <a href="tel:+918900344344">+91-9123456789</a>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end mt-2-style mt-md-0-style social-icons">
+          <a href="#" class="top-bar-social-media-icon"><i class="fab fa-twitter" data-icon="fa-twitter"></i></a>
+          <a href="#" class="top-bar-social-media-icon"><i class="fab fa-facebook" data-icon="fa-facebook"></i></a>
+          <a href="#" class="top-bar-social-media-icon"><i class="fab fa-instagram" data-icon="fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="container-fluid sticky-top bg-white" id="navbar" data-section="navbar">
+    <div class="container">
+      <header class="d-flex flex-wrap align-items-center justify-content-between py-3-style mb-0-style position-relative">
+        <div class="d-flex align-items-center">
+          <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none align-items-center">
+            <div class="img-wrapper-style col-3" data-logo="navbar">
+              <img src="assets/images/logo.png" class="img-fluid me-2-style" alt="Logo" style="height: 40px" />
+            </div>
+            <h1 class="m-0-style fs-4-style fw-bold-style uniquefontfamily">Elektrnqs</h1>
+          </a>
+        </div>
+
+        <div class="d-lg-none">
+          <div class="hamburger hamburger--spring js-hamburger" id="hamburger-toggle">
+            <div class="hamburger-box">
+              <div class="hamburger-inner"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="collapse d-lg-flex flex-lg-row flex-column align-items-center justify-content-center text-center-style mt-3-style mt-md-0-style" id="navbarMenu">
+          <ul class="nav flex-column flex-md-row align-items-center justify-content-center">
+            <li>
+              <a href="#home" class="nav-link fw-semibold-style gradient-text active">Home</a>
+            </li>
+            <li>
+              <a href="#aboutus" class="nav-link fw-semibold-style gradient-text">About Us</a>
+            </li>
+            <li>
+              <a href="#services" class="nav-link fw-semibold-style gradient-text">Services</a>
+            </li>
+            <li>
+              <a href="#ourteam" class="nav-link fw-semibold-style gradient-text">Our Team</a>
+            </li>
+            <li>
+              <a href="#faq" class="nav-link fw-semibold-style gradient-text">Pricing</a>
+            </li>
+            <li>
+              <a href="#contactus" class="nav-link fw-semibold-style gradient-text">Contact Us</a>
+            </li>
+          </ul>
+          <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-end mt-3-style mt-lg-0-style ms-lg-3-style gap-2">
+            <a type="button" class="btn book-a-service uniquefontfamily px-4-style d-flex align-items-center phone-call-vibration-animation" id="bookServiceBtn" href="tel:+918900344344">
+              Book A Service
+              <span class="ms-2-style arrow-icon"><i class="fas fa-arrow-right" data-icon="fa-arrow-right"></i></span>
+              <span class="ms-2-style phone-icon"><i class="fas fa-solid fa-phone" data-icon="fa-phone"></i></span>
+            </a>
+          </div>
+        </div>
+      </header>
+    </div>
+  </nav>
+
+  <section class="hero-section d-flex align-items-center" id="home" data-section="home">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8 text-white-style">
+          <p class="small-text mobile-reparing-shop-text text-uppercase fw-bold-style mb-2-style d-flex align-items-center">
+            A Mobile Repairing Services
+            <span class="horizontal-line ms-3-style"></span>
+          </p>
+
+          <h1 class="display-6-style fw-bold-style d-flex mb-4-style hero-section-heading">
+            A Smarter Technology<br />Repair Service
+          </h1>
+          <p class="mb-4-style col-lg-11 hero-section-para">
+            Faucibus commodo a aenean et sit quisque ipsum. Consequat eu id ut
+            dolor felis quis. Sagittis a sapien pulvinar etiam senectus
+            adipiscing tempor diam tellus.
+          </p>
+          <a href="tel:+918900344344" class="btn book-a-service uniquefontfamily hero-section-book-a-service phone-call-vibration-animation">
+            Book A Service
+            <span class="ms-2-style arrow-icon"><i class="fas fa-arrow-right" data-icon="fa-arrow-right"></i></span>
+            <span class="ms-2-style phone-icon"><i class="fas fa-solid fa-phone" data-icon="fa-phone"></i></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <a href="#" class="btn rounded-circle floating-btn">
+    <i class="bi bi-arrow-up" data-icon="bi-arrow-up"></i>
+  </a>
+
+  <section class="about-section py-sm-5-style py-3-style" id="aboutus" data-section="aboutus">
+    <div class="container container-div-aboutus">
+      <div class="row align-items-center image-and-text-div-aboutus">
+        <div class="col-lg-7 d-flex flex-wrap gap-md-3 align-items-center justify-content-center mb-4-style mb-md-0-style image-div-aboutus">
+          <img src="assets/images/service&maintenancewebsitetemplate-2a.webp" class="img-fluid rounded about-img about-img1" alt="Tech Repair 1" loading="lazy" />
+          <img src="assets/images/service&maintenancewebsitetemplate-2b.webp" class="img-fluid rounded about-img about-img2" alt="Tech Repair 2" loading="lazy" />
+        </div>
+
+        <div class="col-lg-5 text-div-aboutus">
+          <h6 class="text-uppercase section-names">About Us</h6>
+          <p class="mb-4-style section-heading uniquefontfamily">
+            We Can Fix All Types of Computer and Mobiles
+          </p>
+          <p class="text-justify p1-aboutus">
+            Our mobile repair services are designed to get your devices back
+            in top shape quickly and efficiently. Whether it's a cracked
+            screen, battery issues, or software glitches, our skilled
+            technicians have the expertise to handle it all. We pride
+            ourselves on providing fast, reliable service that keeps you
+            connected
+          </p>
+          <p class="text-justify p2-aboutus">
+            Looking for quick and affordable mobile repair services? From
+            screen replacements to battery swaps, we offer a range of
+            solutions to fix your device. Trust us to restore your phone to
+            perfect working condition in no time.
+          </p>
+          <button type="button" class="btn book-a-service uniquefontfamily px-4-style d-flex align-items-center explore-aboutus" id="bookServiceBtn">
+            Explore About Us
+            <span class="explore-about-us-button ms-2-style"><i class="fas fa-arrow-right" data-icon="fa-arrow-right"></i></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-fluid py-sm-5-style py-3-style" id="services" data-section="services">
+    <div class="container">
+      <div class="text-center-style mb-5-style">
+        <h6 class="text-uppercase section-names">OUR SERVICES</h6>
+        <h2 class="section-heading">What We Offer to Our Customers</h2>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6 col-sm-12 clonable-card">
+          <div class="service-card p-3-style">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/images/service&maintenancewebsitetemplate-3a.webp" alt="Broken Screen Repair" loading="lazy" class="img-fluid mb-3-style rounded service-card-image" />
+            </div>
+            <div class="d-flex align-items-center mb-2-style">
+              <div class="service-icon">
+                <i class="bi bi-wrench" data-icon="bi-wrench"></i>
+              </div>
+              <h4 class="service-title mb-0-style">Broken Screen Repair</h4>
+            </div>
+            <p class="service-text">
+              Ut quis euismod at vivamus nunc duis. Tempus leo id phasellus at
+              tellus non orci consectetur.
+            </p>
+            <a href="#" class="fw-bold-style learn-more">Learn More</a>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-12 clonable-card">
+          <div class="service-card p-3-style">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/images/service&maintenancewebsitetemplate-3b.webp" alt="Charging Port Repair" loading="lazy" class="img-fluid mb-3-style rounded service-card-image" />
+            </div>
+            <div class="d-flex align-items-center mb-2-style">
+              <div class="service-icon">
+                <i class="bi bi-wrench" data-icon="bi-wrench"></i>
+              </div>
+              <h4 class="service-title mb-0-style">Charging Port Repair</h4>
+            </div>
+            <p class="service-text">
+              Ut quis euismod at vivamus nunc duis. Tempus leo id phasellus at
+              tellus non orci consectetur.
+            </p>
+            <a href="#" class="fw-bold-style learn-more">Learn More</a>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-12 clonable-card">
+          <div class="service-card p-3-style">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/images/service&maintenancewebsitetemplate-3c.webp" alt="Water Damage Repair" loading="lazy" class="img-fluid mb-3-style rounded service-card-image" />
+            </div>
+            <div class="d-flex align-items-center mb-2-style">
+              <div class="service-icon">
+                <i class="bi bi-wrench" data-icon="bi-wrench"></i>
+              </div>
+              <h4 class="service-title mb-0-style">Water Damage Repair</h4>
+            </div>
+            <p class="service-text">
+              Ut quis euismod at vivamus nunc duis. Tempus leo id phasellus at
+              tellus non orci consectetur.
+            </p>
+            <a href="#" class="fw-bold-style learn-more">Learn More</a>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-12 clonable-card">
+          <div class="service-card p-3-style">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/images/service&maintenancewebsitetemplate-3d.webp" alt="Battery Replacement" loading="lazy" class="img-fluid mb-3-style rounded service-card-image" />
+            </div>
+            <div class="d-flex align-items-center mb-2-style">
+              <div class="service-icon">
+                <i class="bi bi-wrench" data-icon="bi-wrench"></i>
+              </div>
+              <h4 class="service-title mb-0-style">Battery Replacement</h4>
+            </div>
+            <p class="service-text">
+              Ut quis euismod at vivamus nunc duis. Tempus leo id phasellus at
+              tellus non orci consectetur.
+            </p>
+            <a href="#" class="fw-bold-style learn-more">Learn More</a>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-12 clonable-card">
+          <div class="service-card p-3-style">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/images/service&maintenancewebsitetemplate-3e.webp" alt="Camera Repair" loading="lazy" class="img-fluid mb-3-style rounded service-card-image" />
+            </div>
+            <div class="d-flex align-items-center mb-2-style">
+              <div class="service-icon">
+                <i class="bi bi-wrench" data-icon="bi-wrench"></i>
+              </div>
+              <h4 class="service-title mb-0-style">Camera Repair</h4>
+            </div>
+            <p class="service-text">
+              Ut quis euismod at vivamus nunc duis. Tempus leo id phasellus at
+              tellus non orci consectetur.
+            </p>
+            <a href="#" class="fw-bold-style learn-more">Learn More</a>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-12 clonable-card">
+          <div class="service-card p-3-style">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/images/service&maintenancewebsitetemplate-3f.webp" alt="Software Troubleshooting" loading="lazy" class="img-fluid mb-3-style rounded service-card-image" />
+            </div>
+            <div class="d-flex align-items-center mb-2-style">
+              <div class="service-icon">
+                <i class="bi bi-wrench" data-icon="bi-wrench"></i>
+              </div>
+              <h4 class="service-title mb-0-style">Software Troubleshooting</h4>
+            </div>
+            <p class="service-text">
+              Ut quis euismod at vivamus nunc duis. Tempus leo id phasellus at
+              tellus non orci consectetur.
+            </p>
+            <a href="#" class="fw-bold-style learn-more">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center-style mt-5-style">
+        <button class="btn btn-see-more book-a-service explore-about-us">
+          See More
+          <span class="explore-about-us-button ms-2-style"><i class="fas fa-arrow-right" data-icon="fa-arrow-right"></i></span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-fluid why-choose-us py-sm-5-style py-3-style" id="ourteam" data-section="ourteam">
+    <div class="container">
+      <div class="text-center-style mb-5-style">
+        <h6 class="text-uppercase section-names">Why choose us</h6>
+        <h2 class="section-heading">
+          Experience unmatched quality and dedicated service.
+        </h2>
+      </div>
+
+      <div class="row align-items-center mb-sm-5-style mb-3-style why-choose-us-block flex-wr">
+        <div class="col-md-6 img-wrapper-style">
+          <img src="assets/images/service&maintenancewebsitetemplate-4a.webp" alt="Quality Guarantee" loading="lazy" class="img-fluid rounded why-you-choose-us-block-image" />
+        </div>
+        <div class="col-md-6 mt-4-style mt-md-0-style why-choose-us-text-block ps-md-5-style">
+          <h3 class="fw-bold-style why-choose-us-section-each-block-heading">
+            <span class="me-2-style"><i class="bi bi-award" data-icon="bi-award"></i></span>Quality Guarantee
+          </h3>
+          <p class="text-muted-style each-block-para">
+            Ut quis Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+            Exercitationem provident molestias optio unde quisquam voluptatem
+            cupiditate esse laborum voluptatibus sit officia dolorem at,
+            maiores autem nulla nesciunt debitis expedita voluptates. euismod
+            at vivamus nunc duis. Tempus leo id phasellus at tellus non orci
+            consectetur. Viverra urna...
+          </p>
+          <a href="#" class="fw-bold-style text-dark-style text-decoration-underline">Learn More</a>
+        </div>
+      </div>
+
+      <div class="row align-items-center mb-sm-5-style mb-3-style flex-md-row-reverse why-choose-us-block">
+        <div class="col-md-6 img-wrapper-style">
+          <img src="assets/images/service&maintenancewebsitetemplate-4b.webp" alt="Customer Support" loading="lazy" class="img-fluid rounded why-you-choose-us-block-image" />
+        </div>
+        <div class="col-md-6 mt-4-style mt-md-0-style why-choose-us-text-block pe-md-5-style">
+          <h3 class="fw-bold-style why-choose-us-section-each-block-heading">
+            <span class="me-2-style"><i class="bi bi-person-lines-fill" data-icon="bi-person-lines-fill"></i></span>Customer Support
+          </h3>
+          <p class="text-muted-style each-block-para">
+            Sed sit Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            Corporis alias, voluptatum deserunt ipsum voluptas nobis aut cum
+            dolor fuga, blanditiis totam similique magnam quam nihil. amet
+            libero vitae metus efficitur volutpat. Mauris quis eros in orci
+            efficitur gravida ac at neque...
+          </p>
+          <a href="#" class="fw-bold-style text-dark-style text-decoration-underline">Contact Us</a>
+        </div>
+      </div>
+
+      <div class="row align-items-center mb-sm-5-style mb-3-style why-choose-us-block">
+        <div class="col-md-6 img-wrapper-style">
+          <img src="assets/images/service&maintenancewebsitetemplate-4aservice&maintenancewebsitetemplate-4c.webp" alt="Quality Guarantee" loading="lazy" class="img-fluid rounded why-you-choose-us-block-image" />
+        </div>
+        <div class="col-md-6 mt-4-style mt-md-0-style why-choose-us-text-block ps-md-5-style">
+          <h3 class="fw-bold-style why-choose-us-section-each-block-heading">
+            <span class=" me-2-style"><i class="bi bi-award" data-icon="bi-award"></i></span>Fast Shipping
+          </h3>
+          <p class="text-muted-style each-block-para">
+            Ut quis Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+            Voluptas quibusdam nobis quasi tempore eius recusandae totam,
+            tenetur at ut officia dolores vero nihil ipsum facilis unde illo
+            accusantium dolorem accusamus...
+          </p>
+          <a href="#" class="fw-bold-style text-dark-style text-decoration-underline">View Shipping Options</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section pb-sm-5-style pb-3-style" id="faq" data-section="faq">
+    <div class="container">
+      <div class="text-center-style mb-5-style">
+        <p class="text-uppercase small text-muted-style section-names">FAQs</p>
+        <h2 class="section-heading">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="accordion" id="faqAccordion">
+        <div class="accordion-item border-0 my-2-style">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed fw-semibold-style" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+              What types of mobile phones do you repair?
+            </button>
+          </h2>
+          <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body col-lg-8">
+              Lorem ipsum dolor sit amet consectetur. Velit gravida malesuada
+              quis ullamcorper. Lectus accumsan turpis quisque tempor nisi.
+              Eget morbi vitae neque adipiscing ridiculus feugiat. Lectus ac
+              eleifend iaculis magna.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border-0 my-2-style">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed fw-semibold-style" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+              Do you provide doorstep repair services?
+            </button>
+          </h2>
+          <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body text-muted-style col-lg-8">
+              Yes, we offer doorstep repair services in select locations.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border-0 my-2-style">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed fw-semibold-style" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+              How long does a typical repair take?
+            </button>
+          </h2>
+          <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body text-muted-style col-lg-8">
+              Most repairs are completed within 1–2 business days.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border-0 my-2-style">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed fw-semibold-style" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+              Do you use original parts for replacements?
+            </button>
+          </h2>
+          <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body text-muted-style col-lg-8">
+              Yes, we use genuine or high-quality OEM parts for all
+              replacements.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border-0 my-2-style">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed fw-semibold-style" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+              Do I need to book an appointment for repair?
+            </button>
+          </h2>
+          <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body text-muted-style col-lg-8">
+              Appointments are recommended, but walk-ins are also welcome.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border-0 my-2-style">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed fw-semibold-style" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+              Do you provide a warranty on repairs?
+            </button>
+          </h2>
+          <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body text-muted-style col-lg-8">
+              Yes, all our repairs come with a 90-day warranty.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border-0 my-2-style">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed fw-semibold-style" type="button" data-bs-toggle="collapse" data-bs-target="#faq7">
+              Do you repair water-damaged phones?
+            </button>
+          </h2>
+          <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body text-muted-style col-lg-8">
+              Yes, we offer diagnostics and repairs for water-damaged phones.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonial-section text-center-style pb-sm-5-style pb-3-style" id="testimonial-section" data-section="testimonial-section">
+    <div class="container">
+      <p class="text-uppercase text-muted-style section-names">Testimonials</p>
+      <h2 class="section-heading">What our clients say</h2>
+
+      <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p>
+                “I love creating new think every single days so let’s do it
+                together it was wonderful to work with you.”
+              </p>
+              <div class="client-info">
+                <img src="assets/images/3.webp" alt="Taro Zizo" loading="lazy" />
+                <span>Tiku</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p>
+                “I truly enjoy building something new every day, and collaborating with you made the
+                journey even more
+                exciting.”
+              </p>
+              <div class="client-info">
+                <img src="assets/images/4.webp" alt="Taro Zizo" loading="lazy" />
+                <span>Sumitra</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p>
+                “Every day is an opportunity to create something unique, and working alongside you made
+                it even more
+                enjoyable.”
+              </p>
+              <div class="client-info">
+                <img src="assets/images/5.webp" alt="Taro Zizo" loading="lazy" />
+                <span>Ram Mohan</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p>
+                “Exploring innovative ideas sparks my creativity, and I’m
+                excited to share this journey with you.”
+              </p>
+              <div class="client-info">
+                <img src="assets/images/6.webp" alt="Maya Lin" loading="lazy" />
+                <span>Anupam Srivastava</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p>
+                “Collaboration brings fresh perspectives, and I believe we can
+                achieve great things together.”
+              </p>
+              <div class="client-info">
+                <img src="assets/images/7.webp" alt="Jasper Lee" loading="lazy" />
+                <span>Dr. Sushama</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p>
+                “Another great experience — timely communication and
+                high-quality work. Highly recommend!”
+              </p>
+              <div class="client-info">
+                <img src="assets/images/1.webp" alt="Alex Kim" loading="lazy" />
+                <span>Vaishnavi</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p>
+                “I believe in creating new things every day, and your collaboration made the process
+                inspiring and
+                fulfilling.”
+              </p>
+              <div class="client-info">
+                <img src="assets/images/2.webp" alt="Alex Kim" loading="lazy" />
+                <span>Khalid</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+
+        <div class="swiper-button-prev">
+          <i class="fas fa-arrow-left" data-icon="fa-arrow-left"></i>
+        </div>
+        <div class="swiper-button-next">
+          <i class="fas fa-arrow-right" data-icon="fa-arrow-right"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-section container-fluid" id="contactus" data-section="contactus">
+    <div class="container">
+      <div class="overlay"></div>
+
+      <div class="contact-box text-start-style ms-auto-style">
+        <h2 class="fw-bold-style fs-1-style uniquefontfamily">Get in touch!</h2>
+        <p class="mb-4-style text-dark-style mb-5-style text-muted-style">
+          Faucibus commodo a aenean et sit quisque ipsum. Consequat
+        </p>
+
+        <form action="http://127.0.0.1:8000/api/forms/submit" method="post" data-zigrow-form>
+          <div form-question-zigrow>
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Enter your name" required>
+          </div>
+
+          <div form-question-zigrow>
+            <label>Address</label>
+            <input type="text" name="address" placeholder="Enter your address" required>
+          </div>
+
+          <div form-question-zigrow>
+            <label>New Question</label>
+            <input type="tel" inputmode="tel" pattern="^\+?[0-9\s\-]{7,15}$" placeholder="Enter your phone number here" name="new-question">
+          </div>
+
+          <button type="submit" class="btn btn-dark mt-3-style get-in-touch-button fw-bold-style">
+            Get in Touch
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer mt-auto-style py-5-style" id="footer" data-section="footer">
+    <div class="container">
+      <div class="row text-start-style">
+        <div class="col-md-3 mb-4-style">
+          <h3 class="fw-bold-style uniquefontfamily" data-logo="footer">
+            <span class=" me-2-style fw-bold-style"><i class="fas fa-mobile-alt" data-icon="fa-mobile-alt"></i></span>Elektrnqs
+          </h3>
+          <p class="footer-small-font-size fs-6-style fw-semibold-style">
+            Leo elementum iaculis quam massa vitae odio sed. Morbi tincidunt
+            senectus.
+          </p>
+          <div class="social-icons mt-3-style">
+            <a href="#"><i class="fab fa-twitter" data-icon="fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram" data-icon="fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube" data-icon="fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div class="col-md-2 mb-4-style footer-small-font-size">
+          <h6 class="fw-bold-style fs-4-style">Navigation</h6>
+          <ul class="list-unstyled fs-6-style fw-semibold-style">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Our Services</a></li>
+            <li><a href="#">Our Team</a></li>
+          </ul>
+        </div>
+
+        <div class="col-md-4 mb-4-style footer-small-font-size">
+          <h6 class="fw-bold-style fs-4-style">Services</h6>
+          <ul class="list-unstyled fs-6-style fw-semibold-style">
+            <li><a href="#">Broken Screen Repair</a></li>
+            <li><a href="#">Charging Port Repair</a></li>
+            <li><a href="#">Water Damage Repair</a></li>
+            <li><a href="#">Camera Repair</a></li>
+            <li><a href="#">Battery Replacement</a></li>
+            <li><a href="#">Software Troubleshooting</a></li>
+          </ul>
+        </div>
+
+        <div class="col-md-3 mb-4-style footer-small-font-size">
+          <h6 class="fw-bold-style fs-4-style">Contact Us</h6>
+          <p class="mb-2-style fs-6-style fw-semibold-style">
+            <span class="me-2-style"><i class="fas fa-map-marker-alt" data-icon="fa-map-marker-alt"></i></span>E-123,
+            ABC Plaza, XYZ Street, New Delhi
+            - 110077
+          </p>
+          <p class="fs-6-style fw-semibold-style">
+            <span class="me-2-style"><i class="fas fa-phone-alt" data-icon="fa-phone-alt"></i></span>+91 9123456789
+          </p>
+        </div>
+      </div>
+
+      <hr />
+      <div class="d-md-flex justify-content-between small pt-3-style text-center-style text-md-start footer-small-font-size">
+        <div class="fw-bold-style">
+          <p>Powered by <a href="https://www.zigrow.com" class="zigrow-footer-link">Zigrow</a></p>
+        </div>
+        <div>
+          <a href="#" class="me-3-style fw-bold-style">TERM OF USE</a>
+          <a href="#" class="fw-bold-style">PRIVACY POLICY</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MorphSVGPlugin.min.js"></script>
+  <script src="js/script.js"></script>
+  <script>
+    (function() {
+      // Find ALL Zigrow forms
+      const forms = Array.from(document.querySelectorAll('[data-zigrow-form]'));
+      if (!forms.length) return;
+
+      // Helper: turn FormData into a plain object
+      function serializeForm(form) {
+        const fd = new FormData(form);
+        const raw = {};
+        for (const [name, value] of fd.entries()) {
+          const el = form.elements[name];
+          const isGroup = el && (el.length && el[0] && el[0].type === 'checkbox');
+          if (isGroup) {
+            if (!raw[name]) raw[name] = [];
+            raw[name].push(value === '' ? true : value);
+          } else {
+            raw[name] = value;
+          }
+        }
+        return raw;
+      }
+
+      // Helper: pick primary value for quick list view
+      function pickPrimaryValue(raw) {
+        if (raw.email && String(raw.email).trim()) return String(raw.email).trim();
+        if (raw.phone && String(raw.phone).trim()) return String(raw.phone).trim();
+        const nameCombo = [raw.firstName, raw.lastName].filter(Boolean).join(' ').trim();
+        if (raw.name && String(raw.name).trim()) return String(raw.name).trim();
+        if (nameCombo) return nameCombo;
+        if (raw.message && String(raw.message).trim()) return String(raw.message).trim();
+        return '';
+      }
+
+      forms.forEach((form) => {
+        // Ensure hidden fields are filled
+        const domainInput = form.querySelector('input[name="domain"]');
+        const pageUrlInput = form.querySelector('input[name="page_url"]');
+        if (domainInput) domainInput.value = location.host;
+        if (pageUrlInput) pageUrlInput.value = location.href;
+
+        // Create a container for messages if not already exists
+        let msgContainer = form.querySelector('.form-submit-message');
+        if (!msgContainer) {
+          msgContainer = document.createElement('div');
+          msgContainer.className = 'form-submit-message mt-2 text-sm';
+          form.appendChild(msgContainer);
+        }
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const submitBtn = form.querySelector('[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.dataset._oldText = submitBtn.innerText;
+            submitBtn.innerText = 'Submitting...';
+          }
+
+          // Clear previous message
+          msgContainer.innerText = '';
+          msgContainer.style.color = '';
+
+          try {
+            const raw = serializeForm(form);
+            const body = new URLSearchParams();
+            body.set('domain', (form.querySelector('input[name="domain"]')?.value || location.host));
+            body.set('form_key', (form.querySelector('input[name="form_key"]')?.value || 'contact'));
+            body.set('page_url', (form.querySelector('input[name="page_url"]')?.value || location.href));
+            body.set('payload', JSON.stringify(raw));
+
+            const primary = pickPrimaryValue(raw);
+            if (primary) body.set('value', primary);
+
+            if (raw._company) body.set('_company', raw._company);
+
+            const res = await fetch(form.action, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json'
+              },
+              body
+            });
+
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && (data.ok ?? true)) {
+              form.reset();
+              msgContainer.innerText = '✅ Thanks! Your request has been submitted.';
+              msgContainer.style.color = '#28a745'; // green success
+            } else {
+              msgContainer.innerText = `❌ ${data.message || `Failed (HTTP ${res.status})`}`;
+              msgContainer.style.color = '#dc3545'; // red error
+            }
+          } catch (err) {
+            console.error(err);
+            msgContainer.innerText = '❌ Something went wrong. Please try again.';
+            msgContainer.style.color = '#dc3545';
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerText = submitBtn.dataset._oldText || 'Send';
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>

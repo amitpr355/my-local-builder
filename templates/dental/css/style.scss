@@ -1,0 +1,2115 @@
+// Variables
+// SCSS variables are kept for compilation but primary/secondary/territory usage is shifted to CSS variables
+$blueColor: #0d6efd; // Will map to --primary-colors
+$whiteColor: white; // Common use
+$headingColor: #212529; // Will map to a dark secondary or heading color
+$textmutedcolor: #444f5d; // Will map to --secondary-colors for paragraphs/muted text
+$textMutedColor: #6c757d; // A lighter muted color, also maps to --secondary-colors
+$newpatient: #f9fafc; // Will map to --territory-colors for background accents
+
+// Unused SCSS variables that don't map to theme:
+$eachSectionBackgroundColor: #fefefe;
+$eachSectionBackgroundColor2: #f9f9f9;
+$lightBlueColor: #5fabb7;
+$heroSectionHeading: #1a174f;
+$eachSectionNameColor: #22272e;
+$starRatingColor: #fdd077;
+
+// CSS Variables Declaration (Typically in :root or body, assuming a top-level theme file applies these)
+// For SCSS-only refactoring, we'll apply them in the body, but note they should be global.
+body {
+  font-family: "Inter", sans-serif;
+  overflow-x: hidden;
+}
+
+// ==========================
+// HAMBURGER Z-INDEX
+// ==========================
+/* Reduce the outer container size */
+.hamburger {
+  z-index: 1051;
+  width: 24px; /* default is 40px, reduce as needed */
+  height: 24px; /* adjust height as per look */
+  display: flex;
+  padding: 0;
+}
+
+/* Reduce the box that contains the lines */
+.hamburger-box {
+  width: 24px;
+  height: 24px;
+}
+
+/* Reduce the inner lines */
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+  width: 24px;
+  height: 3px; /* thinner lines */
+  background-color: $whiteColor;
+}
+
+.hamburger.is-active .hamburger-inner,
+.hamburger.is-active .hamburger-inner::before,
+.hamburger.is-active .hamburger-inner::after {
+  background-color: $whiteColor; // active color
+}
+
+.nav-item {
+  display: flex;
+  justify-content: center;
+}
+
+.navbar {
+  background-color: transparent;
+  .navbar-brand {
+    .img-container-style {
+      height: 50px;
+    }
+  }
+
+  .navbar-menu-div {
+    a {
+      @media (max-width: 991.98px) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+
+  .nav-link {
+    position: relative;
+    color: $whiteColor;
+    font-weight: 600;
+    text-decoration: none;
+    padding-bottom: 5px;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      width: 0;
+      color: $whiteColor;
+      background-color: currentColor;
+      transition: width 0.4s ease;
+    }
+
+    &:hover::after {
+      width: 100%; // Animate underline on hover
+      background-color: $whiteColor;
+    }
+
+    // Optional: text color change on hover
+    &:hover {
+      color: $whiteColor;
+    }
+  }
+
+  .btn-custom {
+    border: 1px solid var(--primary-colors, #0d6efd);
+    color: $whiteColor;
+    background-color: var(--primary-colors, #0d6efd);
+    padding: 12px 24px;
+    font-weight: 600;
+  }
+}
+
+@media (min-width: 991.98px) {
+  .navbar-nav .nav-link.active {
+    color: $whiteColor;
+    font-weight: 800;
+
+    &::after {
+      width: 100%;
+      background-color: $whiteColor;
+    }
+  }
+}
+
+// Hero Section code
+.hero-section {
+  position: relative;
+  background: url("../assets/images/dentist_dental_clinic_website_template_footer.webp")
+    top/cover no-repeat;
+  min-height: 100vh;
+  margin-top: -100px;
+  padding-top: 100px;
+  display: flex;
+  flex-direction: column;
+  clip-path: ellipse(90% 90% at 50% 0%);
+
+  // Overlay only for the background
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); // Dark transparent overlay
+    z-index: 1; // Below text, above background
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2; // Keeps text above overlay
+    margin-top: auto;
+    margin-bottom: auto;
+    color: $whiteColor;
+    text-align: center;
+
+    .hero-heading {
+      // font-size: 3.5rem;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 600;
+    }
+  }
+
+  p {
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .book-an-appointment {
+    border: 1px solid var(--primary-colors, #0d6efd);
+    background-color: var(--primary-colors, #0d6efd);
+    color: $whiteColor;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 12px 24px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: white;
+    transform: translateY(50%);
+    z-index: 3;
+  }
+}
+
+// For the floating button
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--primary-colors, #0d6efd);
+  color: $whiteColor;
+  border: 2px solid $whiteColor;
+  transition: all 0.3s ease;
+  opacity: 0; /* Start hidden for GSAP animation */
+  transform: translateY(50px); /* Initial offset for slide-in */
+  &:hover {
+    background-color: $whiteColor;
+    color: var(--primary-colors, #0d6efd);
+    border-color: $whiteColor;
+  }
+  .bi-arrow-up {
+    font-size: 25px;
+  }
+}
+
+.each-section-heading {
+  font-size: clamp(24px, 4vw, 40px);
+  font-weight: 600;
+  color: var(--secondary-colors, #212529); /* Using a dark color for headings */
+}
+
+.each-section-para {
+  font-size: clamp(14px, 2vw, 18px);
+  color: var(
+    --secondary-colors,
+    #444f5d
+  ); /* Using muted color for paragraphs */
+}
+
+// Welcome section
+.welcome-section {
+  .row {
+    align-items: center;
+  }
+
+  .icon-box {
+    width: 50px;
+    height: 45px;
+    background-color: rgba(
+      13,
+      110,
+      253,
+      0.1
+    ); /* Based on $blueColor/--primary-colors */
+    color: var(--primary-colors, #0d6efd);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.2rem;
+  }
+
+  .feature-heading {
+    font-weight: 500;
+    // font-size: 20px;
+    font-size: clamp(16px, 2.5vw, 20px);
+  }
+
+  .feature-para {
+    font-size: clamp(14px, 2.5vw, 16px);
+    color: var(--secondary-colors, #6c757d);
+    padding-right: 50px;
+  }
+
+  .view-google-btn {
+    border: 1px solid var(--primary-colors, #0d6efd);
+    border-radius: 4px;
+    color: var(--primary-colors, #0d6efd);
+    padding: 12px 24px;
+  }
+
+  .img-wrapper {
+    position: relative;
+    height: 100%;
+    display: flex;
+    justify-content: end;
+    @media (max-width: 575.98px) {
+      justify-content: center;
+    }
+
+    .pattern-bg {
+      position: absolute;
+      right: 40%;
+      top: 10%;
+      width: 300px;
+      height: 300px;
+      background-image: radial-gradient(#828284 1px, transparent 1px);
+      background-size: 18px 18px;
+      z-index: 0;
+    }
+
+    .img1 {
+      max-width: 100%;
+      z-index: -1;
+    }
+
+    .img-overlay {
+      position: absolute;
+      object-fit: cover;
+      right: 30%;
+      bottom: -5%;
+      width: 50%;
+      height: 60%;
+      border-radius: 0 0 50% 50%;
+      z-index: 1;
+    }
+  }
+}
+
+// New patient section
+.new-patient-section {
+  background: linear-gradient(
+    to right,
+    var(--primary-colors, #0d6efd) 80%,
+    var(--territory-colors, #f9fafc) 20%
+  );
+  position: relative;
+  overflow-x: hidden;
+
+  @media (max-width: 991px) {
+    background: var(
+      --primary-colors,
+      #0d6efd
+    ); // On mobile, use single blue background
+  }
+
+  .left-content-div {
+    color: $whiteColor;
+    position: relative;
+
+    .each-section-heading {
+      color: $whiteColor;
+    }
+
+    .each-section-para {
+      color: $whiteColor;
+    }
+  }
+
+  .form-card {
+    z-index: 5;
+    position: absolute;
+    right: -20%;
+    width: 400px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: $whiteColor;
+
+    @media (max-width: 991.98px) {
+      position: static; // let it follow normal document flow
+      width: 100%; // take full width under paragraph
+      margin-top: 1.5rem; // space between paragraph and form
+      transform: none; // remove vertical centering
+      right: auto; // reset absolute offsets
+      top: auto;
+    }
+
+    .btn-send-request {
+      background-color: var(--primary-colors, #0d6efd);
+      color: $whiteColor;
+      border-radius: 4px;
+      display: flex;
+      justify-content: center;
+      padding: 0.95rem;
+    }
+  }
+
+  // Pattern Dots
+  &::after {
+    content: "";
+    position: absolute;
+    right: 3.5%;
+    bottom: 1%;
+    width: 300px;
+    height: 300px;
+    background-image: radial-gradient(#d4dcf7 2px, transparent 2px);
+    background-size: 20px 20px;
+
+    @media (max-width: 991px) {
+      display: none;
+    }
+  }
+
+  .form-control {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+}
+.new-patient-section {
+  position: relative;
+  z-index: 0; // creates stacking context
+
+  &::after {
+    z-index: -1; // push behind everything
+  }
+}
+
+// Dental Excellence Section
+.dental-excellence-section {
+  overflow-x: hidden;
+  .img-wrapper {
+    position: relative;
+    height: 100%;
+    display: flex;
+    @media (max-width: 575.98px) {
+      justify-content: center;
+    }
+
+    .pattern-bg {
+      position: absolute;
+      left: 20%;
+      top: 0%;
+      width: 300px;
+      height: 300px;
+      background-image: radial-gradient(#828284 1px, transparent 1px);
+      background-size: 18px 18px;
+      z-index: 0;
+    }
+
+    .img-overlay {
+      position: absolute;
+      border-radius: 0 0 45% 45%;
+      height: 90%;
+      top: 20%;
+      left: 30%;
+      width: 60%;
+      object-fit: cover;
+      z-index: 2;
+    }
+  }
+}
+
+// Customer care on your schedule
+.services-section {
+  background-color: $whiteColor;
+  overflow-x: hidden;
+  .service-card {
+    background: $whiteColor;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon {
+      font-size: 2rem;
+      color: var(--primary-colors, #0d6efd);
+      position: absolute;
+      top: -15%;
+      left: 50%;
+      transform: translateX(-50%);
+      i {
+        font-size: 40px;
+      }
+    }
+
+    .card-heading {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card-para {
+      font-size: 0.9rem;
+      color: var(--secondary-colors, #6c757d);
+      margin: 20px;
+    }
+  }
+}
+
+// Lifestyle section
+.dental-services {
+  overflow-x: hidden;
+
+  .service-card {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    min-height: 220px;
+    color: $whiteColor;
+    border-radius: 0px;
+    overflow: hidden;
+
+    .each-section-heading {
+      color: var(--secondary-colors, #212529);
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: start;
+      @media (max-width: 499.98px) {
+        padding: 20px;
+      }
+
+      h6 {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      h5 {
+        font-weight: 600;
+        margin-top: 10px;
+        margin-bottom: 20px;
+      }
+      p {
+        font-size: 1rem;
+        margin: 0;
+        line-height: 1.6;
+        font-weight: bold;
+        @media (max-width: 767.98px) {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .heading-card {
+    @media (max-width: 767.98px) {
+      min-height: 0px;
+    }
+  }
+
+  .insurance-card {
+    background: var(--primary-colors, #0d6efd);
+    color: $whiteColor;
+    min-height: 220px;
+    border-radius: 0 0 220px 0;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    small {
+      letter-spacing: 1px;
+      display: block;
+      margin-bottom: 5px;
+
+      i {
+        padding: 5px;
+      }
+    }
+
+    h5 {
+      font-weight: bold;
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .insurance-card {
+      border-radius: 0 0 4px 4px;
+    }
+  }
+}
+
+// Discount section
+.discount-section {
+  overflow-x: hidden;
+  .container-fluid {
+    background-color: var(--primary-colors, #0d6efd);
+  }
+
+  .row {
+    align-items: center;
+  }
+
+  /* Gradient on image container */
+  .image-gradient {
+    position: relative;
+
+    img {
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(0, 109, 253, 0),
+        /* Using RGB of $blueColor/--primary-colors */ rgba(0, 109, 253, 1)
+      );
+
+      pointer-events: none; /* lets clicks pass through */
+    }
+  }
+
+  .discount-content {
+    background: var(--primary-colors, #0d6efd); // Blue background
+    padding: 50px;
+    height: 100%;
+    color: $whiteColor;
+
+    .each-section-para {
+      color: $whiteColor;
+    }
+
+    .each-section-heading {
+      color: $whiteColor;
+      font-weight: 600;
+    }
+
+    .btn-book-appointment {
+      border: 1px solid $whiteColor;
+      transition: 0.3s;
+      color: $whiteColor;
+      border-radius: 4px;
+      padding: 12px 24px;
+      &:hover {
+        background: $whiteColor;
+        color: var(--primary-colors, #0d6efd);
+      }
+    }
+  }
+
+  @media (max-width: 992px) {
+    .discount-content {
+      text-align: center;
+      padding: 30px;
+    }
+  }
+}
+
+// Happy stories section
+.happy-stories {
+  overflow: hidden;
+  display: flex;
+
+  .story-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+    height: 100%;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+    }
+
+    .quote-mark {
+      font-size: 2rem;
+      color: var(--primary-colors, #0d6efd);
+      position: absolute;
+      top: 20px;
+      left: -16px;
+    }
+
+    p {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--secondary-colors, #444f5d); /* Ensure text is theme-based */
+    }
+
+    .profile-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .author {
+      font-weight: bold;
+    }
+  }
+}
+
+// Contact section
+.contact-section {
+  overflow-x: hidden;
+
+  background: $whiteColor;
+
+  .container {
+    text-align: center;
+  }
+
+  .btn-view-on-googlemaps {
+    border: 1px solid var(--primary-colors, #0d6efd);
+    background-color: var(--primary-colors, #0d6efd);
+    color: $whiteColor;
+    border-radius: 4px;
+    padding: 12px 24px;
+  }
+
+  .info-cards {
+    background-color: var(--primary-colors, #0d6efd);
+    border-radius: 4px 4px 0 0;
+    padding: 18px;
+    .card {
+      border: none;
+      border-radius: 4px;
+      transition: transform 0.3s ease;
+      background-color: var(--primary-colors, #0d6efd);
+      display: flex;
+      flex-direction: row;
+      align-items: start;
+
+      .icon-div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        padding: 5px;
+        border-radius: 50%;
+        background-color: rgba(239, 237, 237, 0.5);
+
+        i {
+          font-size: 20px;
+          border-radius: 50%;
+          color: $whiteColor;
+        }
+      }
+
+      .text-div {
+        display: flex;
+        flex-direction: column;
+        color: $whiteColor;
+        justify-content: start;
+        margin-left: 15px;
+        h5 {
+          display: flex;
+          justify-content: start;
+        }
+        p {
+          display: flex;
+          justify-content: start;
+          text-align: start;
+        }
+      }
+    }
+  }
+
+  .book-your-appointment-heading {
+    font-weight: 600;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+  }
+
+  form {
+    input,
+    textarea {
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      &:focus {
+        border-color: var(--primary-colors, #0d6efd);
+        box-shadow: none;
+      }
+    }
+
+    .button-div {
+      text-align: start;
+    }
+
+    .btn-send-request {
+      border: 1px solid var(--primary-colors, #0d6efd);
+      background-color: var(--primary-colors, #0d6efd);
+      color: $whiteColor;
+      border-radius: 4px;
+    }
+  }
+
+  .map-div {
+    padding: 0;
+  }
+
+  iframe {
+    min-height: 350px;
+    border-radius: 0 0 4px 0;
+    width: 100%;
+  }
+}
+
+// Footer section
+.footer-section {
+  background-color: #111;
+  color: $whiteColor;
+  font-size: 14px;
+  overflow-x: hidden;
+
+  .footer-logo {
+    .logo-img {
+      height: 50px;
+    }
+    .logo-text {
+      font-size: 18px;
+      color: $whiteColor;
+      strong {
+        color: var(--primary-colors, #0d6efd); // Blue accent for "Dental"
+      }
+    }
+  }
+
+  .social-icons {
+    a {
+      color: $whiteColor;
+      margin: 0 8px;
+      font-size: 18px;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: var(--primary-colors, #0d6efd); // Hover blue
+      }
+    }
+  }
+
+  p {
+    font-size: 13px;
+    color: #bbb;
+  }
+}
+
+.nav-dark {
+  background-color: var(--primary-colors, #0d6efd);
+}
+
+.btn-custom {
+  border: 1px solid $whiteColor; /* Keep white for outline on dark nav */
+}
+
+/* --- Custom Padding Utility Classes (Replacing disallowed Bootstrap utilities) --- */
+/* The styles below are retained/created as custom utilities per rule 4.1 & 4.2 */
+
+.p-0-style {
+  padding: 0;
+}
+.p-1-style {
+  padding: 0.25rem;
+}
+.p-2-style {
+  padding: 0.5rem;
+}
+.p-3-style {
+  padding: 1rem;
+}
+.p-4-style {
+  padding: 1.5rem;
+}
+.p-5-style {
+  padding: 3rem;
+}
+.py-1-style {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+.py-2-style {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.py-3-style {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.py-4-style {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+.py-5-style {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+.px-1-style {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+.px-2-style {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.px-3-style {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.px-4-style {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+.px-5-style {
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+.pb-5-style {
+  padding-bottom: 3rem;
+}
+.pt-3-style {
+  padding-top: 1rem;
+}
+
+@media (min-width: 576px) {
+  /* All-sides padding */
+  .p-sm-1-style {
+    padding: 0.25rem;
+  }
+  .p-sm-2-style {
+    padding: 0.5rem;
+  }
+  .p-sm-3-style {
+    padding: 1rem;
+  }
+  .p-sm-4-style {
+    padding: 1.5rem;
+  }
+  .p-sm-5-style {
+    padding: 3rem;
+  }
+
+  /* Vertical padding (Top and Bottom) */
+  .py-sm-1-style {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .py-sm-2-style {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .py-sm-3-style {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .py-sm-4-style {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  .py-sm-5-style {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  /* Horizontal padding (Left and Right/Start and End) */
+  .px-sm-1-style {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  .px-sm-2-style {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .px-sm-3-style {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .px-sm-4-style {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  .px-sm-5-style {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+@media (min-width: 768px) {
+  /* All-sides padding */
+  .p-md-1-style {
+    padding: 0.25rem;
+  }
+  .p-md-2-style {
+    padding: 0.5rem;
+  }
+  .p-md-3-style {
+    padding: 1rem;
+  }
+  .p-md-4-style {
+    padding: 1.5rem;
+  }
+  .p-md-5-style {
+    padding: 3rem;
+  }
+  /* Vertical padding */
+  .py-md-1-style {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .py-md-2-style {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .py-md-3-style {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .py-md-4-style {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  .py-md-5-style {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  /* Horizontal padding */
+  .px-md-1-style {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  .px-md-2-style {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .px-md-3-style {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .px-md-4-style {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  .px-md-5-style {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+@media (min-width: 992px) {
+  /* All-sides padding */
+  .p-lg-1-style {
+    padding: 0.25rem;
+  }
+  .p-lg-2-style {
+    padding: 0.5rem;
+  }
+  .p-lg-3-style {
+    padding: 1rem;
+  }
+  .p-lg-4-style {
+    padding: 1.5rem;
+  }
+  .p-lg-5-style {
+    padding: 3rem;
+  }
+
+  /* Vertical padding (Top and Bottom) */
+  .py-lg-1-style {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .py-lg-2-style {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .py-lg-3-style {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .py-lg-4-style {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  .py-lg-5-style {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  /* Horizontal padding (Left and Right/Start and End) */
+  .px-lg-1-style {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  .px-lg-2-style {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .px-lg-3-style {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .px-lg-4-style {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  .px-lg-5-style {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+  .pe-lg-4-style {
+    padding-left: 1.5rem;
+  }
+}
+@media (min-width: 1200px) {
+  /* All-sides padding */
+  .p-xl-1-style {
+    padding: 0.25rem;
+  }
+  .p-xl-2-style {
+    padding: 0.5rem;
+  }
+  .p-xl-3-style {
+    padding: 1rem;
+  }
+  .p-xl-4-style {
+    padding: 1.5rem;
+  }
+  .p-xl-5-style {
+    padding: 3rem;
+  }
+
+  /* Vertical padding (Top and Bottom) */
+  .py-xl-1-style {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .py-xl-2-style {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .py-xl-3-style {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .py-xl-4-style {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  .py-xl-5-style {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  /* Horizontal padding (Left and Right/Start and End) */
+  .px-xl-1-style {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  .px-xl-2-style {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .px-xl-3-style {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .px-xl-4-style {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  .px-xl-5-style {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+@media (min-width: 1400px) {
+  /* All-sides padding */
+  .p-xxl-1-style {
+    padding: 0.25rem;
+  }
+  .p-xxl-2-style {
+    padding: 0.5rem;
+  }
+  .p-xxl-3-style {
+    padding: 1rem;
+  }
+  .p-xxl-4-style {
+    padding: 1.5rem;
+  }
+  .p-xxl-5-style {
+    padding: 3rem;
+  }
+
+  /* Vertical padding (Top and Bottom) */
+  .py-xxl-1-style {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .py-xxl-2-style {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .py-xxl-3-style {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .py-xxl-4-style {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  .py-xxl-5-style {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  /* Horizontal padding (Left and Right/Start and End) */
+  .px-xxl-1-style {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  .px-xxl-2-style {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .px-xxl-3-style {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .px-xxl-4-style {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  .px-xxl-5-style {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+.fw-semibold-style {
+  font-weight: 600;
+}
+
+.fs-4-style {
+  font-size: 1.5rem;
+}
+
+.bg-dark-style {
+  background: #212529;
+}
+.text-white-style {
+  color: #fff;
+}
+
+img {
+  object-fit: cover;
+}
+
+.mx-auto-style {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-white-style-50 {
+  color: #fff;
+  opacity: 0.5;
+}
+
+// All-sides margin
+.m-0-style {
+  margin: 0;
+}
+.m-1-style {
+  margin: 0.25rem;
+}
+.m-2-style {
+  margin: 0.5rem;
+}
+.m-3-style {
+  margin: 1rem;
+}
+.m-4-style {
+  margin: 1.5rem;
+}
+.m-5-style {
+  margin: 3rem;
+}
+
+// Vertical margin (Top and Bottom)
+.my-1-style {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+.my-2-style {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.my-3-style {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.my-4-style {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.my-5-style {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+// Horizontal margin (Left and Right)
+.mx-1-style {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+.mx-2-style {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+.mx-3-style {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+.mx-4-style {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+.mx-5-style {
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
+
+// Single-side margin (Top)
+.mt-1-style {
+  margin-top: 0.25rem;
+}
+.mt-2-style {
+  margin-top: 0.5rem;
+}
+.mt-3-style {
+  margin-top: 1rem;
+}
+.mt-4-style {
+  margin-top: 1.5rem;
+}
+.mt-5-style {
+  margin-top: 3rem;
+}
+.mt-auto-style {
+  margin-top: auto;
+}
+
+// Single-side margin (Bottom)
+.mb-1-style {
+  margin-bottom: 0.25rem;
+}
+.mb-2-style {
+  margin-bottom: 0.5rem;
+}
+.mb-3-style {
+  margin-bottom: 1rem;
+}
+.mb-4-style {
+  margin-bottom: 1.5rem;
+}
+.mb-5-style {
+  margin-bottom: 3rem;
+}
+
+// Single-side margin (Left/Start)
+.ms-1-style {
+  margin-left: 0.25rem;
+}
+.ms-2-style {
+  margin-left: 0.5rem;
+}
+.ms-3-style {
+  margin-left: 1rem;
+}
+.ms-4-style {
+  margin-left: 1.5rem;
+}
+.ms-5-style {
+  margin-left: 3rem;
+}
+
+// Single-side margin (Right/End)
+.me-1-style {
+  margin-right: 0.25rem;
+}
+.me-2-style {
+  margin-right: 0.5rem;
+}
+.me-3-style {
+  margin-right: 1rem;
+}
+.me-4-style {
+  margin-right: 1.5rem;
+}
+.me-5-style {
+  margin-right: 3rem;
+}
+
+@media (min-width: 576px) {
+  // All-sides margin
+  .m-sm-1-style {
+    margin: 0.25rem;
+  }
+  .m-sm-2-style {
+    margin: 0.5rem;
+  }
+  .m-sm-3-style {
+    margin: 1rem;
+  }
+  .m-sm-4-style {
+    margin: 1.5rem;
+  }
+  .m-sm-5-style {
+    margin: 3rem;
+  }
+
+  // Vertical margin (Top and Bottom)
+  .my-sm-1-style {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .my-sm-2-style {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .my-sm-3-style {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .my-sm-4-style {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .my-sm-5-style {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  // Horizontal margin (Left and Right)
+  .mx-sm-1-style {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
+  .mx-sm-2-style {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+  .mx-sm-3-style {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  .mx-sm-4-style {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  }
+  .mx-sm-5-style {
+    margin-left: 3rem;
+    margin-right: 3rem;
+  }
+
+  // Single-side margin (Top)
+  .mt-sm-1-style {
+    margin-top: 0.25rem;
+  }
+  .mt-sm-2-style {
+    margin-top: 0.5rem;
+  }
+  .mt-sm-3-style {
+    margin-top: 1rem;
+  }
+  .mt-sm-4-style {
+    margin-top: 1.5rem;
+  }
+  .mt-sm-5-style {
+    margin-top: 3rem;
+  }
+
+  // Single-side margin (Bottom)
+  .mb-sm-1-style {
+    margin-bottom: 0.25rem;
+  }
+  .mb-sm-2-style {
+    margin-bottom: 0.5rem;
+  }
+  .mb-sm-3-style {
+    margin-bottom: 1rem;
+  }
+  .mb-sm-4-style {
+    margin-bottom: 1.5rem;
+  }
+  .mb-sm-5-style {
+    margin-bottom: 3rem;
+  }
+
+  // Single-side margin (Left/Start)
+  .ms-sm-1-style {
+    margin-left: 0.25rem;
+  }
+  .ms-sm-2-style {
+    margin-left: 0.5rem;
+  }
+  .ms-sm-3-style {
+    margin-left: 1rem;
+  }
+  .ms-sm-4-style {
+    margin-left: 1.5rem;
+  }
+  .ms-sm-5-style {
+    margin-left: 3rem;
+  }
+
+  // Single-side margin (Right/End)
+  .me-sm-1-style {
+    margin-right: 0.25rem;
+  }
+  .me-sm-2-style {
+    margin-right: 0.5rem;
+  }
+  .me-sm-3-style {
+    margin-right: 1rem;
+  }
+  .me-sm-4-style {
+    margin-right: 1.5rem;
+  }
+  .me-sm-5-style {
+    margin-right: 3rem;
+  }
+}
+@media (min-width: 768px) {
+  // All-sides margin
+  .m-md-1-style {
+    margin: 0.25rem;
+  }
+  .m-md-2-style {
+    margin: 0.5rem;
+  }
+  .m-md-3-style {
+    margin: 1rem;
+  }
+  .m-md-4-style {
+    margin: 1.5rem;
+  }
+  .m-md-5-style {
+    margin: 3rem;
+  }
+
+  // Vertical margin (Top and Bottom)
+  .my-md-1-style {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .my-md-2-style {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .my-md-3-style {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .my-md-4-style {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .my-md-5-style {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  // Horizontal margin (Left and Right)
+  .mx-md-1-style {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
+  .mx-md-2-style {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+  .mx-md-3-style {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  .mx-md-4-style {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  }
+  .mx-md-5-style {
+    margin-left: 3rem;
+    margin-right: 3rem;
+  }
+
+  // Single-side margin (Top)
+  .mt-md-1-style {
+    margin-top: 0.25rem;
+  }
+  .mt-md-2-style {
+    margin-top: 0.5rem;
+  }
+  .mt-md-3-style {
+    margin-top: 1rem;
+  }
+  .mt-md-4-style {
+    margin-top: 1.5rem;
+  }
+  .mt-md-5-style {
+    margin-top: 3rem;
+  }
+
+  .mb-md-0-style {
+    margin-bottom: 0;
+  }
+  // Single-side margin (Bottom)
+  .mb-md-1-style {
+    margin-bottom: 0.25rem;
+  }
+  .mb-md-2-style {
+    margin-bottom: 0.5rem;
+  }
+  .mb-md-3-style {
+    margin-bottom: 1rem;
+  }
+  .mb-md-4-style {
+    margin-bottom: 1.5rem;
+  }
+  .mb-md-5-style {
+    margin-bottom: 3rem;
+  }
+
+  // Single-side margin (Left/Start)
+  .ms-md-1-style {
+    margin-left: 0.25rem;
+  }
+  .ms-md-2-style {
+    margin-left: 0.5rem;
+  }
+  .ms-md-3-style {
+    margin-left: 1rem;
+  }
+  .ms-md-4-style {
+    margin-left: 1.5rem;
+  }
+  .ms-md-5-style {
+    margin-left: 3rem;
+  }
+
+  // Single-side margin (Right/End)
+  .me-md-1-style {
+    margin-right: 0.25rem;
+  }
+  .me-md-2-style {
+    margin-right: 0.5rem;
+  }
+  .me-md-3-style {
+    margin-right: 1rem;
+  }
+  .me-md-4-style {
+    margin-right: 1.5rem;
+  }
+  .me-md-5-style {
+    margin-right: 3rem;
+  }
+}
+@media (min-width: 992px) {
+  // All-sides margin
+  .m-lg-1-style {
+    margin: 0.25rem;
+  }
+  .m-lg-2-style {
+    margin: 0.5rem;
+  }
+  .m-lg-3-style {
+    margin: 1rem;
+  }
+  .m-lg-4-style {
+    margin: 1.5rem;
+  }
+  .m-lg-5-style {
+    margin: 3rem;
+  }
+
+  // Vertical margin (Top and Bottom)
+  .my-lg-1-style {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .my-lg-2-style {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .my-lg-3-style {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .my-lg-4-style {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .my-lg-5-style {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  // Horizontal margin (Left and Right)
+  .mx-lg-1-style {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
+  .mx-lg-2-style {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+  .mx-lg-3-style {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  .mx-lg-4-style {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  }
+  .mx-lg-5-style {
+    margin-left: 3rem;
+    margin-right: 3rem;
+  }
+
+  // Single-side margin (Top)
+  .mt-lg-1-style {
+    margin-top: 0.25rem;
+  }
+  .mt-lg-2-style {
+    margin-top: 0.5rem;
+  }
+  .mt-lg-3-style {
+    margin-top: 1rem;
+  }
+  .mt-lg-4-style {
+    margin-top: 1.5rem;
+  }
+  .mt-lg-5-style {
+    margin-top: 3rem;
+  }
+
+  // Single-side margin (Bottom)
+  .mb-lg-0-style {
+    margin-bottom: 0;
+  }
+  .mb-lg-1-style {
+    margin-bottom: 0.25rem;
+  }
+  .mb-lg-2-style {
+    margin-bottom: 0.5rem;
+  }
+  .mb-lg-3-style {
+    margin-bottom: 1rem;
+  }
+  .mb-lg-4-style {
+    margin-bottom: 1.5rem;
+  }
+  .mb-lg-5-style {
+    margin-bottom: 3rem;
+  }
+
+  // Single-side margin (Left/Start)
+  .ms-lg-1-style {
+    margin-left: 0.25rem;
+  }
+  .ms-lg-2-style {
+    margin-left: 0.5rem;
+  }
+  .ms-lg-3-style {
+    margin-left: 1rem;
+  }
+  .ms-lg-4-style {
+    margin-left: 1.5rem;
+  }
+  .ms-lg-5-style {
+    margin-left: 3rem;
+  }
+
+  // Single-side margin (Right/End)
+  .me-lg-1-style {
+    margin-right: 0.25rem;
+  }
+  .me-lg-2-style {
+    margin-right: 0.5rem;
+  }
+  .me-lg-3-style {
+    margin-right: 1rem;
+  }
+  .me-lg-4-style {
+    margin-right: 1.5rem;
+  }
+  .me-lg-5-style {
+    margin-right: 3rem;
+  }
+}
+@media (min-width: 1200px) {
+  // All-sides margin
+  .m-xl-1-style {
+    margin: 0.25rem;
+  }
+  .m-xl-2-style {
+    margin: 0.5rem;
+  }
+  .m-xl-3-style {
+    margin: 1rem;
+  }
+  .m-xl-4-style {
+    margin: 1.5rem;
+  }
+  .m-xl-5-style {
+    margin: 3rem;
+  }
+
+  // Vertical margin (Top and Bottom)
+  .my-xl-1-style {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .my-xl-2-style {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .my-xl-3-style {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .my-xl-4-style {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .my-xl-5-style {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  // Horizontal margin (Left and Right)
+  .mx-xl-1-style {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
+  .mx-xl-2-style {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+  .mx-xl-3-style {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  .mx-xl-4-style {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  }
+  .mx-xl-5-style {
+    margin-left: 3rem;
+    margin-right: 3rem;
+  }
+
+  // Single-side margin (Top)
+  .mt-xl-1-style {
+    margin-top: 0.25rem;
+  }
+  .mt-xl-2-style {
+    margin-top: 0.5rem;
+  }
+  .mt-xl-3-style {
+    margin-top: 1rem;
+  }
+  .mt-xl-4-style {
+    margin-top: 1.5rem;
+  }
+  .mt-xl-5-style {
+    margin-top: 3rem;
+  }
+
+  // Single-side margin (Bottom)
+  .mb-xl-1-style {
+    margin-bottom: 0.25rem;
+  }
+  .mb-xl-2-style {
+    margin-bottom: 0.5rem;
+  }
+  .mb-xl-3-style {
+    margin-bottom: 1rem;
+  }
+  .mb-xl-4-style {
+    margin-bottom: 1.5rem;
+  }
+  .mb-xl-5-style {
+    margin-bottom: 3rem;
+  }
+
+  // Single-side margin (Left/Start)
+  .ms-xl-1-style {
+    margin-left: 0.25rem;
+  }
+  .ms-xl-2-style {
+    margin-left: 0.5rem;
+  }
+  .ms-xl-3-style {
+    margin-left: 1rem;
+  }
+  .ms-xl-4-style {
+    margin-left: 1.5rem;
+  }
+  .ms-xl-5-style {
+    margin-left: 3rem;
+  }
+
+  // Single-side margin (Right/End)
+  .me-xl-1-style {
+    margin-right: 0.25rem;
+  }
+  .me-xl-2-style {
+    margin-right: 0.5rem;
+  }
+  .me-xl-3-style {
+    margin-right: 1rem;
+  }
+  .me-xl-4-style {
+    margin-right: 1.5rem;
+  }
+  .me-xl-5-style {
+    margin-right: 3rem;
+  }
+}
+@media (min-width: 1400px) {
+  // All-sides margin
+  .m-xxl-1-style {
+    margin: 0.25rem;
+  }
+  .m-xxl-2-style {
+    margin: 0.5rem;
+  }
+  .m-xxl-3-style {
+    margin: 1rem;
+  }
+  .m-xxl-4-style {
+    margin: 1.5rem;
+  }
+  .m-xxl-5-style {
+    margin: 3rem;
+  }
+
+  // Vertical margin (Top and Bottom)
+  .my-xxl-1-style {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .my-xxl-2-style {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .my-xxl-3-style {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .my-xxl-4-style {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .my-xxl-5-style {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  // Horizontal margin (Left and Right)
+  .mx-xxl-1-style {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
+  .mx-xxl-2-style {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+  .mx-xxl-3-style {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  .mx-xxl-4-style {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  }
+  .mx-xxl-5-style {
+    margin-left: 3rem;
+    margin-right: 3rem;
+  }
+
+  // Single-side margin (Top)
+  .mt-xxl-1-style {
+    margin-top: 0.25rem;
+  }
+  .mt-xxl-2-style {
+    margin-top: 0.5rem;
+  }
+  .mt-xxl-3-style {
+    margin-top: 1rem;
+  }
+  .mt-xxl-4-style {
+    margin-top: 1.5rem;
+  }
+  .mt-xxl-5-style {
+    margin-top: 3rem;
+  }
+
+  // Single-side margin (Bottom)
+  .mb-xxl-1-style {
+    margin-bottom: 0.25rem;
+  }
+  .mb-xxl-2-style {
+    margin-bottom: 0.5rem;
+  }
+  .mb-xxl-3-style {
+    margin-bottom: 1rem;
+  }
+  .mb-xxl-4-style {
+    margin-bottom: 1.5rem;
+  }
+  .mb-xxl-5-style {
+    margin-bottom: 3rem;
+  }
+
+  // Single-side margin (Left/Start)
+  .ms-xxl-1-style {
+    margin-left: 0.25rem;
+  }
+  .ms-xxl-2-style {
+    margin-left: 0.5rem;
+  }
+  .ms-xxl-3-style {
+    margin-left: 1rem;
+  }
+  .ms-xxl-4-style {
+    margin-left: 1.5rem;
+  }
+  .ms-xxl-5-style {
+    margin-left: 3rem;
+  }
+
+  // Single-side margin (Right/End)
+  .me-xxl-1-style {
+    margin-right: 0.25rem;
+  }
+  .me-xxl-2-style {
+    margin-right: 0.5rem;
+  }
+  .me-xxl-3-style {
+    margin-right: 1rem;
+  }
+  .me-xxl-4-style {
+    margin-right: 1.5rem;
+  }
+  .me-xxl-5-style {
+    margin-right: 3rem;
+  }
+}
+
+.fw-bold-style {
+  font-weight: 700;
+}
+
+.text-center-style {
+  text-align: center;
+}
+
+.bg-white-style {
+  background: #fff;
+}
+
+//
+.align-items-center-style {
+  align-items: center;
+}
+
+@media (max-width: 575.98px) {
+  .align-items-sm-center-style {
+    align-items: center;
+  }
+}
+
+.justify-content-center-style {
+  justify-content: center;
+}
+
+@media (min-width: 1400px) {
+  .justify-content-md-start-style {
+    justify-content: start;
+  }
+}
+
+.img-container-style {
+  text-align: center;
+}
+
+img {
+  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+section {
+  overflow: hidden;
+}
+
+div[form-question-zigrow] {
+  margin-bottom: 1rem;
+}
+
+form input, form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+form label {
+  text-align: left;
+  color: #000;
+}

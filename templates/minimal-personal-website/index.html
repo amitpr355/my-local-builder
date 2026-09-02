@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minimal Personal Website</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <a
+      href="#top"
+      id="backToTopBtn"
+      class="back-to-top"
+      aria-label="Back to top"
+    >
+      <i class="bi bi-arrow-up" data-icon="arrow-up"></i>
+    </a>
+    <!-- ===== Header (absolute) ===== -->
+    <header
+      id="site-header"
+      class="site-header"
+      data-section="site-header"
+      aria-label="Primary"
+    >
+      <div class="container">
+        <div class="nav-bar">
+          <!-- Toggle (CSS-only) -->
+          <input
+            id="nav-toggle"
+            class="nav-toggle"
+            type="checkbox"
+            aria-hidden="true"
+          />
+
+          <label
+            for="nav-toggle"
+            class="menu-btn"
+            aria-label="Toggle navigation"
+            aria-controls="primary-menu"
+            aria-expanded="false"
+          >
+            <span></span><span></span><span></span>
+          </label>
+
+          <!-- Left: Nav links -->
+          <nav class="nav-link" id="primary-menu" aria-label="Main navigation">
+            <ul class="nav-list">
+              <li><a href="#hero">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#services">Services</a></li>
+              <li><a href="#projects">Works</a></li>
+              <li><a href="#cta-footer">Contact</a></li>
+            </ul>
+          </nav>
+
+          <!-- Center: Brand -->
+          <a
+            class="brand"
+            href="#"
+            aria-label="Mack Hobbs Home"
+            data-logo="navbar"
+            >Mack Studio</a
+          >
+
+          <!-- Right: Socials (Bootstrap Icons) -->
+          <div class="socials" aria-label="Social links">
+            <a href="#" aria-label="Facebook">
+              <i class="bi bi-facebook" data-icon="facebook"></i>
+            </a>
+
+            <a href="#" aria-label="LinkedIn">
+              <i class="bi bi-linkedin" data-icon="linkedin"></i>
+            </a>
+
+            <a href="#" aria-label="Dribbble">
+              <i class="bi bi-dribbble" data-icon="dribbble"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero (separate section) -->
+    <section
+      id="hero"
+      class="hero-section py-6"
+      data-section="hero"
+      aria-label="Hero"
+    >
+      <div class="container">
+        <!-- TOP COPY ROW -->
+        <div class="row align-items-center gy-4">
+          <!-- LEFT COPY -->
+          <div class="col-lg-7">
+            <div class="hero-section__left">
+              <span class="hero-section__eyebrow">Hello There…</span>
+
+              <span class="hero-section__headline">
+                I’m Mack. Your Design<br />
+                Partner For Growing<br />
+                Your Business
+                <span class="hero-section__emoji" aria-hidden="true">🏀</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- RIGHT COPY -->
+          <div class="col-lg-5">
+            <div class="hero-section__right">
+              <span class="hero-section__intro">
+                <span class="hero-section__ping" aria-hidden="true"></span>
+                <em>Freelance UI/UX Designer</em> building personal brands and
+                modern websites that look premium, load fast, and convert
+                visitors into real leads.
+              </span>
+
+              <a
+                href="#contact"
+                class="hero-section__cta"
+                aria-label="Contact Me"
+                data-btn="hero"
+              >
+                Contact Me
+                <span class="hero-section__cta-icon" aria-hidden="true">
+                  <i class="bi bi-arrow-right" data-icon="arrow-right"></i>
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCROLL INDICATOR -->
+        <div class="row">
+          <div class="col-12">
+            <div class="hero-section__scroll text-center" aria-hidden="true">
+              <span class="hero-section__scroll-text">Scroll Down</span>
+              <a
+                href="#about"
+                class="hero-section__scroll-dot"
+                tabindex="-1"
+                aria-label="Scroll"
+              >
+                <i class="bi bi-arrow-down" data-icon="arrow-down"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- GALLERY ROW -->
+        <div class="row g-3 align-items-end hero-section__gallery">
+          <div class="col-lg-3 col-md-6 col-12">
+            <div class="hero-section__img-wrap">
+              <div class="hero-section__card hero-section__card--notch-left">
+                <img
+                  src="assets/images/Minimal-hero-1.webp"
+                  alt="Project preview 1"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 col-12">
+            <div class="hero-section__img-wrap">
+              <div class="hero-section__card hero-section__card--notch-2">
+                <img
+                  src="assets/images/Minimal-hero-2.webp"
+                  alt="Project preview 2"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 col-12">
+            <div class="hero-section__img-wrap">
+              <div class="hero-section__card hero-section__card--notch-3">
+                <img
+                  src="assets/images/Minimal-hero-3.webp"
+                  alt="Project preview 3"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 col-12">
+            <div class="hero-section__img-wrap">
+              <div class="hero-section__card hero-section__card--notch-right">
+                <img
+                  src="assets/images/Minimal-hero-4.webp"
+                  alt="Project preview 4"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trusted Logos Section -->
+    <section
+      id="trusted"
+      class="trusted-section"
+      data-section="trusted"
+      aria-label="Trusted by clients"
+    >
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <span class="trusted-section__eyebrow">
+              Trusted by 400+ growing brands worldwide
+            </span>
+          </div>
+        </div>
+
+        <div class="row trusted-section__logos">
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a href="#" class="trusted-section__logo">
+              <div class="trusted-section__logo-img">
+                <img src="assets/images/logo.png" alt="Brand One" />
+              </div>
+            </a>
+          </div>
+
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a href="#" class="trusted-section__logo">
+              <div class="trusted-section__logo-img">
+                <img src="assets/images/logo.png" alt="Brand Two" />
+              </div>
+            </a>
+          </div>
+
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a href="#" class="trusted-section__logo">
+              <div class="trusted-section__logo-img">
+                <img src="assets/images/logo.png" alt="Brand Three" />
+              </div>
+            </a>
+          </div>
+
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a href="#" class="trusted-section__logo">
+              <div class="trusted-section__logo-img">
+                <img src="assets/images/logo.png" alt="Brand Four" />
+              </div>
+            </a>
+          </div>
+
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a href="#" class="trusted-section__logo">
+              <div class="trusted-section__logo-img">
+                <img src="assets/images/logo.png" alt="Brand Five" />
+              </div>
+            </a>
+          </div>
+
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a href="#" class="trusted-section__logo">
+              <div class="trusted-section__logo-img">
+                <img src="assets/images/logo.png" alt="Brand Six" />
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About / Experience -->
+    <section
+      id="about"
+      class="about-section"
+      data-section="about"
+      aria-label="About & Experience"
+    >
+      <div class="container">
+        <!-- TOP ROW -->
+        <div class="row about-section__top">
+          <!-- left chip -->
+          <div class="col-lg-3">
+            <div class="about-section__chip">
+              <span class="about-section__chip-dot" aria-hidden="true"></span>
+              <span class="about-section__chip-text">+ ABOUT ME</span>
+            </div>
+          </div>
+
+          <!-- right title + tabs -->
+          <div class="col-lg-9">
+            <div class="about-section__head">
+              <div class="about-section__title">
+                <p>I Specialize In Turning Vision</p>
+                <span>Into Reality With My Experience</span>
+              </div>
+
+              <div
+                class="about-section__tabs"
+                role="tablist"
+                aria-label="Experience tabs"
+              >
+                <a
+                  href="#"
+                  class="about-section__tab tab is-active"
+                  role="tab"
+                  aria-selected="true"
+                >
+                  Work Experience
+                </a>
+                <a
+                  href="#"
+                  class="about-section__tab tab"
+                  role="tab"
+                  aria-selected="false"
+                >
+                  My Education
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BODY ROW -->
+        <div class="row about-section__body">
+          <!-- left companies -->
+          <div class="col-lg-3">
+            <div class="about-section__companies">
+              <div class="row">
+                <!-- Apple -->
+                <div class="col-lg-12 col-md-4 col-sm-4 col-12">
+                  <div class="about-section__company">
+                    <p class="about-section__company-name">Apple.com</p>
+                    <p class="about-section__company-date">
+                      Sep 2022 – Present
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Microsoft -->
+                <div class="col-lg-12 col-md-4 col-sm-4 col-12">
+                  <div class="about-section__company">
+                    <p class="about-section__company-name">Microsoft.com</p>
+                    <p class="about-section__company-date">
+                      Jan 2019 – Jul 2022
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Google -->
+                <div class="col-lg-12 col-md-4 col-sm-4 col-12">
+                  <div class="about-section__company">
+                    <p class="about-section__company-name">Google.com</p>
+                    <p class="about-section__company-date">
+                      Feb 2016 – Nov 2018
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- right timeline -->
+          <div class="col-lg-9">
+            <div class="about-section__timeline" aria-label="Work timeline">
+              <div class="about-section__t-item">
+                <div class="about-section__t-dot" aria-hidden="true">
+                  <span class="d-non"></span>
+                </div>
+                <div class="about-section__t-role">Sr. Product Designer</div>
+                <div class="about-section__t-desc">
+                  Led product UI systems, designed high-converting landing
+                  pages, and built scalable component libraries for modern web
+                  products.
+                </div>
+              </div>
+
+              <div class="about-section__t-item">
+                <div class="about-section__t-dot" aria-hidden="true">
+                  <span class="d-non"></span>
+                </div>
+                <div class="about-section__t-role">UI/UX Designer</div>
+                <div class="about-section__t-desc">
+                  Crafted user journeys, wireframes, and clean interface design
+                  for mobile & web — focused on clarity, usability, and brand
+                  identity.
+                </div>
+              </div>
+
+              <div class="about-section__t-item">
+                <div class="about-section__t-dot" aria-hidden="true">
+                  <span class="d-non"></span>
+                </div>
+                <div class="about-section__t-role">Visual Designer</div>
+                <div class="about-section__t-desc">
+                  Designed marketing visuals, hero sections, and modern layouts
+                  for personal brands and portfolio websites.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM CARD ROW -->
+        <div class="row about-section__bottom">
+          <div class="col-12">
+            <div class="about-section__intro-card">
+              <div class="about-section__intro-img">
+                <img
+                  src="assets/images/Minimal-about.webp"
+                  alt="Self introduction cover"
+                />
+              </div>
+
+              <div
+                class="about-section__intro-overlay"
+                aria-hidden="true"
+              ></div>
+
+              <div class="about-section__intro-content">
+                <div class="about-section__intro-eyebrow">
+                  Self Introduction
+                </div>
+                <div class="about-section__intro-title">
+                  Meet A Value-Driven<br />Creative Individual
+                </div>
+
+                <a href="#" class="about-section__play" aria-label="Play now">
+                  Play Now
+                  <span
+                    class="about-section__play-dot"
+                    aria-hidden="true"
+                  ></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section
+      class="services-section py-6"
+      id="services"
+      data-section="services"
+      aria-label="My Services"
+    >
+      <div class="container">
+        <!-- Header -->
+        <div class="services-section__head">
+          <div class="row">
+            <div class="col-12 col-lg-4">
+              <div class="services-section__chip-wrap">
+                <span class="services-section__chip">+ My Services</span>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-8">
+              <div class="services-section__title-wrap">
+                <h2 class="services-section__title">
+                  Transforming Products With
+                  <span>Modern UX/UI Design That Converts</span>
+                </h2>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion -->
+        <div class="services-section__list accordion" id="servicesAccordion">
+          <!-- 01 -->
+          <div class="accordion-item services-section__item">
+            <a
+              class="services-section__row"
+              href="#"
+              role="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#service1"
+              aria-expanded="true"
+              aria-controls="service1"
+            >
+              <div class="row">
+                <div class="col-12 col-md-1">
+                  <span class="services-section__num">01</span>
+                </div>
+
+                <div class="col-12 col-md-8">
+                  <div class="services-section__meta">
+                    <h3 class="services-section__name">Branding</h3>
+                    <div class="services-section__tags">
+                      <span class="services-section__tag">Logo</span>
+                      <span class="services-section__tag"
+                        >Brand Guidelines</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-3">
+                  <div class="services-section__pill-wrap">
+                    <span class="services-section__pill">
+                      <span class="services-section__pill-view"
+                        >View Details</span
+                      >
+                      <span class="services-section__pill-close">Collapse</span>
+                      <i
+                        class="services-section__pill-icon"
+                        data-icon="service-plus"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <div
+              id="service1"
+              class="accordion-collapse collapse show"
+              data-bs-parent="#servicesAccordion"
+            >
+              <div class="services-section__panel">
+                <p class="services-section__desc">
+                  I build a premium personal brand identity with strong visual
+                  direction—logo, typography, and guidelines that look
+                  consistent everywhere.
+                </p>
+
+                <div class="services-section__media">
+                  <div class="services-section__media-inner">
+                    <img
+                      src="assets/images/Minimal-service-1.webp"
+                      alt="Branding preview"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 02 -->
+          <div class="accordion-item services-section__item">
+            <a
+              class="services-section__row collapsed"
+              href="#"
+              role="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#service2"
+              aria-expanded="false"
+              aria-controls="service2"
+            >
+              <div class="row">
+                <div class="col-12 col-md-1">
+                  <span class="services-section__num">02</span>
+                </div>
+
+                <div class="col-12 col-md-8">
+                  <div class="services-section__meta">
+                    <h3 class="services-section__name">UX Design</h3>
+                    <div class="services-section__tags">
+                      <span class="services-section__tag">UX</span>
+                      <span class="services-section__tag">Strategy</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-3">
+                  <div class="services-section__pill-wrap">
+                    <span class="services-section__pill">
+                      <span class="services-section__pill-view"
+                        >View Details</span
+                      >
+                      <span class="services-section__pill-close">Collapse</span>
+                      <i
+                        class="services-section__pill-icon"
+                        data-icon="service-plus"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <div
+              id="service2"
+              class="accordion-collapse collapse"
+              data-bs-parent="#servicesAccordion"
+            >
+              <div class="services-section__panel">
+                <p class="services-section__desc">
+                  I map user journeys and flows to reduce confusion—clear
+                  sections, better structure, and a smooth experience across
+                  devices.
+                </p>
+
+                <div class="services-section__media">
+                  <div class="services-section__media-inner">
+                    <img
+                      src="assets/images/Minimal-service-2.webp"
+                      alt="UX preview"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 03 -->
+          <div class="accordion-item services-section__item">
+            <a
+              class="services-section__row collapsed"
+              href="#"
+              role="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#service3"
+              aria-expanded="false"
+              aria-controls="service3"
+            >
+              <div class="row">
+                <div class="col-12 col-md-1">
+                  <span class="services-section__num">03</span>
+                </div>
+
+                <div class="col-12 col-md-8">
+                  <div class="services-section__meta">
+                    <h3 class="services-section__name">UI Design</h3>
+                    <div class="services-section__tags">
+                      <span class="services-section__tag">Visual</span>
+                      <span class="services-section__tag">Interface</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-3">
+                  <div class="services-section__pill-wrap">
+                    <span class="services-section__pill">
+                      <span class="services-section__pill-view"
+                        >View Details</span
+                      >
+                      <span class="services-section__pill-close">Collapse</span>
+                      <i
+                        class="services-section__pill-icon"
+                        data-icon="service-plus"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <div
+              id="service3"
+              class="accordion-collapse collapse"
+              data-bs-parent="#servicesAccordion"
+            >
+              <div class="services-section__panel">
+                <p class="services-section__desc">
+                  I craft clean UI with strong spacing and hierarchy—so your
+                  website feels modern, premium, and easy to trust.
+                </p>
+
+                <div class="services-section__media">
+                  <div class="services-section__media-inner">
+                    <img
+                      src="assets/images/Minimal-service-3.webp"
+                      alt="UI preview"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 04 -->
+          <div class="accordion-item services-section__item">
+            <a
+              class="services-section__row collapsed"
+              href="#"
+              role="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#service4"
+              aria-expanded="false"
+              aria-controls="service4"
+            >
+              <div class="row">
+                <div class="col-12 col-md-1">
+                  <span class="services-section__num">04</span>
+                </div>
+
+                <div class="col-12 col-md-8">
+                  <div class="services-section__meta">
+                    <h3 class="services-section__name">Design System</h3>
+                    <div class="services-section__tags">
+                      <span class="services-section__tag">Style Guide</span>
+                      <span class="services-section__tag">Components</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-3">
+                  <div class="services-section__pill-wrap">
+                    <span class="services-section__pill">
+                      <span class="services-section__pill-view"
+                        >View Details</span
+                      >
+                      <span class="services-section__pill-close">Collapse</span>
+                      <i
+                        class="services-section__pill-icon"
+                        data-icon="service-plus"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <div
+              id="service4"
+              class="accordion-collapse collapse"
+              data-bs-parent="#servicesAccordion"
+            >
+              <div class="services-section__panel">
+                <p class="services-section__desc">
+                  I create reusable components and a style system that keeps
+                  your website consistent as you add more pages and sections.
+                </p>
+
+                <div class="services-section__media">
+                  <div class="services-section__media-inner">
+                    <img
+                      src="assets/images/Minimal-service-4.webp"
+                      alt="Design system preview"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 05 -->
+          <div class="accordion-item services-section__item">
+            <a
+              class="services-section__row collapsed"
+              href="#"
+              role="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#service5"
+              aria-expanded="false"
+              aria-controls="service5"
+            >
+              <div class="row">
+                <div class="col-12 col-md-1">
+                  <span class="services-section__num">05</span>
+                </div>
+
+                <div class="col-12 col-md-8">
+                  <div class="services-section__meta">
+                    <h3 class="services-section__name">Development</h3>
+                    <div class="services-section__tags">
+                      <span class="services-section__tag">Custom Builds</span>
+                      <span class="services-section__tag">Low-Code</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-3">
+                  <div class="services-section__pill-wrap">
+                    <span class="services-section__pill">
+                      <span class="services-section__pill-view"
+                        >View Details</span
+                      >
+                      <span class="services-section__pill-close">Collapse</span>
+                      <i
+                        class="services-section__pill-icon"
+                        data-icon="service-plus"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <div
+              id="service5"
+              class="accordion-collapse collapse"
+              data-bs-parent="#servicesAccordion"
+            >
+              <div class="services-section__panel">
+                <p class="services-section__desc">
+                  I convert designs into responsive front-end builds—fast
+                  loading, clean code, and pixel-perfect sections for all screen
+                  sizes.
+                </p>
+
+                <div class="services-section__media">
+                  <div class="services-section__media-inner">
+                    <img
+                      src="assets/images/Minimal-service-5.webp"
+                      alt="Development preview"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- end -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Projects -->
+    <section
+      class="projects-section py-6"
+      id="projects"
+      data-section="projects"
+      aria-label="Recent Projects"
+    >
+      <div class="container">
+        <!-- Header -->
+        <div class="projects-section__head">
+          <div class="row">
+            <div class="col-12 col-lg-4">
+              <div class="projects-section__chip-wrap">
+                <p class="projects-section__chip">
+                  <span
+                    class="projects-section__chip-dot"
+                    aria-hidden="true"
+                  ></span>
+                  <span>+ MY RECENT PROJECTS</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-8">
+              <div class="projects-section__title-wrap">
+                <h2 class="projects-section__title">
+                  Discover Our Unveiling Success Stories
+                  <span>From 50+ Brands</span>
+                </h2>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 1 -->
+        <div class="projects-section__row-wrap">
+          <div class="row g-4 align-items-stretch">
+            <div class="col-12 col-lg-6">
+              <div class="projects-section__card projects-section__card--mint">
+                <div class="projects-section__badges">
+                  <p class="projects-section__badge">Brand Guideline</p>
+                  <p class="projects-section__badge">UX Audit</p>
+                  <p class="projects-section__badge">Style Guide</p>
+                  <p class="projects-section__badge">UI Design</p>
+                  <p class="projects-section__badge">Development</p>
+                </div>
+
+                <p class="projects-section__meta">
+                  <span class="projects-section__dot" aria-hidden="true"></span>
+                  <span>Project Timeline • 11/09/2024 – 05/11/2024</span>
+                </p>
+
+                <h3 class="projects-section__case-title">
+                  GRADO – Real Estate Booking Experience
+                </h3>
+
+                <p class="projects-section__case-desc">
+                  I redesigned the full booking flow to reduce drop-offs—cleaner
+                  screens, better hierarchy, and a smoother journey from search
+                  to confirmation.
+                </p>
+
+                <p class="projects-section__q">
+                  <span>“Want a similar upgrade for your product?”</span>
+                </p>
+
+                <a href="#" class="projects-section__cta">
+                  <span class="projects-section__cta-text">Let’s Chat</span>
+                  <span class="projects-section__cta-icon" data-btn="projects">
+                    <i
+                      class="bi bi-arrow-right"
+                      data-icon="arrow-right"
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <div class="projects-section__visual">
+                <div class="projects-section__visual-inner">
+                  <img
+                    src="assets/images/Minimal-project-1.webp"
+                    alt="Mobile app mockups on devices"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="projects-section__row-wrap">
+          <div class="row g-4 align-items-stretch">
+            <div class="col-12 col-lg-6">
+              <div class="projects-section__card projects-section__card--blue">
+                <div class="projects-section__badges">
+                  <p class="projects-section__badge">Landing Page</p>
+                  <p class="projects-section__badge">UI System</p>
+                  <p class="projects-section__badge">UX Research</p>
+                  <p class="projects-section__badge">Conversion</p>
+                  <p class="projects-section__badge">Responsive</p>
+                </div>
+
+                <p class="projects-section__meta">
+                  <span class="projects-section__dot" aria-hidden="true"></span>
+                  <span>Project Timeline • 06/07/2024 – 21/08/2024</span>
+                </p>
+
+                <h3 class="projects-section__case-title">
+                  NOVA – Personal Portfolio & Case Study Site
+                </h3>
+
+                <p class="projects-section__case-desc">
+                  I created a minimal portfolio layout with strong typography
+                  and spacing—fast loading, mobile-first, and built to highlight
+                  real work clearly.
+                </p>
+
+                <p class="projects-section__q">
+                  <span>“Need a premium personal website?”</span>
+                </p>
+
+                <a href="#" class="projects-section__cta">
+                  <span class="projects-section__cta-text">Let’s Chat</span>
+                  <span class="projects-section__cta-icon" data-btn="projects">
+                    <i
+                      class="bi bi-arrow-right"
+                      data-icon="arrow-right"
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <div class="projects-section__visual">
+                <div class="projects-section__visual-inner">
+                  <img
+                    src="assets/images/Minimal-project-2.webp"
+                    alt="Website mockups preview"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="projects-section__row-wrap">
+          <div class="row g-4 align-items-stretch">
+            <div class="col-12 col-lg-6">
+              <div class="projects-section__card projects-section__card--pink">
+                <div class="projects-section__badges">
+                  <p class="projects-section__badge">Design System</p>
+                  <p class="projects-section__badge">Component Kit</p>
+                  <p class="projects-section__badge">Brand Refresh</p>
+                  <p class="projects-section__badge">UI Polish</p>
+                  <p class="projects-section__badge">Dev Handoff</p>
+                </div>
+
+                <p class="projects-section__meta">
+                  <span class="projects-section__dot" aria-hidden="true"></span>
+                  <span>Project Timeline • 10/04/2024 – 02/06/2024</span>
+                </p>
+
+                <h3 class="projects-section__case-title">
+                  AURA – Dashboard UI & Design System Setup
+                </h3>
+
+                <p class="projects-section__case-desc">
+                  I standardized components and spacing rules so the product
+                  stays consistent while scaling— reusable patterns, clean UI,
+                  and smooth dev handoff.
+                </p>
+
+                <p class="projects-section__q">
+                  <span>“Want your UI to look consistent everywhere?”</span>
+                </p>
+
+                <a href="#" class="projects-section__cta">
+                  <span class="projects-section__cta-text">Let’s Chat</span>
+                  <span class="projects-section__cta-icon" data-btn="projects">
+                    <i
+                      class="bi bi-arrow-right"
+                      data-icon="arrow-right"
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <div class="projects-section__visual">
+                <div class="projects-section__visual-inner">
+                  <img
+                    src="assets/images/Minimal-project-3.webp"
+                    alt="App UI preview"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- testimonial -->
+    <section
+      class="testimonials-section py-6"
+      id="testimonials"
+      data-section="testimonials"
+      aria-label="Clients Testimonial"
+    >
+      <div class="container">
+        <div class="testimonials-section__head">
+          <span class="testimonials-section__chip">
+            <span class="testimonials-section__chip-dot"></span>
+            Clients Testimonial
+          </span>
+        </div>
+
+        <div class="testimonials-section__body">
+          <div class="row align-items-end">
+            <!-- Controls -->
+            <div class="col-12 col-sm-4 col-md-3 col-lg-2">
+              <div class="testimonials-section__controls">
+                <a
+                  href="#"
+                  class="testimonials-section__ctrl testimonials-prev"
+                  aria-label="Previous testimonial"
+                >
+                  <span
+                    class="testimonials-section__ctrl-icon"
+                    data-icon="arrow-left"
+                  >
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                  </span>
+                </a>
+
+                <a
+                  href="#"
+                  class="testimonials-section__ctrl testimonials-next"
+                  aria-label="Next testimonial"
+                >
+                  <span
+                    class="testimonials-section__ctrl-icon"
+                    data-icon="arrow-right"
+                  >
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Swiper -->
+            <div class="col-12 col-sm-8 col-md-9 col-lg-10">
+              <div class="swiper testimonials-swiper" aria-live="polite">
+                <div class="swiper-wrapper">
+                  <!-- Slide 1 -->
+                  <div class="swiper-slide">
+                    <div class="testimonials-section__quote">
+                      <p class="testimonials-section__q-bold">
+                        “My portfolio finally looks premium and clients
+                        instantly trust the brand.”
+                      </p>
+                      <p class="testimonials-section__q-sub">
+                        “The layout and spacing feel modern, and the site
+                        performs smoothly on every device.”
+                      </p>
+
+                      <div class="testimonials-section__author">
+                        <div class="testimonials-section__avatar">
+                          <img src="assets/images/testimonial-1.png" alt="" />
+                        </div>
+
+                        <div class="testimonials-section__author-meta">
+                          <p class="testimonials-section__name">Aarav Mehta</p>
+                          <p class="testimonials-section__title">Founder</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Slide 2 -->
+                  <div class="swiper-slide">
+                    <div class="testimonials-section__quote">
+                      <p class="testimonials-section__q-bold">
+                        “He understood my vision and turned it into a clean,
+                        conversion-focused website.”
+                      </p>
+                      <p class="testimonials-section__q-sub">
+                        “Now my personal brand feels consistent across web,
+                        social, and proposals.”
+                      </p>
+
+                      <div class="testimonials-section__author">
+                        <div class="testimonials-section__avatar">
+                          <img src="assets/images/testimonial-2.png" alt="" />
+                        </div>
+
+                        <div class="testimonials-section__author-meta">
+                          <p class="testimonials-section__name">Rakesh Singh</p>
+                          <p class="testimonials-section__title">
+                            Managing Director
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Slide 3 -->
+                  <div class="swiper-slide">
+                    <div class="testimonials-section__quote">
+                      <p class="testimonials-section__q-bold">
+                        “The site feels fast, polished, and easy to
+                        navigate—exactly what I wanted.”
+                      </p>
+                      <p class="testimonials-section__q-sub">
+                        “After launch, enquiries increased because the content
+                        reads clearly and looks trustworthy.”
+                      </p>
+
+                      <div class="testimonials-section__author">
+                        <div class="testimonials-section__avatar">
+                          <img src="assets/images/testimonial-3.png" alt="" />
+                        </div>
+
+                        <div class="testimonials-section__author-meta">
+                          <p class="testimonials-section__name">Neha Kapoor</p>
+                          <p class="testimonials-section__title">
+                            Marketing Lead
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- swiper-wrapper -->
+              </div>
+              <!-- swiper -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+
+    <section
+      id="faq"
+      class="faq-section"
+      data-section="faq"
+      aria-label="Frequently Asked Questions"
+    >
+      <div class="container">
+        <div class="row">
+          <!-- LEFT CONTENT -->
+          <div class="col-lg-4 col-md-12">
+            <span class="faq-section__chip">
+              <span class="faq-section__chip-dot"></span>
+              FAQs
+            </span>
+
+            <h2 class="faq-section__title">
+              Frequently Asked <span>Questions</span>
+            </h2>
+
+            <p class="faq-section__sub">
+              Everything you need to know before starting your personal website
+              journey with us.
+            </p>
+          </div>
+
+          <!-- RIGHT ACCORDION -->
+          <div class="col-lg-8 col-md-12">
+            <div class="accordion" id="faqAccordion">
+              <!-- BOX 1 -->
+              <div class="faq-section__item">
+                <a
+                  href="#faq1"
+                  class="faq-section__row"
+                  data-bs-toggle="collapse"
+                  role="button"
+                  aria-expanded="true"
+                  aria-controls="faq1"
+                >
+                  <div class="row">
+                    <div class="col-10">
+                      <h3 class="faq-section__q">
+                        Is there a free consultation available?
+                      </h3>
+                    </div>
+                    <div class="col-2 text-end">
+                      <span
+                        class="faq-section__icon"
+                        data-icon="plus-minus"
+                      ></span>
+                    </div>
+                  </div>
+                </a>
+
+                <div
+                  id="faq1"
+                  class="accordion-collapse collapse show"
+                  data-bs-parent="#faqAccordion"
+                >
+                  <div class="faq-section__panel">
+                    <p class="faq-section__a">
+                      Yes, we offer a free discussion call to understand your
+                      goals and suggest the right website structure.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BOX 2 -->
+              <div class="faq-section__item">
+                <a
+                  href="#faq2"
+                  class="faq-section__row collapsed"
+                  data-bs-toggle="collapse"
+                  role="button"
+                  aria-expanded="false"
+                  aria-controls="faq2"
+                >
+                  <div class="row">
+                    <div class="col-10">
+                      <h3 class="faq-section__q">
+                        Can I change content after the website is live?
+                      </h3>
+                    </div>
+                    <div class="col-2 text-end">
+                      <span
+                        class="faq-section__icon"
+                        data-icon="plus-minus"
+                      ></span>
+                    </div>
+                  </div>
+                </a>
+
+                <div
+                  id="faq2"
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#faqAccordion"
+                >
+                  <div class="faq-section__panel">
+                    <p class="faq-section__a">
+                      Yes, you can update text, images, and sections anytime
+                      without technical knowledge.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BOX 3 -->
+              <div class="faq-section__item">
+                <a
+                  href="#faq3"
+                  class="faq-section__row collapsed"
+                  data-bs-toggle="collapse"
+                  role="button"
+                  aria-expanded="false"
+                  aria-controls="faq3"
+                >
+                  <div class="row">
+                    <div class="col-10">
+                      <h3 class="faq-section__q">
+                        Will my website work on mobile devices?
+                      </h3>
+                    </div>
+                    <div class="col-2 text-end">
+                      <span
+                        class="faq-section__icon"
+                        data-icon="plus-minus"
+                      ></span>
+                    </div>
+                  </div>
+                </a>
+
+                <div
+                  id="faq3"
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#faqAccordion"
+                >
+                  <div class="faq-section__panel">
+                    <p class="faq-section__a">
+                      Absolutely. Every website is optimized for mobile, tablet,
+                      and desktop screens.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BOX 4 -->
+              <div class="faq-section__item">
+                <a
+                  href="#faq4"
+                  class="faq-section__row collapsed"
+                  data-bs-toggle="collapse"
+                  role="button"
+                  aria-expanded="false"
+                  aria-controls="faq4"
+                >
+                  <div class="row">
+                    <div class="col-10">
+                      <h3 class="faq-section__q">
+                        How long does it take to complete a website?
+                      </h3>
+                    </div>
+                    <div class="col-2 text-end">
+                      <span
+                        class="faq-section__icon"
+                        data-icon="plus-minus"
+                      ></span>
+                    </div>
+                  </div>
+                </a>
+
+                <div
+                  id="faq4"
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#faqAccordion"
+                >
+                  <div class="faq-section__panel">
+                    <p class="faq-section__a">
+                      Most personal websites are completed within 7–10 working
+                      days depending on content readiness.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BOX 5 -->
+              <div class="faq-section__item">
+                <a
+                  href="#faq5"
+                  class="faq-section__row collapsed"
+                  data-bs-toggle="collapse"
+                  role="button"
+                  aria-expanded="false"
+                  aria-controls="faq5"
+                >
+                  <div class="row">
+                    <div class="col-10">
+                      <h3 class="faq-section__q">
+                        Do you provide ongoing support after delivery?
+                      </h3>
+                    </div>
+                    <div class="col-2 text-end">
+                      <span
+                        class="faq-section__icon"
+                        data-icon="plus-minus"
+                      ></span>
+                    </div>
+                  </div>
+                </a>
+
+                <div
+                  id="faq5"
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#faqAccordion"
+                >
+                  <div class="faq-section__panel">
+                    <p class="faq-section__a">
+                      Yes, we provide post-launch support and maintenance
+                      options to keep your site running smoothly.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- END ALL BOXES -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA + Footer -->
+    <section
+      id="cta-footer"
+      class="cta-footer-section py-6"
+      data-section="cta-footer"
+      aria-label="Book a call and site footer"
+    >
+      <div class="container">
+        <!-- Tiny headline -->
+        <p class="cta-footer-section__eyebrow">
+          Let’s see if we’re a good fit with a 15 min call
+          <span class="cta-footer-section__eyebrow-icon" aria-hidden="true">
+            <i
+              class="fa-solid fa-turn-down"
+              data-icon="turn-down"
+              aria-hidden="true"
+            ></i>
+          </span>
+        </p>
+
+        <!-- Big pill marquee CTA -->
+        <a
+          href="#contact"
+          class="cta-footer-section__marquee"
+          aria-label="Book a call"
+        >
+          <div class="cta-footer-section__track" aria-hidden="true">
+            <span>Book a Call ✦</span>
+            <span>Book a Call ✦</span>
+            <span>Book a Call ✦</span>
+            <span>Book a Call ✦</span>
+            <span>Book a Call ✦</span>
+            <span>Book a Call ✦</span>
+            <span>Book a Call ✦</span>
+          </div>
+        </a>
+
+        <hr class="cta-footer-section__divider" />
+
+        <!-- Links / columns (Bootstrap Row/Col only) -->
+        <div class="row cta-footer-section__links" aria-label="Footer">
+          <div class="col-12 col-sm-6 col-lg-3 col-xl-2">
+            <p class="cta-footer-section__col-title">Home</p>
+            <p class="cta-footer-section__link">
+              <a href="#">About Me</a>
+            </p>
+            <p class="cta-footer-section__link">
+              <a href="#">My Services</a>
+            </p>
+            <p class="cta-footer-section__link">
+              <a href="#">Projects</a>
+            </p>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-3 col-xl-2">
+            <p class="cta-footer-section__col-title">Resources</p>
+            <p class="cta-footer-section__link">
+              <a href="#">FAQs</a>
+            </p>
+            <p class="cta-footer-section__link">
+              <a href="#">Blog</a>
+            </p>
+            <p class="cta-footer-section__link">
+              <a href="#">Contact</a>
+            </p>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-3 col-xl-2">
+            <p class="cta-footer-section__col-title">Pages</p>
+            <p class="cta-footer-section__link">
+              <a href="#">Style Guide</a>
+            </p>
+            <p class="cta-footer-section__link">
+              <a href="#">Changelog</a>
+            </p>
+            <p class="cta-footer-section__link">
+              <a href="#">License</a>
+            </p>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-3 col-xl-2">
+            <p class="cta-footer-section__col-title">Social</p>
+            <p class="cta-footer-section__link">
+              <a href="#">Behance</a>
+            </p>
+            <p class="cta-footer-section__link">
+              <a href="#">Dribbble</a>
+            </p>
+            <p class="cta-footer-section__link">
+              <a href="#">LinkedIn</a>
+            </p>
+          </div>
+
+          <div class="col-12 col-lg-12 col-xl-4">
+            <p class="cta-footer-section__col-title">Contact</p>
+            <p
+              class="cta-footer-section__link cta-footer-section__contact-link"
+            >
+              <a href="mailto:hello@yourportfolio.com">
+                yourname@domainname.com</a
+              >
+            </p>
+            <p
+              class="cta-footer-section__link cta-footer-section__contact-link"
+            >
+              <a href="tel:+919123456789">+91-91234-56789</a>
+            </p>
+            <p class="cta-footer-section__helper">
+              Want to discuss a project? Send a quick message and I’ll reply
+              within 24 hours.
+            </p>
+          </div>
+        </div>
+
+        <!-- Legal row (Bootstrap Row/Col only) -->
+        <div class="row cta-footer-section__legal">
+          <div class="col-12 col-md-6 col-lg-4">
+            <p class="cta-footer-section__legal-text">
+              Copyrights © <a href="#">All Right Reserved</a>
+            </p>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <p class="cta-footer-section__legal-text">
+              Designed with care by <a href="#">Zigrow</a>
+            </p>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <p
+              class="cta-footer-section__legal-text cta-footer-section__legal-right"
+            >
+              Powered by <a href="#">Zigrow</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>

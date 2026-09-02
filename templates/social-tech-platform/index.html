@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <a
+      href="#top"
+      id="backToTopBtn"
+      class="back-to-top"
+      aria-label="Back to top"
+    >
+      <i class="bi bi-arrow-up" data-icon="arrow-up" aria-hidden="true"></i>
+    </a>
+
+    <!-- Site Nav -->
+    <header
+      id="site-nav"
+      class="site-nav"
+      data-section="site-nav"
+      aria-label="Primary navigation"
+    >
+      <div class="container">
+        <div class="nav-bar">
+          <!-- Brand -->
+          <a href="#" class="brand" aria-label="Analyx Home">
+            <span class="word" data-logo="navbar">Analyx</span>
+          </a>
+
+          <!-- ✅ Required for mobile toggle -->
+          <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+
+          <label
+            for="nav-toggle"
+            class="menu-btn"
+            aria-label="Toggle navigation"
+            aria-controls="nav-primary"
+          >
+            <span></span><span></span><span></span>
+          </label>
+
+          <!-- Links -->
+          <nav id="nav-primary" class="links" aria-label="Main">
+            <ul class="list">
+              <li><a class="is-active" href="#">Home</a></li>
+              <li><a href="#">About</a></li>
+              <li><a href="#">Services</a></li>
+              <li><a href="#">Pricing</a></li>
+              <li><a href="#">Page</a></li>
+            </ul>
+          </nav>
+
+          <!-- Right CTA -->
+          <a href="#" class="cta cta-desktop" data-btn="navbar">Contact Us</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Social Hero -->
+    <section
+      id="social-hero"
+      class="social-hero"
+      data-section="social-hero"
+      aria-label="Analytx Social Media Hero"
+    >
+      <div class="container">
+        <!-- Decorative arrows -->
+        <div class="arrow-img">
+          <img src="assets/images/arrow.webp" alt="" />
+        </div>
+        <div class="arrow-img-2">
+          <img src="assets/images/arrow.webp" alt="" />
+        </div>
+
+        <!-- Head -->
+        <div class="row">
+          <div class="col-12">
+            <div class="hero-head">
+              <span class="label">
+                <i
+                  class="bi bi-pencil-fill"
+                  data-icon="edit"
+                  aria-hidden="true"
+                ></i>
+                <span>Welcome To Analyx</span>
+              </span>
+
+              <h1 class="title">
+                <span>Social Media</span>
+                <span id="hero-typer" class="typer" aria-live="polite"></span>
+                <span class="caret" aria-hidden="true"></span>
+              </h1>
+
+              <p class="sub">
+                Gain deeper social insights. Unlock growth opportunities,
+                optimize strategies & connect with your audience like never
+                before.
+              </p>
+
+              <a href="#" class="cta">
+                <span>Start Free Trial</span>
+                <i
+                  class="bi bi-arrow-right"
+                  data-icon="arrow-right"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual section -->
+        <div class="row justify-content-center">
+          <!-- Stats -->
+          <div class="col-12 col-md-10 col-lg-4 d-flex justify-content-center">
+            <div class="card stats">
+              <div class="card-head">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+
+              <div class="inner-card">
+                <h6 class="title-head">
+                  <span>Insights Overview</span>
+                </h6>
+
+                <div class="profile">
+                  <div class="profile-img">
+                    <img src="assets/images/testimonial-2.png" alt="" />
+                  </div>
+                  <div>
+                    <span>Sebo Studio</span>
+                    <span>@sebostudio</span>
+                  </div>
+                </div>
+
+                <div class="numbers">
+                  <div>
+                    <span>Posts</span>
+                    <span>230</span>
+                  </div>
+                  <div>
+                    <span>Followers</span>
+                    <span>2,648</span>
+                  </div>
+                  <div>
+                    <span>Following</span>
+                    <span>768</span>
+                  </div>
+                </div>
+
+                <div class="best">
+                  <span>Best performance</span>
+                  <span class="up">+ 83.7%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Person -->
+          <div class="col-12 col-md-10 col-lg-4 d-flex justify-content-center">
+            <div class="person">
+              <img
+                src="assets/images/social-tech-hero.webp"
+                alt="Smiling man holding a laptop"
+              />
+            </div>
+          </div>
+
+          <!-- Chart -->
+          <div class="col-12 col-md-10 col-lg-4 d-flex justify-content-center">
+            <div class="card chart">
+              <div class="card-bar">
+                <div class="left">
+                  <span>Post Insight</span>
+                </div>
+                <button class="pill" type="button" aria-label="Change week">
+                  <span>Week 1</span>
+                </button>
+              </div>
+
+              <div class="bars" role="img" aria-label="Weekly bar chart">
+                <div class="bar h-78">
+                  <span class="track"><span class="fill"></span></span>
+                  <span class="day">S</span>
+                </div>
+                <div class="bar h-62">
+                  <span class="track"><span class="fill"></span></span>
+                  <span class="day">M</span>
+                </div>
+                <div class="bar h-48">
+                  <span class="track"><span class="fill"></span></span>
+                  <span class="day">T</span>
+                </div>
+                <div class="bar h-28">
+                  <span class="track"><span class="fill"></span></span>
+                  <span class="day">W</span>
+                </div>
+                <div class="bar h-58">
+                  <span class="track"><span class="fill"></span></span>
+                  <span class="day">T</span>
+                </div>
+                <div class="bar h-42">
+                  <span class="track"><span class="fill"></span></span>
+                  <span class="day">F</span>
+                </div>
+                <div class="bar h-72">
+                  <span class="track"><span class="fill"></span></span>
+                  <span class="day">S</span>
+                </div>
+              </div>
+
+              <div class="legend">
+                <span>Best performance</span>
+                <span>Sunday</span>
+                <span class="value">7.6k</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom -->
+        <div class="row justify-content-center mt-3">
+          <div class="col-12 col-md-10 col-lg-6 d-flex justify-content-center">
+            <div class="tile followers">
+              <div class="meta">
+                <span>Followers</span>
+                <span>2.648</span>
+              </div>
+              <span class="chip up">+ 6.2%</span>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-10 col-lg-6 d-flex justify-content-center">
+            <ul class="socials-icon" aria-label="Social networks">
+              <li>
+                <a href="#" aria-label="Instagram">
+                  <i
+                    class="fa-brands fa-square-instagram"
+                    data-icon="instagram"
+                    aria-hidden="true"
+                  ></i>
+                </a>
+              </li>
+              <li>
+                <a href="#" aria-label="Facebook">
+                  <i
+                    class="fa-brands fa-facebook"
+                    data-icon="facebook"
+                    aria-hidden="true"
+                  ></i>
+                </a>
+              </li>
+              <li>
+                <a href="#" aria-label="TikTok">
+                  <i
+                    class="fa-brands fa-tiktok"
+                    data-icon="tiktok"
+                    aria-hidden="true"
+                  ></i>
+                </a>
+              </li>
+              <li>
+                <a href="#" aria-label="Twitter/X">
+                  <i
+                    class="fa-brands fa-twitter"
+                    data-icon="twitter"
+                    aria-hidden="true"
+                  ></i>
+                </a>
+              </li>
+              <li>
+                <a href="#" aria-label="Behance">
+                  <i
+                    class="fa-brands fa-square-behance"
+                    data-icon="behance"
+                    aria-hidden="true"
+                  ></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Floating notifications -->
+        <div class="icon" aria-hidden="true">
+          <i class="bi bi-bell-fill" data-icon="notification"></i>
+          <span class="badge">95</span>
+        </div>
+
+        <div class="icon-2" aria-hidden="true">
+          <i class="bi bi-bell-fill" data-icon="notification"></i>
+          <span class="badge">50</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- trusted brands -->
+    <section
+      id="trusted-brands"
+      class="trusted-brands py-6"
+      data-section="trusted-brands"
+    >
+      <div class="container">
+        <div class="trusted-wrapper">
+          <p class="trusted-text">
+            Trusted by world’s <span>leading brand</span>
+          </p>
+
+          <div class="row g-4 justify-content-center align-items-center">
+            <div class="col-6 col-sm-6 col-md-4 col-lg-2">
+              <div class="brand-item">
+                <img src="assets/images/brand-logo.png" alt="Rise" />
+              </div>
+            </div>
+
+            <div class="col-6 col-sm-6 col-md-4 col-lg-2">
+              <div class="brand-item">
+                <img src="assets/images/brand-logo.png" alt="Vertigo" />
+              </div>
+            </div>
+
+            <div class="col-6 col-sm-6 col-md-4 col-lg-2">
+              <div class="brand-item">
+                <img src="assets/images/brand-logo.png" alt="Minty" />
+              </div>
+            </div>
+
+            <div class="col-6 col-sm-6 col-md-4 col-lg-2">
+              <div class="brand-item">
+                <img src="assets/images/brand-logo.png" alt="Glossy" />
+              </div>
+            </div>
+
+            <div class="col-6 col-sm-6 col-md-4 col-lg-2">
+              <div class="brand-item">
+                <img src="assets/images/brand-logo.png" alt="Rise 2" />
+              </div>
+            </div>
+
+            <div class="col-6 col-sm-6 col-md-4 col-lg-2">
+              <div class="brand-item">
+                <img src="assets/images/brand-logo.png" alt="Waveless" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- service section -->
+    <section
+      id="services"
+      class="services-section"
+      data-section="services"
+      aria-label="Our Services"
+    >
+      <div class="container">
+        <!-- Head -->
+        <div class="services-head">
+          <span class="label">
+            <i class="bi bi-laptop" data-icon="laptop" aria-hidden="true"></i>
+            <span>Our Services</span>
+          </span>
+
+          <h2 class="title">
+            Empowering social media <span class="hi">insights</span>
+          </h2>
+
+          <p class="lead">
+            Cras fermentum consectetur risus, id lacinia dui posuere quis sed
+            veh.
+          </p>
+        </div>
+
+        <!-- Cards (Bootstrap grid) -->
+        <div class="row g-4 justify-content-center">
+          <!-- Card 1 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="svc-card is-post">
+              <div class="media window">
+                <img
+                  src="assets/images/social-tech-service-1.webp"
+                  alt="Social post preview"
+                />
+              </div>
+
+              <h3 class="svc-title">Social Media Monitoring</h3>
+
+              <p class="svc-desc">
+                Cras fermentum consectetur risus se lacinia dui posuere quis.
+                Sed vehiculi.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 2 (highlight) -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="svc-card is-hero">
+              <div class="media dotted">
+                <img
+                  class="float"
+                  src="assets/images/social-tech-service-2.webp"
+                  alt="Dashboard on a laptop"
+                />
+              </div>
+
+              <h3 class="svc-title">Audience Analysis</h3>
+
+              <p class="svc-desc">
+                Cras fermentum consectetur risus se lacinia dui posuere quis.
+                Sed vehiculi.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="svc-card is-chart">
+              <div class="media">
+                <div class="chart-header">
+                  <span class="chart-title">Statistics</span>
+                  <span class="pill">7 Days</span>
+                </div>
+
+                <div class="chart-bars" aria-hidden="true">
+                  <span style="--h: 65%"></span>
+                  <span style="--h: 48%"></span>
+                  <span style="--h: 72%"></span>
+                  <span style="--h: 38%"></span>
+                  <span style="--h: 88%"></span>
+                  <span style="--h: 44%"></span>
+                  <span style="--h: 70%"></span>
+                </div>
+              </div>
+
+              <h3 class="svc-title">Performance Analytics</h3>
+
+              <p class="svc-desc">
+                Cras fermentum consectetur risus se lacinia dui posuere quis.
+                Sed vehiculi.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- history -->
+    <section
+      id="history"
+      class="history-section py-6"
+      data-section="history"
+      aria-label="Our History"
+    >
+      <div class="container">
+        <div class="arrow-img">
+          <img src="assets/images/arrow-2.webp" alt="" />
+        </div>
+
+        <div class="row g-4 history-row">
+          <!-- Left rail + CTA -->
+          <div class="col-12 col-md-4 col-lg-4">
+            <div class="left-rail">
+              <div class="rail">
+                <span class="rail-icon" aria-hidden="true">▣</span>
+                <span class="chip">Our History</span>
+              </div>
+
+              <a href="#" class="cta-xl" data-btn="history">
+                <span>More About Us</span>
+                <i
+                  class="bi bi-chevron-right"
+                  data-icon="chevron-right"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right copy -->
+          <div class="col-12 col-md-8 col-lg-8">
+            <div class="copy">
+              <h2 class="title">
+                Unleash social <span class="hi">potential</span>
+              </h2>
+
+              <div class="text">
+                <p>
+                  Suspendisse eu quam lacinia, vestibulum massa sit amet,
+                  convallis nulla. Interdum et malesuada fames ac ante ipsum
+                  primis in faucibus. Sed id pulvinar nibh, ut laoreet.
+                </p>
+
+                <p>
+                  Mauris congue maximus venenatis. Pellentesque turpis turpis,
+                  aliquam in lorem nec, congue faucibus massa. Quisque ac nunc
+                  aliquam, molestie massa vitae, gravida elit. Sed suspendisse
+                  dictum pellentesque, sem a bibendum dolorem sed lorem utam
+                  pharetra eget purus eget mais.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- insight-demo -->
+    <section
+      id="insight-demo"
+      class="insight-demo-section py-6"
+      data-section="insight-demo"
+      aria-label="Profile growth & engagement"
+    >
+      <div class="container">
+        <div class="stage">
+          <!-- Bubbles (networks) -->
+          <i
+            class="fa-brands fa-twitter tw"
+            data-icon="twitter"
+            aria-hidden="true"
+          ></i>
+          <i
+            class="fa-brands fa-tiktok tt"
+            data-icon="tiktok"
+            aria-hidden="true"
+          ></i>
+
+          <div class="row g-4 align-items-center">
+            <!-- Left: person -->
+            <div class="col-12 col-lg-6">
+              <div class="person">
+                <img
+                  src="assets/images/social-tech-history.webp"
+                  alt="Creator using laptop"
+                />
+              </div>
+            </div>
+
+            <!-- Right: chart plate -->
+            <div class="col-12 col-lg-6">
+              <div class="plate">
+                <div class="chart-card" aria-label="Profile growth & discovery">
+                  <div class="chart-head">
+                    <span class="chart-title"
+                      >Profile growth &amp; discovery</span
+                    >
+                    <span class="pill">Impressions</span>
+                  </div>
+
+                  <div class="stats-row">
+                    <span class="green">+8.23%</span>
+
+                    <span class="stat">
+                      <span class="num">2,090</span>
+                      <span class="meta">Impressions</span>
+                    </span>
+
+                    <span class="stat">
+                      <span class="num">1,820</span>
+                      <span class="meta">Reach</span>
+                    </span>
+
+                    <span class="stat">
+                      <span class="num">2.38%</span>
+                      <span class="meta">Growth Rate</span>
+                    </span>
+                  </div>
+
+                  <div
+                    class="bars"
+                    role="img"
+                    aria-label="Bar chart for Mar 21–Apr 21"
+                  >
+                    <span style="--h: 65%"></span>
+                    <span style="--h: 40%"></span>
+                    <span style="--h: 74%"></span>
+                    <span style="--h: 52%"></span>
+                    <span style="--h: 80%"></span>
+                    <span style="--h: 58%"></span>
+                    <span style="--h: 70%"></span>
+                    <span style="--h: 60%"></span>
+                    <span style="--h: 84%"></span>
+                    <span style="--h: 66%"></span>
+                  </div>
+
+                  <!-- axis kept same text, but now responsive -->
+                  <div class="axis" aria-label="Date axis">
+                    <span>Mar 21</span>
+                    <span>Mar 26</span>
+                    <span>Mar 31</span>
+                    <span>Apr 5</span>
+                    <span>Apr 10</span>
+                    <span>Apr 21</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- KPI floating card -->
+              <div class="kpi" aria-label="Engagement">
+                <div class="kpi-head">
+                  <span class="kpi-title">Engagement</span>
+
+                  <!-- button -> anchor -->
+                  <a
+                    href="#"
+                    class="dots"
+                    aria-label="More options"
+                    data-icon="more-options"
+                  >
+                    ⋯
+                  </a>
+                </div>
+
+                <div class="kpi-main">
+                  <span class="value">82.6%</span>
+                  <span class="chip up">▲ 0.2%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="tiny-note">Roloid lacinia dui posuere quis sed veh.</p>
+      </div>
+    </section>
+
+    <!-- reach -->
+    <section
+      id="reach"
+      class="reach-section py-6"
+      data-section="reach"
+      aria-label="Boost Social Reach"
+    >
+      <div class="container">
+        <div class="arrow-img">
+          <div class="img-box">
+            <img src="assets/images/arrow.webp" alt="Decorative arrow" />
+          </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <div class="reach-head">
+              <span class="label">
+                <i aria-hidden="true" data-icon="info">🛈</i>
+                Boost Social Reach
+              </span>
+
+              <h2 class="title">
+                Maximizing reach and
+                <span class="accent">sourcing fresh content</span>
+                for you.
+              </h2>
+
+              <p class="sub">
+                Scale your brand's digital footprint with automated content
+                strategies and data-driven insights designed for high-impact
+                engagement.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row features-row">
+          <div class="col-12 col-md-6 mb-4">
+            <div class="f-card">
+              <span class="badge">100% Guaranteed</span>
+              <div class="icon">
+                <i class="fa-solid fa-bell" data-icon="bell"></i>
+              </div>
+              <div class="description">
+                <h3 class="f-title">Get Creative Inspiration</h3>
+                <p class="f-desc">
+                  Unlock daily creative prompts and trending hooks tailored to
+                  your industry to keep your audience constantly engaged.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 mb-4">
+            <div class="f-card">
+              <div class="icon">
+                <i class="fa-solid fa-image" data-icon="image"></i>
+              </div>
+              <div class="description">
+                <h3 class="f-title">Make Every Post Pop</h3>
+                <p class="f-desc">
+                  Transform standard visuals into high-converting assets with
+                  our integrated design optimization and aesthetic filtering
+                  tools.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 mb-4">
+            <div class="f-card">
+              <div class="icon">
+                <i class="fa-solid fa-message" data-icon="message"></i>
+              </div>
+              <div class="description">
+                <h3 class="f-title">Exceptional Customer Service</h3>
+                <p class="f-desc">
+                  Our support specialists ensure your campaigns run smoothly,
+                  providing technical assistance and strategic advice whenever
+                  you need it.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 mb-4">
+            <div class="f-card">
+              <div class="icon">
+                <i class="fa-solid fa-square-check" data-icon="check"></i>
+              </div>
+              <div class="description">
+                <h3 class="f-title">Keep Brand Aesthetics On Point</h3>
+                <p class="f-desc">
+                  Automatically maintain a consistent look and feel across all
+                  social platforms to build instant recognition and trust.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage-outer">
+          <div class="row g-0">
+            <div class="col-12 col-lg-6">
+              <div class="plate">
+                <div class="quote-card">
+                  <span class="chip">Our Client’s Testimonials</span>
+                  <div class="quote-content">
+                    “The analytics dashboard gave us the clarity we needed to
+                    double our organic reach within just three months of
+                    implementation.”
+                  </div>
+
+                  <div class="byline">
+                    <div class="img-box avatar-box">
+                      <img
+                        src="assets/images/testimonial-2.png"
+                        alt="Client avatar"
+                      />
+                    </div>
+                    <div>
+                      <h5>Rohit Raj</h5>
+                      <small>Entrepreneur</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <div class="person-frame">
+                <div class="img-box person-img-wrap">
+                  <img
+                    src="assets/images/social-tech-reach.webp"
+                    alt="Smiling marketer"
+                  />
+                </div>
+                <i class="fa-brands fa-instagram ig" data-icon="instagram"></i>
+                <i class="fa-brands fa-facebook fb" data-icon="facebook"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="tiny-note">
+          Note: Results are based on active content participation and strategy
+          adherence.
+        </p>
+      </div>
+    </section>
+    <!-- faq section -->
+    <section
+      id="faq"
+      class="faq-section py-6"
+      data-section="faq"
+      aria-label="Help Center FAQs"
+    >
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-10">
+            <div class="faq-head">
+              <span class="label">
+                <i
+                  class="bi bi-question-circle-fill"
+                  aria-hidden="true"
+                  data-icon="question-circle"
+                ></i>
+                Help Center
+              </span>
+              <h2 class="title">
+                Answers to your analytics <span class="accent">questions</span>
+              </h2>
+              <p class="sub">
+                Discover how our advanced algorithms and data processing tools
+                can transform your social media presence into a measurable
+                growth engine.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <div class="accordion faq-list w-100" id="faqAccordion">
+              <div class="accordion-item faq-card">
+                <div class="accordion-header">
+                  <a
+                    class="accordion-button collapsed"
+                    role="button"
+                    href="javascript:void(0)"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#faq1"
+                    aria-expanded="false"
+                    aria-controls="faq1"
+                  >
+                    <span>How does the AI predict trending content hooks?</span>
+                  </a>
+                </div>
+                <div
+                  id="faq1"
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#faqAccordion"
+                >
+                  <div class="accordion-body answer-wrap">
+                    <p>
+                      Our proprietary AI engine scans real-time platform
+                      signals, identifying high-velocity keywords and audio
+                      patterns before they hit the mainstream. This allows you
+                      to deploy content that aligns perfectly with the current
+                      algorithm's distribution bias.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item faq-card">
+                <div class="accordion-header">
+                  <a
+                    class="accordion-button"
+                    role="button"
+                    href="javascript:void(0)"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#faq2"
+                    aria-expanded="true"
+                    aria-controls="faq2"
+                  >
+                    <span
+                      >Can I integrate multiple API tokens for different
+                      brands?</span
+                    >
+                  </a>
+                </div>
+                <div
+                  id="faq2"
+                  class="accordion-collapse collapse show"
+                  data-bs-parent="#faqAccordion"
+                >
+                  <div class="accordion-body answer-wrap">
+                    <p>
+                      Yes, our enterprise tier supports multi-tenant
+                      architecture. You can securely link unique API tokens for
+                      each brand account, ensuring that data streams remain
+                      isolated while providing a unified cross-platform
+                      reporting dashboard.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item faq-card">
+                <div class="accordion-header">
+                  <a
+                    class="accordion-button collapsed"
+                    role="button"
+                    href="javascript:void(0)"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#faq3"
+                    aria-expanded="false"
+                    aria-controls="faq3"
+                  >
+                    <span
+                      >Which social tech stack is required for full
+                      automation?</span
+                    >
+                  </a>
+                </div>
+                <div
+                  id="faq3"
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#faqAccordion"
+                >
+                  <div class="accordion-body answer-wrap">
+                    <p>
+                      Our platform is built on a serverless architecture that
+                      connects directly via Webhooks. No local tech stack is
+                      required; our system handles the cloud-based processing
+                      and publishing without requiring high-end local hardware.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item faq-card">
+                <div class="accordion-header">
+                  <a
+                    class="accordion-button collapsed"
+                    role="button"
+                    href="javascript:void(0)"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#faq4"
+                    aria-expanded="false"
+                    aria-controls="faq4"
+                  >
+                    <span
+                      >Is my personal information secure during data
+                      analysis?</span
+                    >
+                  </a>
+                </div>
+                <div
+                  id="faq4"
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#faqAccordion"
+                >
+                  <div class="accordion-body answer-wrap">
+                    <p>
+                      Security is our core priority. We utilize 256-bit AES
+                      encryption for all data at rest and TLS 1.3 for data in
+                      transit. We never store raw login credentials, opting
+                      instead for secure OAuth2 authorization protocols.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- footer -->
+    <section
+      id="footer"
+      class="footer-section py-6"
+      data-section="footer"
+      aria-label="Site footer"
+    >
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-5 mb-5 mb-lg-0">
+            <div class="footer-left-content">
+              <a href="#" class="footer-brand" aria-label="Analyx home">
+                <span class="brand-name" data-logo="footer">Analyx</span>
+              </a>
+
+              <div class="newsletter-wrapper">
+                <h4 class="footer-heading">Subscribe Our Newsletter</h4>
+                <form
+                  class="newsletter-form"
+                  action="http://127.0.0.1:8000/api/forms/submit"
+                  method="post"
+                  data-zigrow-form
+                >
+                  <div class="custom-input-group">
+                    <input
+                      type="email"
+                      name="email"
+                      id="email"
+                      required
+                      placeholder="Enter your email"
+                      aria-label="Email address"
+                    />
+                    <button type="submit" class="submit-btn" data-btn="footer">Send</button>
+                  </div>
+                </form>
+                <p class="footer-description">
+                  Get the latest social technology insights and algorithm
+                  updates delivered to your inbox.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-7">
+            <div class="footer-right-content">
+              <div class="insight-badge">
+                <i
+                  class="bi bi-lightning-charge-fill"
+                  data-icon="lightning"
+                ></i>
+                Gain Competitive Edge
+              </div>
+              <h2 class="footer-main-title">Boost Insights!</h2>
+
+              <div class="row">
+                <div class="col-12 col-sm-6 mb-4 mb-sm-0">
+                  <div class="links-column">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-link-list">
+                      <li><a href="#">Home</a></li>
+                      <li><a href="#">About</a></li>
+                      <li><a href="#">Services</a></li>
+                      <li><a href="#">Pricing</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="contact-column">
+                    <h4 class="footer-heading">Contact &amp; Support</h4>
+                    <ul class="footer-contact-list">
+                      <li>
+                        <i class="bi bi-telephone-fill" data-icon="phone"></i>
+                        +91-9123456789
+                      </li>
+                      <li>
+                        <i class="bi bi-envelope-at-fill" data-icon="email"></i>
+                        yourname@domainname.com
+                      </li>
+                      <li>
+                        <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+                        E-123, ABC Plaza, XYZ Street, New Delhi - 110077
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row footer-bottom-border">
+          <div class="col-12 col-md-6 text-center text-md-start">
+            <p class="copyright-text">
+              Copyright © 2026 zigrow. All rights reserved.
+            </p>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="social-icons-wrapper">
+              <ul class="social-list">
+                <li>
+                  <a href="#" aria-label="Facebook"
+                    ><i class="bi bi-facebook" data-icon="facebook"></i
+                  ></a>
+                </li>
+                <li>
+                  <a href="#" aria-label="Twitter"
+                    ><i class="bi bi-twitter-x" data-icon="twitter"></i
+                  ></a>
+                </li>
+                <li>
+                  <a href="#" aria-label="YouTube"
+                    ><i class="bi bi-youtube" data-icon="youtube"></i
+                  ></a>
+                </li>
+                <li>
+                  <a href="#" aria-label="LinkedIn"
+                    ><i class="bi bi-linkedin" data-icon="linkedin"></i
+                  ></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/app.js"></script>
+    <script>
+      (function () {
+        // Find ALL Zigrow forms
+        const forms = Array.from(
+          document.querySelectorAll("[data-zigrow-form]")
+        );
+        if (!forms.length) return;
+
+        // Helper: turn FormData into a plain object
+        function serializeForm(form) {
+          const fd = new FormData(form);
+          const raw = {};
+          for (const [name, value] of fd.entries()) {
+            const el = form.elements[name];
+            const isGroup =
+              el && el.length && el[0] && el[0].type === "checkbox";
+            if (isGroup) {
+              if (!raw[name]) raw[name] = [];
+              raw[name].push(value === "" ? true : value);
+            } else {
+              raw[name] = value;
+            }
+          }
+          return raw;
+        }
+
+        // Helper: pick primary value for quick list view
+        function pickPrimaryValue(raw) {
+          if (raw.email && String(raw.email).trim())
+            return String(raw.email).trim();
+          if (raw.phone && String(raw.phone).trim())
+            return String(raw.phone).trim();
+          const nameCombo = [raw.firstName, raw.lastName]
+            .filter(Boolean)
+            .join(" ")
+            .trim();
+          if (raw.name && String(raw.name).trim())
+            return String(raw.name).trim();
+          if (nameCombo) return nameCombo;
+          if (raw.message && String(raw.message).trim())
+            return String(raw.message).trim();
+          return "";
+        }
+
+        forms.forEach((form) => {
+          // Ensure hidden fields are filled
+          const domainInput = form.querySelector('input[name="domain"]');
+          const pageUrlInput = form.querySelector('input[name="page_url"]');
+          if (domainInput) domainInput.value = location.host;
+          if (pageUrlInput) pageUrlInput.value = location.href;
+
+          // Create a container for messages if not already exists
+          let msgContainer = form.querySelector(".form-submit-message");
+          if (!msgContainer) {
+            msgContainer = document.createElement("div");
+            msgContainer.className = "form-submit-message mt-2 text-sm";
+            form.appendChild(msgContainer);
+          }
+
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('[type="submit"]');
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.dataset._oldText = submitBtn.innerText;
+              submitBtn.innerText = "Submitting...";
+            }
+
+            // Clear previous message
+            msgContainer.innerText = "";
+            msgContainer.style.color = "";
+
+            try {
+              const raw = serializeForm(form);
+              const body = new URLSearchParams();
+              body.set(
+                "domain",
+                form.querySelector('input[name="domain"]')?.value ||
+                  location.host
+              );
+              body.set(
+                "form_key",
+                form.querySelector('input[name="form_key"]')?.value || "contact"
+              );
+              body.set(
+                "page_url",
+                form.querySelector('input[name="page_url"]')?.value ||
+                  location.href
+              );
+              body.set("payload", JSON.stringify(raw));
+
+              const primary = pickPrimaryValue(raw);
+              if (primary) body.set("value", primary);
+
+              if (raw._company) body.set("_company", raw._company);
+
+              const res = await fetch(form.action, {
+                method: "POST",
+                headers: { Accept: "application/json" },
+                body,
+              });
+
+              const data = await res.json().catch(() => ({}));
+              if (res.ok && (data.ok ?? true)) {
+                form.reset();
+                msgContainer.innerText =
+                  "✅ Thanks! Your request has been submitted.";
+                msgContainer.style.color = "#28a745"; // green success
+              } else {
+                msgContainer.innerText = `❌ ${
+                  data.message || `Failed (HTTP ${res.status})`
+                }`;
+                msgContainer.style.color = "#dc3545"; // red error
+              }
+            } catch (err) {
+              console.error(err);
+              msgContainer.innerText =
+                "❌ Something went wrong. Please try again.";
+              msgContainer.style.color = "#dc3545";
+            } finally {
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = submitBtn.dataset._oldText || "Send";
+              }
+            }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

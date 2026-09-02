@@ -1,0 +1,660 @@
+@charset "UTF-8";
+/* Navbar */
+#navbar {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 1rem 0;
+  z-index: 1000;
+  transition: background 0.3s ease, padding 0.3s ease;
+  /* Sticky version after scrolling */
+}
+#navbar .nav-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#navbar .logo a {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #4caf50;
+  text-decoration: none;
+}
+#navbar .logo a span {
+  font-size: 2.5rem;
+  color: #4caf50;
+}
+#navbar .nav-menu ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+#navbar .nav-menu ul li a {
+  position: relative;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+  transition: color 0.3s ease;
+}
+#navbar .nav-menu ul li a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 2px;
+  background: #4caf50;
+  transition: width 0.3s ease;
+}
+#navbar .nav-menu ul li a:hover, #navbar .nav-menu ul li a.active {
+  color: #4caf50;
+}
+#navbar .nav-menu ul li a:hover::after, #navbar .nav-menu ul li a.active::after {
+  width: 100%;
+}
+#navbar .menu-toggle {
+  display: none;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+}
+#navbar.sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 0.7rem 0;
+}
+@media (max-width: 768px) {
+  #navbar .nav-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+  #navbar .nav-menu ul {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  #navbar .menu-toggle {
+    display: block;
+  }
+  #navbar .nav-menu.active {
+    display: block;
+    animation: slideDown 0.3s ease-in-out;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Hero Section */
+#hero {
+  position: relative;
+  background: url("../assets/images/dietitian-hero.webp") no-repeat center center/cover;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  /* Overlay */
+}
+#hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+#hero .container {
+  position: relative;
+  z-index: 2;
+}
+#hero .hero-content {
+  max-width: 700px;
+  margin: 0 auto;
+}
+#hero .hero-content .brand-title {
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+#hero .hero-content .brand-title span {
+  color: #fff;
+}
+#hero .hero-content .subtitle {
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+#hero .hero-content .btn-custom {
+  display: inline-block;
+  margin-top: 2rem;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #4caf50;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+#hero .hero-content .btn-custom:hover {
+  background-color: #43a047;
+}
+
+#backToTopBtn {
+  position: fixed;
+  bottom: 5%;
+  right: 1%;
+  display: none;
+  z-index: 1000;
+  color: white;
+  font-size: 1.4rem;
+  border-radius: 50%;
+  background-color: #4caf50;
+  box-shadow: 0 12px 12px rgba(53, 51, 51, 0.6);
+}
+#backToTopBtn:hover {
+  background-color: #4caf50;
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+  #hero .brand-title {
+    font-size: 3rem;
+  }
+  #hero .subtitle {
+    font-size: 1rem;
+  }
+}
+@media (max-width: 480px) {
+  #hero .brand-title {
+    font-size: 2.25rem;
+  }
+  #hero .subtitle {
+    font-size: 0.9rem;
+  }
+}
+#about {
+  background: #f7f7f7;
+  /* Responsive */
+}
+#about .about-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+}
+#about .about-text {
+  flex: 1 1 50%;
+}
+#about .about-text h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+#about .about-text h2 span {
+  color: #4caf50;
+}
+#about .about-text .underline {
+  width: 50px;
+  height: 3px;
+  background: #4caf50;
+  margin: 1.5rem 0rem;
+}
+#about .about-text p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+#about .about-text .consult {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+#about .about-text .consult span {
+  color: #000;
+}
+#about .about-text .btn-custom {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: #4caf50;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+#about .about-text .btn-custom:hover {
+  background: #43a047;
+}
+#about .about-image {
+  flex: 1 1 45%;
+}
+#about .about-image img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2/2;
+  -o-object-fit: cover;
+     object-fit: cover;
+  display: block;
+  padding: 0 3rem 2rem 3rem;
+}
+@media (max-width: 992px) {
+  #about .about-wrapper {
+    flex-direction: column;
+  }
+  #about .about-text,
+  #about .about-image {
+    flex: 1 1 100%;
+  }
+}
+
+#how-it-works {
+  background: #f7f7f7;
+  /* Responsive */
+}
+#how-it-works .section-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 3rem auto;
+}
+#how-it-works .section-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+#how-it-works .section-header .underline {
+  width: 80px;
+  height: 3px;
+  background: #4caf50;
+  margin: 0.75rem auto 1.5rem auto;
+}
+#how-it-works .section-header p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+}
+#how-it-works .cards-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+#how-it-works .card-custom {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  flex: 1 1 calc(33.333% - 2rem);
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#how-it-works .card-custom:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+#how-it-works .card-custom .icon {
+  font-size: 3rem;
+  color: #4caf50;
+  margin-bottom: 1rem;
+  /* placeholders for icons (replace with SVG or font icons) */
+}
+#how-it-works .card-custom .icon .icon-chat::before {
+  content: "💬";
+}
+#how-it-works .card-custom .icon .icon-video::before {
+  content: "🎥";
+}
+#how-it-works .card-custom .icon .icon-salad::before {
+  content: "🥗";
+}
+#how-it-works .card-custom h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+#how-it-works .card-custom .card-underline {
+  width: 40px;
+  height: 2px;
+  background: #333;
+  margin: 0 auto 1rem auto;
+}
+#how-it-works .card-custom p {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+#how-it-works .card-custom .btn-custom {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  background: #4caf50;
+  color: #fff;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+#how-it-works .card-custom .btn-custom:hover {
+  background: #43a047;
+}
+@media (max-width: 992px) {
+  #how-it-works .card-custom {
+    flex: 1 1 calc(50% - 2rem);
+  }
+}
+@media (max-width: 576px) {
+  #how-it-works .card-custom {
+    flex: 1 1 100%;
+  }
+}
+
+#appointment {
+  background: url("../assets/images/dietitian-testimonial.webp") center/cover no-repeat;
+  position: relative;
+  z-index: 1;
+  /* Responsive */
+}
+#appointment::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: -1;
+}
+#appointment .appointment-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2rem;
+}
+#appointment .appointment-content {
+  flex: 1 1 50%;
+  color: #fff;
+  position: relative;
+}
+#appointment .appointment-content h2 {
+  font-size: 2.4rem;
+  font-weight: 600;
+  margin-bottom: 1.6rem;
+}
+#appointment .appointment-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+#appointment .appointment-content h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+#appointment .appointment-content h4 span {
+  color: #fff;
+  font-weight: 700;
+}
+#appointment .appointment-form {
+  flex: 1 1 45%;
+  background: #f9f9f9;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+#appointment .appointment-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+#appointment .appointment-form form input,
+#appointment .appointment-form form textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+#appointment .appointment-form form textarea {
+  resize: none;
+}
+#appointment .appointment-form form .btn-custom {
+  padding: 0.6rem 1.5rem;
+  background: #4caf50;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 30px;
+  border: none;
+  width: -moz-fit-content;
+  width: fit-content;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+#appointment .appointment-form form .btn-custom:hover {
+  background: #43a047;
+}
+@media (max-width: 992px) {
+  #appointment .appointment-content,
+  #appointment .appointment-form {
+    flex: 1 1 100%;
+  }
+}
+
+#testimonial {
+  background: #f8f9fa;
+  /* Responsive */
+}
+#testimonial .testimonial-wrapper {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+#testimonial .testimonial-img {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+#testimonial .testimonial-img img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border: 4px solid #eaeaea;
+}
+#testimonial .testimonial-img .quote-icon {
+  position: absolute;
+  bottom: 0;
+  right: -10px;
+  background: #4caf50;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#testimonial .testimonial-text {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+#testimonial .testimonial-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+@media (max-width: 768px) {
+  #testimonial .testimonial-img img {
+    width: 80px;
+    height: 80px;
+  }
+  #testimonial .testimonial-text {
+    font-size: 0.95rem;
+    padding: 0 1rem;
+  }
+  #testimonial .testimonial-name {
+    font-size: 1rem;
+  }
+}
+
+#featured {
+  background: #fff;
+  /* Responsive */
+}
+#featured .featured-wrapper {
+  text-align: center;
+}
+#featured .featured-wrapper .featured-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #00695c;
+  margin-bottom: 2rem;
+}
+#featured .featured-wrapper .featured-logos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+#featured .featured-wrapper .featured-logos img {
+  max-height: 80px;
+  max-width: 120px;
+  -o-object-fit: contain;
+     object-fit: contain;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+#featured .featured-wrapper .featured-logos img:hover {
+  transform: scale(1.05);
+}
+@media (max-width: 768px) {
+  #featured .featured-logos {
+    gap: 1.5rem;
+  }
+  #featured .featured-logos img {
+    max-height: 40px;
+    max-width: 100px;
+  }
+}
+@media (max-width: 576px) {
+  #featured .featured-logos {
+    gap: 1rem;
+  }
+  #featured .featured-logos img {
+    max-height: 35px;
+    max-width: 80px;
+  }
+}
+
+#footer {
+  position: relative;
+  background: url("../assets/images/dietitian-footer.webp") no-repeat center center/cover;
+  color: #fff;
+  text-align: center;
+  z-index: 1;
+}
+#footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: -1;
+}
+#footer .footer-content {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+#footer .footer-content .logo {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #6ed36e;
+}
+#footer .footer-content .logo span {
+  color: #fff;
+}
+#footer .footer-content .tagline {
+  font-size: 1.1rem;
+  margin: 10px 0 20px;
+  font-weight: 400;
+}
+#footer .footer-content .footer-nav {
+  margin-bottom: 20px;
+}
+#footer .footer-content .footer-nav a {
+  color: #fff;
+  margin: 0 5px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+#footer .footer-content .footer-nav a:hover {
+  color: #6ed36e;
+}
+#footer .footer-content .social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+#footer .footer-content .social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: #fff;
+  color: #000;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+#footer .footer-content .social-icons a:hover {
+  background: #6ed36e;
+  color: #fff;
+}
+
+#copyright {
+  background: #111;
+  color: #aaa;
+  text-align: center;
+}
+#copyright p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+#copyright p a {
+  color: #6ed36e;
+  text-decoration: none;
+}
+#copyright p a:hover {
+  text-decoration: underline;
+}/*# sourceMappingURL=style.css.map */

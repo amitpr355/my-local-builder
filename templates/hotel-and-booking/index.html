@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hotel</title>
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+
+  <!-- Bootstrap Library -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <!-- Poppins Font Family -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Font awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Belleza Font family -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Belleza&display=swap" rel="stylesheet">
+
+  <!-- Hambuger -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hamburgers@1.2.1/dist/hamburgers.min.css" />
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customutilitystyle.css">
+  <link rel="icon" href="assets/Images/logo.webp">
+</head>
+
+<body>
+  <!-- Navbar Section -->
+  <nav class="navbar sticky-top top-0 navbar-section py-0" id="navbar" data-section="navbar">
+    <div class="container">
+      <a href="tel: 919123456789" class="reserve-now-btn">
+        <i class="bi bi-telephone-fill" data-icon="telephone-fill"></i> RESERVE NOW
+      </a>
+
+      <div class="logo">
+        <div class="img-wrapper-style col-12">
+          <img src="assets/Images/logo.webp" id="Logo" class="img-fluid" alt="Logo">
+        </div>
+      </div>
+
+      <!-- Hamburger Menu -->
+      <div class="menu-container" id="hamburger">
+        <div class="hamburger">
+          <div class="ham-div1"></div>
+          <div class="ham-div2"></div>
+          <div class="ham-div3"></div>
+        </div>
+        <span>MENU</span>
+      </div>
+
+      <div class="drawer px-2-styl py-3-style" id="drawer">
+        <div class="drawer-contents">
+          <div class="hamburger-cross" id="closeDrawer">
+            <i class="bi bi-x" data-icon="x"></i>
+          </div>
+
+          <div class="img-wrapper-style mx-auto-style">
+            <img src="assets/Images/logo-2.webp" class="img-fluid mt-5-style" alt="Logo Image">
+          </div>
+
+          <div class="contact-section">
+            <div class="contact-item">
+              <i class="bi bi-envelope" data-icon="envelope"></i>
+              <span class="text">yourname@domainname.com</span>
+            </div>
+
+            <div class="contact-item">
+              <i class="bi bi-clock" data-icon="clock"></i>
+              <span class="text">Mon–Fri / 7 AM – 8 PM</span>
+            </div>
+
+            <div class="contact-item">
+              <i class="bi bi-geo-alt" data-icon="geo-alt"></i>
+              <span class="text">E-123, ABC Plaza, XYZ Street, New Delhi - 110077</span>
+            </div>
+
+            <a href="tel:9123456789" class="btn reserve-button">
+              <i class="bi bi-telephone-fill" data-icon="telephone-fill"></i>
+              RESERVE NOW
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section d-flex hero-animate" id="hero-section" data-section="hero-section">
+    <!-- Kept overlay OUTSIDE the grid as per A1 -->
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+
+    <div class="container position-relative mt-5-style">
+      <div class="row">
+        <div class="col-lg-10 heading-div">
+          <h1 class="hero-heading mb-5-style">
+            Unwind in Luxury: Discover Our <br class="d-none d-md-block" />
+            Exquisite Hotel and Resort
+          </h1>
+          <a href="#" class="get-started-btn">Get Started
+            <div class="ms-2-style d-inline-flex">
+              <i class="bi bi-arrow-right" data-icon="arrow-right"></i>
+            </div>
+          </a>
+        </div>
+        <!-- If any empty logical column required by spec -->
+        <div class="col d-none"><span class="d-none"></span></div>
+      </div>
+    </div>
+
+    <!-- Coordinates (absolute/outside grid per A1) -->
+    <div class="coordinates position-absolute start-0 bottom-0 ms-3-style mb-5-style">
+      <i class="bi bi-geo-alt" data-icon="geo-alt"></i>
+      3.2028° N, 73.2207° E
+    </div>
+
+    <!-- Scroll Icon (absolute/outside grid) -->
+    <div class="scroll-down-icon position-absolute bottom-0 start-50 mb-3-style">
+      <i class="bi bi-chevron-down" data-icon="chevron-down"></i>
+    </div>
+  </section>
+
+  <!-- Floating Button (kept outside grid) -->
+  <a href="#" class="rounded-circle floating-btn">
+    <i class="bi bi-arrow-up" data-icon="arrow-up"></i>
+  </a>
+
+  <!-- Royal Heritage Section -->
+  <section class="heritage-section py-5-style" id="heritage-section" data-section="heritage-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 main-text pb-5-style">
+          From the moment you step foot on our grounds, you'll be enveloped in a world of refined elegance and
+          warm hospitality.
+        </div>
+      </div>
+
+      <div class="row align-items-center justify-content-center">
+        <div class="col-lg-5 mb-4-style mb-lg-0-style royal-heritage-image-div img-wrapper-style">
+          <img src="assets/Images/hotel-luxury-reposrt-website-template-section-2.webp" alt="Heritage Pool View" class="img-fluid royal-heritage-image" />
+        </div>
+
+        <div class="col-lg-5 text-section">
+          <h6 class="each-section-name mb-3-style">Royal Heritage</h6>
+
+          <h2 class="each-section-heading mb-4-style">
+            Taken from Javanese culture,
+            the possess a meaning of
+            peacefulness and tranquility.
+          </h2>
+
+          <p class="mb-5-style each-section-para">
+            Experience true opulence in our meticulously designed accommodations.
+            Each room and suite is tastefully furnished with a harmonious blend
+            of comfort, style, and sophistication.
+          </p>
+
+          <a href="#" class="learn-more-btn">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Royal Experience Section -->
+  <section class="experience-section py-5-style" id="experience-section" data-section="experience-section">
+    <div class="container pb-md-2-style">
+      <div class="row">
+        <div class="col-12 experience-text-div mb-5-style">
+          <h6 class="each-section-name">Royal Experience</h6>
+
+          <h2 class="main-text">
+            Designed by the most creative minds in profession,<br />
+            built by the finest people in the industry, and we<br />
+            have finally begun our journey to serve you.
+          </h2>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Card 1 -->
+        <div class="col-md-4 clonable-card">
+          <div class="experience-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/hotel-luxury-reposrt-website-template-section-3-a.webp" class="img-fluid rounded mb-3-style" alt="Infinity Pool" />
+            </div>
+            <h5 class="card-heading mb-2-style">Infinity Pool</h5>
+
+            <p class="card-description col-md-8 mb-3-style">
+              An 89m heated infinity pool with breathtaking views over the valley.
+            </p>
+
+            <a href="#" class="view-more-btn">View More</a>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-4 clonable-card">
+          <div class="experience-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/hotel-luxury-reposrt-website-template-section-3-b.webp" class="img-fluid rounded mb-3-style" alt="Club Lounge" />
+            </div>
+            <h5 class="card-heading mb-2-style">Club Lounge</h5>
+
+            <p class="card-description col-md-8 mb-3-style">
+              A sophisticated and quiet space reserved for Club Guests only.
+            </p>
+
+            <a href="#" class="view-more-btn">View More</a>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-4 clonable-card">
+          <div class="experience-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/hotel-luxury-reposrt-website-template-section-3-c.webp" class="img-fluid rounded mb-3-style" alt="Free Lunch Food" />
+            </div>
+            <h5 class="card-heading mb-2-style">Free Lunch Food</h5>
+
+            <p class="card-description col-md-8 mb-3-style">
+              A natural, sustainable cocoon for intimate events and wedding ceremonies.
+            </p>
+
+            <a href="#" class="view-more-btn">View More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Room and Suites -->
+  <section class="rooms-section py-5-style" id="rooms-section" data-section="rooms-section">
+    <div class="container pb-md-2-style">
+      <div class="row">
+        <div class="col-12 room-text-div mb-5-style">
+          <h6 class="each-section-name">Room & Suites</h6>
+
+          <h2 class="main-text">
+            Each suite is meticulously designed to offer the perfect<br />
+            blend of comfort, elegance, and sophistication.
+          </h2>
+        </div>
+      </div>
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        <!-- Room Card -->
+        <div class="col clonable-card">
+          <div class="room-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/room-types-grid-1.webp" class="img-fluid rounded" alt="Premier Room" />
+            </div>
+            <p class="mt-2-style room-card-heading">Premier Room</p>
+          </div>
+        </div>
+
+        <div class="col clonable-card">
+          <div class="room-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/room-types-grid-2.webp" class="img-fluid rounded" alt="Premier Twin Room" />
+            </div>
+            <p class="mt-2-style room-card-heading">Premier Twin Room</p>
+          </div>
+        </div>
+
+        <div class="col clonable-card">
+          <div class="room-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/room-types-grid-3.webp" class="img-fluid rounded" alt="Premier Deluxe Room" />
+            </div>
+            <p class="mt-2-style room-card-heading">Premier Deluxe Room</p>
+          </div>
+        </div>
+
+        <!-- additional room items... keep same pattern -->
+        <div class="col clonable-card">
+          <div class="room-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/room-types-grid-4.webp" class="img-fluid rounded" alt="Premier Club Room" />
+            </div>
+            <p class="mt-2-style room-card-heading">Premier Club Room</p>
+          </div>
+        </div>
+
+        <div class="col clonable-card">
+          <div class="room-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/room-types-grid-5.webp" class="img-fluid rounded" alt="Premier Club Pool View" />
+            </div>
+            <p class="mt-2-style room-card-heading">Premier Club Pool View</p>
+          </div>
+        </div>
+
+        <div class="col clonable-card">
+          <div class="room-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/room-types-grid-6.webp" class="img-fluid rounded" alt="Premier Club Deluxe Room" />
+            </div>
+            <p class="mt-2-style room-card-heading">Premier Club Deluxe Room</p>
+          </div>
+        </div>
+
+        <div class="col clonable-card">
+          <div class="room-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/room-types-grid-7.webp" class="img-fluid rounded" alt="One-Bedroom Suite" />
+            </div>
+            <p class="mt-2-style room-card-heading">One-Bedroom Suite</p>
+          </div>
+        </div>
+
+        <div class="col clonable-card">
+          <div class="room-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/room-types-grid-8.webp" class="img-fluid rounded" alt="Two-Bedroom Suite" />
+            </div>
+            <p class="mt-2-style room-card-heading">Two-Bedroom Suite</p>
+          </div>
+        </div>
+
+        <div class="col clonable-card">
+          <div class="room-card">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/room-types-grid-9.webp" class="img-fluid rounded" alt="Premium Suite" />
+            </div>
+            <p class="mt-2-style room-card-heading">Premium Suite</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Royal Culture Section -->
+  <section class="culture-section py-5-style" id="culture-section" data-section="culture-section">
+    <div class="container mb-3-style">
+      <div class="row">
+        <div class="col-12">
+          <h6 class="each-section-name">Royal Culture</h6>
+
+          <h2 class="main-text pb-5-style">
+            We take pride in our attention to detail, personalized service,<br />
+            and commitment to exceeding your expectations.
+          </h2>
+        </div>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <!-- Feature Card 1 -->
+        <div class="col clonable-card">
+          <div class="feature-card p-4-style py-5-style h-100">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/service-1.webp" alt="Infinity Pool" class="mb-3-style" height="40" />
+            </div>
+            <h5 class="feature-card-heading">Infinity Pool</h5>
+            <p class="feature-card-desc">Relax in our infinity pool with stunning views.</p>
+          </div>
+        </div>
+
+        <!-- Feature Card 2 -->
+        <div class="col clonable-card">
+          <div class="feature-card p-4-style py-5-style h-100">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/service-2.webp" alt="Coworking Space" class="mb-3-style" height="40" />
+            </div>
+            <h5 class="feature-card-heading">Coworking Space</h5>
+            <p class="feature-card-desc">Work in our spacious, inspiring coworking area.</p>
+          </div>
+        </div>
+
+        <!-- Feature Card 3 -->
+        <div class="col clonable-card">
+          <div class="feature-card p-4-style py-5-style h-100">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/service-3.webp" alt="Homy & Cozy Place" class="mb-3-style" height="40" />
+            </div>
+            <h5 class="feature-card-heading">Homy & Cozy Place</h5>
+            <p class="feature-card-desc">Feel at home with our warm, cozy atmosphere.</p>
+          </div>
+        </div>
+
+        <!-- Feature Card 4 -->
+        <div class="col clonable-card">
+          <div class="feature-card p-4-style py-5-style h-100">
+            <div class="img-wrapper-style col-12">
+              <img src="assets/Images/service.webp" alt="Many food menus" class="mb-3-style" height="40" />
+            </div>
+            <h5 class="feature-card-heading">Many food menus</h5>
+            <p class="feature-card-desc">Explore a variety of menus to satisfy every taste.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Royal Value -->
+  <section class="royal-value-section pb-5-style pt-3-style pt-sm-5-style" id="royal-value-section" data-section="royal-value-section">
+    <div class="container">
+      <div class="row align-items-center justify-content-center g-md-5 g-3">
+        <!-- Left Text -->
+        <div class="col-lg-5 left-text-div">
+          <h6 class="each-section-name">Royal Value</h6>
+
+          <h2 class="each-section-heading">
+            Exceptional service: Going
+            above and beyond for every
+            guest who has coming
+          </h2>
+
+          <p class="each-section-para mb-4-style">
+            At our hotel, exceptional service is at the core of everything we do. From the moment you arrive
+            until your departure, our dedicated team is committed to providing personalized attention.
+          </p>
+
+          <a href="#" class="learn-more-btn">Learn More</a>
+        </div>
+
+        <!-- Right Image -->
+        <div class="col-lg-5 right-image-div img-wrapper-style">
+          <img src="assets/Images/royal-value-image.webp" alt="Royal Value" class="img-fluid" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video Section -->
+  <section class="video-preview-section py-5-style" id="video-preview-section" data-section="video-preview-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 video-wrapper-div position-relative">
+          <div class="img-wrapper-style col-12">
+            <img src="assets/Images/hotel-room-types-9-images-370-280-2.webp" alt="Video Preview" class="img-fluid" />
+          </div>
+
+          <a href="https://www.youtube.com/" class="play-btn position-absolute top-50 start-50 translate-middle" target="_blank">
+            <i class="bi bi-play-fill" data-icon="play-fill"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Royal Experience / Testimonials (Swiper) -->
+  <section class="royal-experience-section py-5-style" id="royal-experience-section" data-section="royal-experience-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <p class="each-section-name mb-2-style">Royal Experience</p>
+
+          <h2 class="each-section-heading mb-5-style">
+            Designed by the most creative minds in profession, built by <br class="d-none d-md-block">
+            the finest people in the industry, and we have finally begun <br class="d-none d-md-block">
+            our journey to serve you.
+          </h2>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Swiper remains logically inside .col-12, but its internal slides / overlays keep absolute behavior as needed -->
+        <div class="swiper mySwiper swiper-initialized swiper-horizontal swiper-backface-hidden">
+          <div class="swiper-wrapper pb-md-3 pb-5" id="swiper-wrapper-5b6972297bdd839a" aria-live="polite" style="transform: translate3d(0px, 0px, 0px);">
+
+            <div class="swiper-slide swiper-slide-active" role="group" style="translate: none; rotate: none; scale: none; opacity: 1; transform: translate(0px, 0px); margin-right: 30px;">
+              <!-- Card 1 -->
+              <div class="position-relative">
+                <div class="review-image-wrapper rounded overflow-hidden">
+                  <img src="assets/Images/testimonial-1.webp" alt="Hotel View" class="img-fluid w-100">
+                  <div class="review-card card">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center mb-md-2 mb-0">
+                        <img src="assets/Images/hotel-testimonials-logo-1.webp" alt="TripAdvisor" style="height: 24px; width: auto;" class="me-2">
+                      </div>
+                      <p class="mb-3 review-text">“Royal Place Hotel surpassed all my
+                        expectations. I felt
+                        like royalty
+                        from the moment I arrived until my departure. Highly recommended!”
+                      </p>
+                      <div class="d-flex align-items-center justify-content-center">
+                        <div class="star-rating-div me-2">
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <div class="rating-number">(4.5 / 5)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide swiper-slide-next" role="group" style="translate: none; rotate: none; scale: none; opacity: 1; transform: translate(0px, 0px); margin-right: 30px;">
+              <!-- Card 2 -->
+              <div class="position-relative">
+                <div class="review-image-wrapper rounded overflow-hidden">
+                  <img src="assets/Images/testimonial-2.webp" alt="Hotel View" class="img-fluid w-100">
+                  <div class="review-card card">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center mb-2">
+                        <img src="assets/Images/hotel-testimonials-logo-1.webp" alt="TripAdvisor" style="height: 24px; width: auto;" class="me-2">
+                      </div>
+                      <p class="mb-3 review-text">“Royal Place Hotel surpassed all my
+                        expectations. I felt
+                        like royalty
+                        from the moment I arrived until my departure. Highly recommended!”
+                      </p>
+                      <div class="d-flex align-items-center">
+                        <div class="star-rating-div me-2">
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <div class="rating-number">(4.5 / 5)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide" role="group" style="translate: none; rotate: none; scale: none; opacity: 1; transform: translate(0px, 0px); margin-right: 30px;">
+              <!-- Card 3 -->
+              <div class="position-relative">
+                <div class="review-image-wrapper rounded overflow-hidden">
+                  <img src="assets/Images/testimonial-3.webp" alt="Hotel View" class="img-fluid w-100">
+                  <div class="review-card card">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center mb-2">
+                        <img src="assets/Images/hotel-testimonials-logo-1.webp" alt="TripAdvisor" style="height: 24px; width: auto;" class="me-2">
+                      </div>
+                      <p class="mb-3 review-text">“Royal Place Hotel surpassed all my
+                        expectations. I felt
+                        like royalty
+                        from the moment I arrived until my departure. Highly recommended!”
+                      </p>
+                      <div class="d-flex align-items-center">
+                        <div class="star-rating-div me-2">
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i>
+                          <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <div class="rating-number">(4.5 / 5)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add  more slides here -->
+          </div>
+
+          <!-- Swiper Pagination -->
+          <div class="swiper-pagination"></div>
+          <!-- <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span> -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Follow us on Instagram -->
+  <section class="instagram-section py-md-5-style py-2-style" id="instagram-section" data-section="instagram-section">
+    <div class="container">
+      <div class="row align-items-center justify-content-between mb-4-style">
+        <div class="col-auto">
+          <p class="each-section-name">Social Media</p>
+          <h2 class="each-section-heading mt-2-style">Follow us on Instagram</h2>
+        </div>
+
+        <div class="col-auto">
+          <a href="#" class="learn-more-btn mt-3-style mt-lg-0-style">
+            View on Instagram <i class="bi bi-arrow-right" data-icon="arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="row g-4 drag-scroll">
+        <div class="col-md-4 d-flex align-items-center-style">
+          <img src="assets/Images/ig-1.webp" class="img-fluid rounded" alt="Instagram 1">
+        </div>
+
+        <div class="col-md-4 d-flex align-items-center-style">
+          <img src="assets/Images/ig-2.webp" class="img-fluid rounded" alt="Instagram 2">
+        </div>
+
+        <div class="col-md-4 d-flex align-items-center-style">
+          <img src="assets/Images/ig-3.webp" class="img-fluid rounded" alt="Instagram 3">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer (if footer exists in original file, replicating pattern and enforcing container->row->cols) -->
+  <footer id="footer" data-section="footer" class="py-5-style footer-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 footer-logo" data-logo="footer">
+          <div class="img-wrapper-style">
+            <img src="assets/Images/logo.webp" alt="Logo" class="img-fluid mb-2-style">
+          </div>
+          <h3 class="text-center-style mb-3-style">RoyalHotel</h3>
+        </div>
+
+        <div class="col-md-4 text-center-style">
+          <h5>Contact</h5>
+          <p>E-123, ABC Plaza, XYZ Street, New Delhi - 110077 | +91-9123456789 | yourname@domainname.com</p>
+        </div>
+
+        <div class="col-md-4 text-center-style">
+          <h5>Follow</h5>
+          <div class="social-links">
+            <a href="#" aria-label="Instagram"><i class="bi bi-instagram" data-icon="instagram"></i></a>
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook" data-icon="facebook"></i></a>
+            <a href="#" aria-label="Twitter"><i class="bi bi-twitter" data-icon="twitter"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4-style">
+        <div class="col-12 text-center-style small-style">
+          <p class="m-0-style">© <span id="currentYear">2025</span> Royal Place Hotel — All rights reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts (kept same as original; Zigrow snippet or other scripts should remain) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // Initialize Swiper (kept behavior identical)
+    const swiper = new Swiper('.mySwiper', {
+      // options as in original file (if present)
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    });
+
+    // Keep any additional JS that exists in original file unchanged.
+    // Example small script to keep footer year dynamic (helps avoid manual update)
+    document.getElementById('currentYear').innerText = new Date().getFullYear();
+  </script>
+
+  <script src="js/script.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    (function() {
+      // Find ALL Zigrow forms
+      const forms = Array.from(document.querySelectorAll('[data-zigrow-form]'));
+      if (!forms.length) return;
+
+      // Helper: turn FormData into a plain object
+      function serializeForm(form) {
+        const fd = new FormData(form);
+        const raw = {};
+        for (const [name, value] of fd.entries()) {
+          const el = form.elements[name];
+          const isGroup = el && (el.length && el[0] && el[0].type === 'checkbox');
+          if (isGroup) {
+            if (!raw[name]) raw[name] = [];
+            raw[name].push(value === '' ? true : value);
+          } else {
+            raw[name] = value;
+          }
+        }
+        return raw;
+      }
+
+      // Helper: pick primary value for quick list view
+      function pickPrimaryValue(raw) {
+        if (raw.email && String(raw.email).trim()) return String(raw.email).trim();
+        if (raw.phone && String(raw.phone).trim()) return String(raw.phone).trim();
+        const nameCombo = [raw.firstName, raw.lastName].filter(Boolean).join(' ').trim();
+        if (raw.name && String(raw.name).trim()) return String(raw.name).trim();
+        if (nameCombo) return nameCombo;
+        if (raw.message && String(raw.message).trim()) return String(raw.message).trim();
+        return '';
+      }
+
+      forms.forEach((form) => {
+        // Ensure hidden fields are filled
+        const domainInput = form.querySelector('input[name="domain"]');
+        const pageUrlInput = form.querySelector('input[name="page_url"]');
+        if (domainInput) domainInput.value = location.host;
+        if (pageUrlInput) pageUrlInput.value = location.href;
+
+        // Create a container for messages if not already exists
+        let msgContainer = form.querySelector('.form-submit-message');
+        if (!msgContainer) {
+          msgContainer = document.createElement('div');
+          msgContainer.className = 'form-submit-message mt-2 text-sm';
+          form.appendChild(msgContainer);
+        }
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const submitBtn = form.querySelector('[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.dataset._oldText = submitBtn.innerText;
+            submitBtn.innerText = 'Submitting...';
+          }
+
+          // Clear previous message
+          msgContainer.innerText = '';
+          msgContainer.style.color = '';
+
+          try {
+            const raw = serializeForm(form);
+            const body = new URLSearchParams();
+            body.set('domain', (form.querySelector('input[name="domain"]')?.value || location.host));
+            body.set('form_key', (form.querySelector('input[name="form_key"]')?.value || 'contact'));
+            body.set('page_url', (form.querySelector('input[name="page_url"]')?.value || location.href));
+            body.set('payload', JSON.stringify(raw));
+
+            const primary = pickPrimaryValue(raw);
+            if (primary) body.set('value', primary);
+
+            if (raw._company) body.set('_company', raw._company);
+
+            const res = await fetch(form.action, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json'
+              },
+              body
+            });
+
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && (data.ok ?? true)) {
+              form.reset();
+              msgContainer.innerText = '✅ Thanks! Your request has been submitted.';
+              msgContainer.style.color = '#28a745'; // green success
+            } else {
+              msgContainer.innerText = `❌ ${data.message || `Failed (HTTP ${res.status})`}`;
+              msgContainer.style.color = '#dc3545'; // red error
+            }
+          } catch (err) {
+            console.error(err);
+            msgContainer.innerText = '❌ Something went wrong. Please try again.';
+            msgContainer.style.color = '#dc3545';
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerText = submitBtn.dataset._oldText || 'Send';
+            }
+          }
+        });
+      });
+    })();
+  </script>
+
+</body>
+
+</html>

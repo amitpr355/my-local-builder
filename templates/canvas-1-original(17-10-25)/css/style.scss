@@ -1,0 +1,264 @@
+// Variables
+$primary-color: #157347;
+$secondary-color: #f8f9fa;
+$heading-color: #093561;
+$btn-color: #198754;
+$white: #ffffff;
+$gray-light: #f4f4f4;
+$font-stack: "Segoe UI", sans-serif;
+$paira-color: gray;
+
+// Global styles
+body {
+  font-family: $font-stack;
+  margin: 0;
+  padding: 0;
+  background-color: $white;
+  color: #333;
+  line-height: 1.6;
+}
+
+// Header
+#header {
+  .navbar-brand {
+    h5 {
+      color: $white;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+  }
+  background-color: $primary-color;
+  .nav-box a {
+    margin-right: 2.5rem;
+    text-decoration: none;
+    color: $white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    &:hover {
+      border-bottom: 2px solid white;
+    }
+  }
+  .nav-btn {
+    background-color: $white;
+    color: $heading-color;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    margin-left: 8rem;
+    &:hover {
+      background-color: darken($white, 5%);
+    }
+  }
+  @media (max-width:991.98px) {
+    .nav-btn{
+      margin-left: 0rem;
+    }
+    .nav-box a{
+      margin: 0rem auto;
+    }
+  }
+}
+
+// Hero Section
+#hero {
+  background: linear-gradient(to bottom, $secondary-color, $white);
+  text-align: center;
+  padding: 6rem 0rem;
+
+  h1 {
+    font-weight: 800;
+    color: $heading-color;
+  }
+
+  p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: auto;
+    color: $paira-color;
+  }
+
+  .btn {
+    background-color: $btn-color;
+    color: $white;
+    padding: 0.7rem 4.5rem;
+    border-radius: 30px;
+    font-weight: 600;
+    &:hover {
+      background-color: darken($btn-color, 5%);
+    }
+  }
+}
+.whatsapp-icon {
+  position: absolute;
+  i {
+    position: fixed;
+    bottom: 5%;
+    right: 4%;
+    background-color: #157347;
+    z-index: 200;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: $white;
+    padding: 0.5rem 1rem;
+    border-radius: 50%;
+    box-shadow: 10px 8px 16px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// About Section
+#about {
+  background-color: $gray-light;
+  padding: 60px 0px;
+
+  .about-tex {
+    text-align: start;
+    @media (max-width:768px) {
+      text-align: center;
+    }
+    h3 {
+      color: $primary-color;
+      font-weight: 600;
+    }
+    p {
+      font-size: 1.2rem;
+      color: $paira-color;
+    }
+  }
+
+  img {
+    max-width: 600px;
+    height: 100%;
+  }
+}
+
+// Services Section
+#services {
+  padding: 60px 0px;
+  background-color: $white;
+
+  h3 {
+    color: $primary-color;
+    font-weight: 700;
+  }
+
+  p {
+    max-width: 800px;
+    margin: 10px auto;
+    color: $paira-color;
+    font-size: 1.2rem;
+  }
+}
+
+// Contact Section
+#contact {
+  background-color: $gray-light;
+  padding: 60px 0px;
+
+  .contact-box {
+    align-items: flex-start;
+    align-items: center;
+    margin-bottom: 15px;
+    i {
+      color: $primary-color;
+      font-size: 2rem;
+      @media (max-width:565px) {
+        font-size: 1.4rem;
+      }
+    }
+
+    p {
+      margin: 0;
+      color: $paira-color;
+      font-size: 1.4rem;
+      @media (max-width:565px) {
+        font-size: 1rem;
+      }
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      &:hover {
+        color: $btn-color;
+      }
+    }
+  }
+
+  .contact-icon {
+    font-size: 2rem;
+    i {
+      cursor: pointer;
+      transition: color 0.3s ease;
+      &:hover {
+        color: $btn-color;
+      }
+    }
+    .icon-1 {
+      color: #1877f2;
+    }
+    .icon-2 {
+      color: #e4405f;
+    }
+    .icon-3 {
+      color: #0a66c2;
+    }
+  }
+
+  .contact-img-box {
+    text-align: center;
+    img {
+      width: 100%;
+      max-width: 400px;
+    }
+  }
+}
+
+// Footer
+footer {
+  background-color: $primary-color;
+  color: $white;
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9rem;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  #header .nav-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hero-section {
+    max-width: 100%;
+  }
+
+  #about,
+  #contact,
+  #services {
+    padding: 30px 0px;
+    .about-tex,
+    .contact-section,
+    .contact-img-box {
+      padding: 10px 0px;
+    }
+
+    .d-md-flex {
+      flex-direction: column;
+    }
+  }
+
+  #hero {
+    padding: 30px 20px;
+    h1 {
+      font-size: 2rem;
+    }
+    .hero-section {
+      padding: 0rem 0rem;
+    }
+  }
+
+  .nav-btn {
+    font-size: 0.9rem;
+    padding: 8px 20px;
+  }
+}

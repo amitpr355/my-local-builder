@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Business Counsultencys</title>
+
+    <!-- Keep Bootstrap only for .container width -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+
+    <!-- Your styles -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <a id="backToTopBtn" aria-label="Back to top" class="back-to-top">
+      <i class="bi bi-arrow-up" data-icon="arrow"></i>
+    </a>
+    <header id="main-header" data-section="main-header" class="main-header">
+      <div class="container">
+        <div class="row header-row">
+          <!-- Logo -->
+          <div class="col-6 col-md-3 logo-col" data-logo="navbar">
+            <a href="#" class="logo">
+              <h4>BUSI<span>N</span>EES</h4>
+              <p>CONSULTANCY</p>
+            </a>
+          </div>
+
+          <!-- Nav + Toggle -->
+          <div class="col-6 col-md-9 nav-col">
+            <!-- Toggle Button (new structure) -->
+            <button
+              id="nav-toggle"
+              class="nav-toggle"
+              aria-label="Toggle menu"
+              aria-controls="navbar"
+              aria-expanded="false"
+            >
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+            </button>
+
+            <!-- Nav Links -->
+            <nav id="navbar" class="nav-links" role="navigation">
+              <ul class="nav-list">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#service">Service</a></li>
+                <li><a href="#help-section">Contact</a></li>
+              </ul>
+              <a href="tel:1234567891" class="btn-nav">
+                Book a Free Consulting Call
+              </a>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" data-section="hero" id="home">
+      <div class="hero-bg"></div>
+      <div class="hero-overlay"></div>
+
+      <div class="container">
+        <div class="row hero-wraper">
+          <div class="col-12 col-lg-10">
+            <div class="hero-text">
+              <p class="eyebrow">WELCOME!</p>
+              <h1 class="hero-title">
+                Strong business <br />
+                strategy to grow your <br />
+                business
+              </h1>
+              <a href="#what-we-help-you" class="hero-btn">Contact Us</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" data-section="about" class="about">
+      <div class="container">
+        <div class="row g-4 g-lg-2 about-row">
+          <!-- Image Column -->
+          <div class="col-12 col-lg-6">
+            <div class="about-img">
+              <img
+                src="assets/business-img/business consulting website 2.webp"
+                alt="Business consultant"
+                class="img-fluid"
+              />
+            </div>
+          </div>
+
+          <!-- Text Column -->
+          <div class="col-12 col-lg-6">
+            <div class="about-text">
+              <span class="section-sub-title">ABOUT</span>
+              <h2 class="section-title">
+                We help small business owners and professionals to grow with
+                clarity and confidence.
+              </h2>
+              <p>
+                Running a business is challenging — from managing operations to
+                finding new clients and staying ahead in a competitive market.
+                Our consultancy helps entrepreneurs, startups, and service
+                professionals create clear strategies that simplify
+                decision-making and accelerate growth.
+              </p>
+              <a href="#what-we-help-you" class="cta-btn" id="hero-button">
+                Contact us
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services py-6" data-section="service" id="service">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-tag">what we do</span>
+          <h2 class="section-title">Consulting Services</h2>
+        </div>
+
+        <div class="row g-3 service-grid">
+          <div class="col-12 col-sm-6 col-lg-4">
+            <article class="service-card">
+              <div class="service-icon">
+                <i
+                  class="bi bi-people"
+                  aria-hidden="true"
+                  data-icon="people"
+                ></i>
+              </div>
+              <h3>Business Consulting</h3>
+              <p>
+                We help businesses identify challenges, streamline operations,
+                and build sustainable strategies for long-term growth. Our
+                approach focuses on clarity, efficiency, and measurable
+                outcomes.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4">
+            <article class="service-card">
+              <div class="service-icon">
+                <i
+                  class="bi bi-people"
+                  aria-hidden="true"
+                  data-icon="people"
+                ></i>
+              </div>
+              <h3>Sales and Marketing</h3>
+              <p>
+                From lead generation to customer retention, we create
+                result-driven sales and marketing strategies that strengthen
+                your brand, boost conversions, and accelerate business growth.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4">
+            <article class="service-card">
+              <div class="service-icon">
+                <i
+                  class="bi bi-people"
+                  aria-hidden="true"
+                  data-icon="people"
+                ></i>
+              </div>
+              <h3>Financial Consulting</h3>
+              <p>
+                We guide you in making smart financial decisions through
+                budgeting, forecasting, cost optimization, and risk
+                analysis—ensuring your business stays stable and profitable.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4">
+            <article class="service-card">
+              <div class="service-icon">
+                <i
+                  class="bi bi-people"
+                  aria-hidden="true"
+                  data-icon="people"
+                ></i>
+              </div>
+              <h3>Productivity Improvement</h3>
+              <p>
+                Our team analyzes your processes and implements tools, systems,
+                and workflows that help your business operate faster, smarter,
+                and more efficiently.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4">
+            <article class="service-card">
+              <div class="service-icon">
+                <i
+                  class="bi bi-people"
+                  aria-hidden="true"
+                  data-icon="people"
+                ></i>
+              </div>
+              <h3>Business Progress</h3>
+              <p>
+                Track, measure, and improve every stage of your business growth
+                with data-backed strategies designed to strengthen performance
+                and drive consistent progress.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4">
+            <article class="service-card">
+              <div class="service-icon">
+                <i
+                  class="bi bi-people"
+                  aria-hidden="true"
+                  data-icon="people"
+                ></i>
+              </div>
+              <h3>Business Planning</h3>
+              <p>
+                We help you develop clear, actionable business plans—from market
+                analysis to execution steps—so you can scale confidently with a
+                strong roadmap in place.
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case Study -->
+    <section class="case" data-section="case-study" id="case-study">
+      <div class="container">
+        <div class="row g-4 case-row">
+          <!-- Text Column -->
+          <div class="col-12 col-lg-6">
+            <div class="case-text">
+              <span class="section-tag">case study</span>
+              <h2 class="section-title">
+                Capital Co. jump-starts growth with return to core strategies
+              </h2>
+              <p>
+                Capital Co. was facing slowing revenue, scattered priorities,
+                and rising operational costs. Their teams were busy, but not
+                always focused on what truly moved the needle for the business.
+              </p>
+
+              <h6 class="case-sub">How we helped?</h6>
+              <ul class="case-points">
+                <li>
+                  <i class="bi bi-chevron-right" data-icon="arrow"></i>
+                  Financial consulting and cash-flow planning
+                </li>
+                <li>
+                  <i class="bi bi-chevron-right" data-icon="arrow"></i>
+                  Productivity improvement across key teams
+                </li>
+                <li>
+                  <i class="bi bi-chevron-right" data-icon="arrow"></i>
+                  Sales and marketing strategy realignment
+                </li>
+              </ul>
+              <a
+                href="#what-we-help-you"
+                class="btn-primary"
+                id="hero-button-2"
+              >
+                Contact us
+              </a>
+            </div>
+          </div>
+
+          <!-- Image Column -->
+          <div class="col-12 col-lg-6">
+            <div class="case-img">
+              <img
+                src="assets/business-img/business consultancy website template 3.webp"
+                alt="Case study"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reviews -->
+    <section
+      class="reviews"
+      data-section="reviews"
+      id="reviews"
+      aria-label="Client reviews"
+    >
+      <div class="reviews-bg"></div>
+      <div class="reviews-overlay"></div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-10 mx-auto">
+            <div class="reviews-content">
+              <div class="reviews-top">
+                <i class="bi bi-quote" data-icon="quote"></i>
+                <p>Reviews From Our Happy Clients</p>
+              </div>
+
+              <h2 class="reviews-title">
+                They helped us bring clarity to our strategy, streamline our
+                processes and grow.
+              </h2>
+
+              <div class="reviews-stars">
+                <p class="reviewer">Ankit Singh, Founder — Capital Co.</p>
+                <div class="stars" aria-label="5 out of 5">
+                  <i class="fa-solid fa-star" data-icon="star"></i>
+                  <i class="fa-solid fa-star" data-icon="star"></i>
+                  <i class="fa-solid fa-star" data-icon="star"></i>
+                  <i class="fa-solid fa-star" data-icon="star"></i>
+                  <i class="fa-solid fa-star" data-icon="star"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Help -->
+    <section class="help" data-section="help-section" id="help-section">
+      <div class="container">
+        <div class="row g-4 help-section-box help-row">
+          <div class="col-12 col-lg-6 help-img-box">
+            <div class="inner-img-box">
+              <img
+                src="assets/business-img/business consultancy website template 5.webp"
+                alt="Team helping client"
+              />
+            </div>
+          </div>
+
+          <!-- Text Column -->
+          <div class="col-12 col-lg-6">
+            <div class="help-text">
+              <h2 class="section-title">What can we help you overcome?</h2>
+              <p>
+                Struggling with unclear strategy, scattered execution, or slow
+                growth? We help business owners cut through the noise,
+                prioritize what really matters, and put systems in place that
+                support sustainable progress.
+              </p>
+              <p>
+                From financial clarity and operations to sales, marketing, and
+                team productivity work with you to remove roadblocks
+                results-driven action.
+              </p>
+              <a href="#contact-form-section" class="btn-primary">Contact us</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer
+      class="site-footer py-6"
+      data-section="footer-contact"
+      id="footer-contact"
+    >
+      <div class="container">
+        <div class="row g-4 footer-row">
+          <div class="col-12 col-lg-6">
+            <div class="contact-box">
+              <h6 class="footer-title">Contact</h6>
+              <p>E-123, ABC Plaza, Street, New Delhi - 110077</p>
+              <p>+91-9123456789</p>
+              <p class="email">yourname@domainname.com</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <div class="contact-box">
+              <h6 class="footer-title">Stay Connected</h6>
+
+              <div class="socials social-icon">
+                <a
+                  href="https://twitter.com"
+                  target="_blank"
+                  aria-label="Twitter"
+                >
+                  <i class="fab fa-twitter" data-icon="twitter"></i>
+                </a>
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  aria-label="Facebook"
+                >
+                  <i class="fab fa-facebook-f" data-icon="facebook"></i>
+                </a>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  aria-label="Instagram"
+                >
+                  <i class="fab fa-instagram" data-icon="instagram"></i>
+                </a>
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  aria-label="LinkedIn"
+                >
+                  <i class="fab fa-linkedin-in" data-icon="linkedin"></i>
+                </a>
+              </div>
+
+              <a href="#what-we-help-you" class="footer-cta">Contact us</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Optional: your scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Private Tutor</title>
+
+  <!-- Fav Icon -->
+  <link rel="icon" href="assets/fav-icon.webp" type="image/png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customutility.css">
+
+  <!-- Bootstrap link -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+  <!-- jonsuh hamburger icon  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hamburgers/1.1.3/hamburgers.min.css"
+    integrity="sha512-...your-integrity-hash..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+  <!-- Google Material Icons CDN -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <link <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Back to Top Button -->
+  <button id="backToTop" class="back-to-top d-flex align-items-center justify-content-center" aria-label="Back to Top">
+    <i class="bi bi-arrow-up-short fs-3"></i>
+  </button>
+  <!-- Header  -->
+  <header>
+    <nav id="mainNavbar" data-logo="mainNavbar" class="navbar navbar-expand-lg py-3 transition-navbar">
+      <div class="container">
+
+        <!-- Logo -->
+        <div class="navbar-header">
+
+          <a class="navbar-brand fw-bold-style  d-flex align-items-center gap-2" href="#">
+            <img src="assets/img/Logo.webp" alt="Logo" class="img-fluid ">
+
+          </a>
+        </div>
+
+        <!-- Toggle button -->
+        <!-- Toggle button with Elastic Hamburger -->
+        <button class="navbar-toggler hamburger hamburger--elastic d-lg-none" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarContent" aria-label="Toggle navigation">
+          <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+          </span>
+        </button>
+
+
+        <!-- Menu Items -->
+        <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
+          <ul class="navbar-nav ms-auto gap-lg-4 text-center font-montserrat">
+            <li class="nav-item py-lg-2 py-3 font-montserrat"><a class="nav-link p-0 " href="#hero">Home</a></li>
+            <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#expertise-section">Expertise</a></li>
+            <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#contact">Contact</a></li>
+
+
+          </ul>
+
+        </div>
+
+      </div>
+    </nav>
+
+
+  </header>
+  <!-- Header ends here -->
+  <!-- Hero Section -->
+  <section id="hero" data-section="hero" class="position-relative py-6">
+
+    <!-- Background Image -->
+    <div class="bg-image position-absolute top-0 start-0 w-100 h-100"></div>
+
+
+    <div class="container">
+      <div class="row align-items-center">
+
+        <!-- Text Content -->
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <p class="mb-2 mb-md-4 hero-subhead">Meet Your Tutor</p>
+          <h1 class="display-4 hero-head mb-3 mb-md-4">Richard Smith</h1>
+          <p class="hero-subpara mb-4">
+            Hi! I’m Richard, with over six years of tutoring experience. I’m passionate
+            about making learning fun and engaging. My goal is to create an adventurous
+            atmosphere through interactive activities and tailored lesson plans, inspiring
+            a love for learning in all my students.
+          </p>
+          <a href="#contact" class="call-now-btn ">
+            <i class="bi bi-telephone me-2"></i> Contact Me
+          </a>
+        </div>
+
+        <!-- Image Content -->
+        <div class="col-lg-6 position-relative text-center">
+          <!-- Decorative BG Circle -->
+          <div class="circle-bg"></div>
+
+          <!-- Decorative SVGs -->
+          <div class="decorative">
+
+            <img src="assets/img/hero-icon-a.webp" class="hero-deco deco-1" alt="">
+            <img src="assets/img/hero-icon-a.webp" class="hero-deco deco-2" alt="">
+            <img src="assets/img/hero-icon-a.webp" class="hero-deco deco-3" alt="">
+
+            <!-- Tutor Image -->
+            <img src="assets/img/hero-2.webp" class="img-fluid hero-img position-relative" alt="Richard Smith">
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Hero Section Ends Here -->
+
+  <!-- Why Choose Section -->
+  <section id="why-choose" data-section="why-choose" class="py-6">
+    <div class="container">
+      <div class="col-md-9 m-auto text-center mb-5">
+        <h2 class="main-heading display-6 mb-md-2 mb-3">Why Choose Personalized Tutoring?</h2>
+        <p class="main-subpara">
+          Get tailored lessons, one-on-one support, and flexible scheduling to make learning easier and more effective.
+        </p>
+      </div>
+
+      <div class="row justify-content-center gy-4">
+        <div class="col-md-4">
+          <div class="why-choose__card text-center">
+            <div class="why-choose__icon mb-3">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h5 class="why-choose__card-title mb-3">One-on-One Attention</h5>
+            <p class="why-choose__card-text">
+              Get personalized guidance tailored to your learning style and pace.
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="why-choose__card text-center">
+            <div class="why-choose__icon mb-3">
+              <i class="bi bi-journal-text"></i>
+            </div>
+            <h5 class="why-choose__card-title mb-3">Customized Lesson Plans</h5>
+            <p class="why-choose__card-text">
+              Lessons designed to target your strengths and improve areas of difficulty.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="why-choose__card text-center">
+            <div class="why-choose__icon mb-3">
+              <i class="bi bi-calendar3"></i>
+            </div>
+            <h5 class="why-choose__card-title mb-3">Flexible Scheduling</h5>
+            <p class="why-choose__card-text">
+              Book sessions at times that fit your busy schedule.Book now.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Section Ends Here -->
+
+  <!-- Programs Section -->
+  <section id="expertise-section" data-section="expertise-section" class=" position-relative py-6">
+    <!-- Decorative Background SVGs -->
+    <div class="decorative">
+      <img src="assets/img/expertise-icon-a.webp" class="decor-svg left-svg position-absolute" alt="left decoration">
+      <img src="assets/img/expertise-icon-b.webp" class="decor-svg right-svg position-absolute" alt="right decoration">
+
+    </div>
+
+    <!-- Section Content -->
+    <div class="container text-center">
+
+      <div class="col-md-12 m-auto text-center mb-5">
+        <h2 class="main-heading display-6 mb-md-2 mb-3">My Areas of Expertise</h2>
+        <p class="main-subpara">
+          Get tailored lessons, one-on-one support, and flexible scheduling to make learning easier and more effective.
+        </p>
+      </div>
+
+
+      <!-- Expertise Cards -->
+      <div class="row g-4 justify-content-center">
+        <!-- Card 1 -->
+        <div class="col-md-4">
+          <div class="expertise-card text-center">
+            <div class="rotating-img">
+              <div class="decorative">
+
+                <img src="assets/img/expertise-b.webp" alt="Mathematics" class="img-fluid">
+              </div>
+            </div>
+            <h5 class="card-heading mt-4 mb-3">Mathematics</h5>
+            <p class="mb-5 card-para">Get personalized guidance tailored to your learning style and pace.</p>
+            <a href="#" class="primary-btn  mt-2">Learn More</a>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-4">
+          <div class="expertise-card text-center">
+            <div class="rotating-img">
+              <div class="decorative">
+
+                <img src="assets/img/expertise-c.webp" alt="English" class="img-fluid">
+              </div>
+            </div>
+            <h5 class="card-heading mt-4 mb-3">English</h5>
+            <p class="card-para mb-5">Get personalized guidance tailored to your learning style and pace.</p>
+            <a href="#" class="primary-btn  mt-2">Learn More</a>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-4">
+          <div class="expertise-card text-center">
+            <div class="rotating-img">
+              <div class="decorative">
+
+                <img src="assets/img/expertise-a.webp" alt="Social Studies" class="img-fluid">
+              </div>
+            </div>
+            <h5 class="card-heading mt-4 mb-3">Social Studies</h5>
+            <p class="card-para mb-5">Get personalized guidance tailored to your learning style and pace.</p>
+            <a href="#" class="primary-btn  mt-2">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programs Section Ends Here -->
+
+  <!-- Features / Interactive Learning Section -->
+  <section id="features" data-section="features" class="position-relative py-6">
+    <!-- Background Image -->
+    <div class="bg-image position-absolute top-0 start-0 w-100 h-100"></div>
+
+    <!-- Decorative SVGs -->
+    <div class="decorative">
+
+      <img src="assets/img/features-icon-a.webp" class="decor-svg left-svg position-absolute" alt="decoration">
+      </div>
+      <dev class="decorative">
+
+        <img src="assets/img/features-icon-b.webp" class="decor-svg right-svg position-absolute" alt="decoration">
+      </dev>
+    
+
+    <div class="container py-5">
+
+      <div class="col-md-9 m-auto text-center mb-5">
+        <h2 class="main-heading display-6 mb-md-2 mb-3">Holistic Approach to Teaching</h2>
+        <p class="main-subpara">
+          Get tailored lessons, one-on-one support, and flexible scheduling to make learning easier and more effective.
+        </p>
+      </div>
+
+
+
+
+      <!-- Flex cards for tablet & desktop -->
+      <div class="row g-4">
+        <!-- Card 1 -->
+        <div class="col-lg-6 col-lg-6">
+          <div class="feature-card card-custom d-flex flex-md-row flex-column p-4 align-items-stretch rounded-4 h-100">
+            <div class="decorative">
+
+              <img src="assets/img/features-a.webp" class="img-custom me-sm-4 m-0" alt="Interaction">
+            </div>
+
+            <div class="d-flex flex-column h-100 w-100 py-3">
+              <h5 class="zzswwww-style mb-4">Interaction</h5>
+              <p class="card-text">Get tailored lessons, one-on-one support, and flexible scheduling to make learning
+                easier and more effective.</p>
+              <a href="#" class="secondary-btn  mt-auto ">Learn More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-lg-6">
+          <div class="feature-card card-custom d-flex p-4  flex-md-row flex-column rounded-4 h-100">
+            <div class="decorative">
+
+              <img src="assets/img/features-b.webp" class="img-custom me-sm-4  m-0" alt="Interaction">
+            </div>
+
+            <div class="d-flex flex-column justify-content-between h-100 w-100 py-3">
+              <h5 class="fw-semibold-style mb-4">Classroom Lectures</h5>
+              <p class="card-text">Get tailored lessons, one-on-one support, and flexible scheduling to make learning easier and
+                more effective.</p>
+              <a href="#" class="secondary-btn  mt-auto ">Learn More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-lg-6">
+          <div
+            class="feature-card card-custom d-flex p-4  rounded-4 flex-md-row flex-column h-100  flex-md-row-reverse">
+            <div class="decorative">
+
+              <img src="assets/img/features-c.webp" class="img-custom ms-sm-4  m-0" alt="Interaction">
+            </div>
+
+            <div class="d-flex flex-column justify-content-between h-100 w-100 py-3">
+              <h5 class="fw-semibold-style mb-4">Project Completion</h5>
+              <p class="card-text">Get tailored lessons, one-on-one support, and flexible scheduling to make learning
+                easier and more effective.</p>
+              <a href="#" class="secondary-btn  mt-auto ">Learn More</a>
+            </div>
+
+
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="col-lg-6">
+          <div
+            class="feature-card card-custom d-flex  p-4 rounded-4 flex-md-row flex-column h-100 flex-md-row-reverse ">
+            <div class="decorative">
+
+              <img src="assets/img/features-d.webp" class="img-custom ms-sm-4  m-0" alt="Interaction">
+            </div>
+
+            <div class="d-flex flex-column justify-content-between h-100 w-100 py-3">
+              <h5 class="fw-semibold-style mb-4">Hands on Experience</h5>
+              <p class="card-text">Get tailored lessons, one-on-one support, and flexible scheduling to make learning
+                easier and more effective.</p>
+              <a href="#" class="secondary-btn  mt-auto ">Learn More</a>
+            </div>
+
+
+          </div>
+        </div>
+        <!-- Repeat other 3 cards -->
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Features Section Ends Here -->
+
+
+
+  <!-- Highlight Program or Callout  -->
+  <section id="highlight-program" data-section="highlight-program" class="position-relative py-6">
+    <!-- Decorative Background Circle -->
+    <div class="decorative">
+
+      <img src="assets/img/hightlight bg icon.webp" class="circle-bg position-absolute" alt="circle decoration" />
+    </div>
+
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <!-- Image Side -->
+        <div class="col-lg-5 position-relative">
+          <div class="decorative">
+
+            <img src="assets/img/highlight.webp" class="img-fluid rounded-4 shadow" alt="Teaching" />
+          </div>
+        </div>
+
+        <!-- Text Side -->
+        <div class="col-lg-6">
+          <h2 class="main-heading display-6 mb-md-3 mb-3">Preparing your Children’s<br />bright future</h2>
+          <p class="main-subpara mb-5">
+            Get tailored lessons, one-on-one support, and flexible scheduling to make learning easier and more
+            effective.
+          </p>
+
+
+          <!-- Points List -->
+          <div class="d-flex align-items-start mb-3">
+            <div class="decorative">
+                <i>
+
+                  <img src="assets/img/highlight-icon-a.webp" alt="icon" class="me-4 icon-32">
+                </i>
+            </div>
+            <div>
+              <h6 class="fw-semibold-style mb-1">Grade Improvement</h6>
+              <p class="muted small mb-0">Get personalized guidance tailored to your learning style and pace.</p>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start mb-3">
+            <div class="decorative">
+              <i>
+
+                <img src="assets/img/highlight-icon-b.webp" alt="icon" class="me-4 icon-32">
+              </i>
+            </div>
+            <div>
+              <h6 class="fw-semibold-style mb-1">Exam Preparation</h6>
+              <p class="muted small mb-0">Lessons designed to target your strengths and improve areas of difficulty.</p>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start">
+            <div class="decorative">
+              <i>
+
+                <img src="assets/img/highlight-icon-c.webp" alt="icon" class="me-4 icon-32">
+              </i>
+            </div>
+            <div>
+              <h6 class="fw-semibold-style mb-1">Social Development</h6>
+              <p class="muted small mb-0">Book sessions at times that fit your busy schedule.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Highlight Program Section Ends Here -->
+
+  <!-- Ratings & Reviews Section -->
+  <section id="reviews" data-section="reviews" class="py-6">
+    <div class="container text-center">
+      <div class="col-md-9 m-auto text-center mb-5">
+        <h2 class="main-heading display-6 mb-md-2 mb-3">What people think about me</h2>
+        <p class="main-subpara">
+          Knowing what students think helps my growth
+        </p>
+      </div>
+      <div class="decorative">
+
+
+        <img src="assets/img/review-bg-icon.webp" alt="" class="quote-img">
+      </div>
+      <p class="review-text mb-5">
+        Ante facilisi ipsum sit eget dolor maecenas sed. Fringilla laoreet tincidunt nec nulla ullamcorper.
+        Convallis viverra risus, facilisis erat gravida justo, urna ultrices. Nulla ullamcorper. Convallis viverra
+        risus.
+      </p>
+
+      <!-- Swiper -->
+      <div class="swiper-wrapper-container position-relative">
+
+
+        <div class="swiper mySwiper">
+          <div class="swiper-wrapper">
+            <!-- Slide 1 -->
+            <div class="swiper-slide">
+              <div class="review-card">
+                <div class="decorative">
+
+                  <img src="assets/img/review-avatar-a.webp" alt="Riya" class="avatar mb-3" />
+                </div>
+                <h6 class="mb-1 fw-semibold-style">Riya Sharma</h6>
+                <p class="muted small mb-0">Student</p>
+              </div>
+            </div>
+
+            <!-- Repeat slides -->
+            <div class="swiper-slide">
+              <div class="review-card">
+                <div class="decorative">
+
+                  <img src="assets/img/review-avatar-b.webp" alt="Tanay" class="avatar mb-3" />
+                </div>
+                <h6 class="mb-1 fw-semibold-style">Tanay Kumar</h6>
+                <p class="muted small mb-0">Student</p>
+              </div>
+            </div>
+
+
+            <div class="swiper-slide">
+              <div class="review-card">
+                <div class="decorative">
+
+                  <img src="assets/img/review-avatar-a.webp" alt="Aarav" class="avatar mb-3" />
+                </div>
+                <h6 class="mb-1 fw-semibold-style">Aarav Gupta</h6>
+                <p class="muted small mb-0">Student</p>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="review-card">
+                <div class="decorative">
+
+                  <img src="assets/img/review-avatar-b.webp" alt="Aarav" class="avatar mb-3" />
+                </div>
+                <h6 class="mb-1 fw-semibold-style">Aarav Gupta</h6>
+                <p class="muted small mb-0">Student</p>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="review-card">
+                <div class="decorative">
+
+                  <img src="assets/img/review-avatar-c.webp" alt="Aarav" class="avatar mb-3" />
+                </div>
+                <h6 class="mb-1 fw-semibold-style">Aarav Gupta</h6>
+                <p class="muted small mb-0">Student</p>
+              </div>
+            </div>
+
+            <div class="swiper-slide">
+              <div class="review-card">
+                <div class="decorative">
+
+                  <img src="assets/img/review-avatar-b.webp" alt="Tanay" class="avatar mb-3" />
+                </div>
+                <h6 class="mb-1 fw-semibold-style">Tanay Kumar</h6>
+                <p class="muted small mb-0">Student</p>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="review-card">
+                <div class="decorative">
+
+                  <img src="assets/img/review-avatar-b.webp" alt="Tanay" class="avatar mb-3" />
+                </div>
+                <h6 class="mb-1 fw-semibold-style">Tanay Kumar</h6>
+                <p class="muted small mb-0">Student</p>
+              </div>
+            </div>
+            <!-- Add more if needed -->
+          </div>
+
+          <!-- Pagination dots -->
+          <div class="swiper-pagination mt-4"></div>
+        </div>
+
+        <!-- Left & Right Gradient Overlays -->
+        <div class="swiper-fade-left"></div>
+        <div class="swiper-fade-right"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews Section Ends Here -->
+
+  <!-- Contact / Location Section -->
+  <section id="contact" data-section="contact" class="position-relative bg-light">
+    <div class="container-fluid px-0">
+      <div class="row g-0 min-vh-100">
+
+        <!-- Left: Contact Info & Form -->
+        <div class="col-lg-6 bg-cream d-flex flex-column justify-content-center p-5">
+          <div class="row">
+            <!-- Contact Info -->
+            <div class="col-md-5 mb-4 mb-md-0 left-contact">
+              <h5 class="fw-semibold-style mb-5">Contact Information</h5>
+              <ul class="list-unstyled mb-5">
+                <li class="mb-4"><i class="bi bi-telephone-fill me-2 icons"></i> +91 12345 67859</li>
+                <li class="mb-4"><i class="bi bi-envelope-fill me-2 icons"></i> demo@gmail.com</li>
+                <li class="mb-4"><i class="bi bi-geo-alt-fill me-2 icons"></i> 132 Dartmouth Street, Bengaluru, 560098
+                </li>
+              </ul>
+              <div>
+                <a href="#"><i class="bi bi-twitter me-3 icons"></i></a>
+                <a href="#"><i class="bi bi-facebook me-3 icons"></i></a>
+                <a href="#"><i class="bi bi-instagram icons"></i></a>
+              </div>
+            </div>
+
+            <!-- Form -->
+            <div class="col-md-7">
+              <form>
+                <div class="row g-5">
+                  <div class="col-12">
+                    <input type="text" class="form-control form-custom" placeholder="Name" />
+                  </div>
+                  <div class="col-12">
+                    <input type="email" class="form-control form-custom" placeholder="Email" />
+                  </div>
+                  <div class="col-12">
+                    <input type="text" class="form-control form-custom" placeholder="Phone Number" />
+                  </div>
+
+                  <div class="col-12">
+                    <textarea class="form-control form-custom" rows="3" placeholder="Write your message..."></textarea>
+                  </div>
+                  <div class="col-12">
+                    <button type="submit" class="call-now-btn  w-100">
+                      <i class="bi bi-telephone me-2"></i> Contact Me
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Right: Embedded Map -->
+        <div class="col-lg-6">
+          <div class="map-container text-center">
+
+            <!-- Map Wrapper -->
+            <div data-component-maps style="width:100%; height: 800px;">
+              <iframe src="https://maps.google.com/maps?q=12.894370090902344,77.6343217148211&z=14&t=q&output=embed"
+                width="100%" height="100%" style="border:0;" loading="lazy" allowfullscreen
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Contact Section Ends Here -->
+
+  <!-- Footer Starts -->
+  <footer id="footer" data-logo='footer' class="py-4 bg-white border-top">
+    <div class="container">
+      <div class="row align-items-center text-center text-md-start">
+
+        <!-- Logo Left -->
+        <div class="col-md-2 mb-3 mb-md-0">
+          <div class="decorative">
+
+            <img src="assets/img/Logo.webp" alt="" class="footer-logo mb-0">
+          </div>
+        </div>
+
+        <!-- Copyright Center -->
+        <div class="col-md-9 text-md-center">
+          <p class="mb-0 small text-muted">
+            © Copyright 2022, All Rights Reserved.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+  <!-- Footer Ends Here -->
+
+
+ <!-- form cript -->
+  
+<script>
+(function () {
+  // Find ALL Zigrow forms
+  const forms = Array.from(document.querySelectorAll('[data-zigrow-form]'));
+  if (!forms.length) return;
+
+  // Helper: turn FormData into a plain object
+  function serializeForm(form) {
+    const fd = new FormData(form);
+    const raw = {};
+
+    for (const [name, value] of fd.entries()) {
+      const el = form.elements[name];
+      const isGroup = el && el.length && el[0] && el[0].type === 'checkbox';
+
+      if (isGroup) {
+        if (!raw[name]) raw[name] = [];
+        raw[name].push(value === '' ? true : value);
+      } else {
+        raw[name] = value;
+      }
+    }
+    return raw;
+  }
+
+  // Helper: pick primary value for quick list view
+  function pickPrimaryValue(raw) {
+    if (raw.email && String(raw.email).trim()) return String(raw.email).trim();
+    if (raw.phone && String(raw.phone).trim()) return String(raw.phone).trim();
+
+    const nameCombo = [raw.firstName, raw.lastName].filter(Boolean).join(' ').trim();
+
+    if (raw.name && String(raw.name).trim()) return String(raw.name).trim();
+    if (nameCombo) return nameCombo;
+
+    if (raw.message && String(raw.message).trim()) return String(raw.message).trim();
+
+    return '';
+  }
+
+  forms.forEach((form) => {
+    // Ensure hidden fields are filled
+    const domainInput = form.querySelector('input[name="domain"]');
+    const pageUrlInput = form.querySelector('input[name="page_url"]');
+
+    if (domainInput) domainInput.value = location.host;
+    if (pageUrlInput) pageUrlInput.value = location.href;
+
+    // Create a container for messages if not exists
+    let msgContainer = form.querySelector('.form-submit-message');
+    if (!msgContainer) {
+      msgContainer = document.createElement('div');
+      msgContainer.className = 'form-submit-message mt-2 text-sm';
+      form.appendChild(msgContainer);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = form.querySelector('[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.dataset._oldText = submitBtn.innerText;
+        submitBtn.innerText = 'Submitting...';
+      }
+
+      // Clear previous message
+      msgContainer.innerText = '';
+      msgContainer.style.color = '';
+
+      try {
+        const raw = serializeForm(form);
+
+        const body = new URLSearchParams();
+        body.set('domain', form.querySelector('input[name="domain"]')?.value || location.host);
+        body.set('form_key', form.querySelector('input[name="form_key"]')?.value || 'contact');
+        body.set('page_url', form.querySelector('input[name="page_url"]')?.value || location.href);
+        body.set('payload', JSON.stringify(raw));
+
+        const primary = pickPrimaryValue(raw);
+        if (primary) body.set('value', primary);
+
+        if (raw._company) body.set('_company', raw._company);
+
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && (data.ok ?? true)) {
+          form.reset();
+          msgContainer.innerText = '✅ Thanks! Your request has been submitted.';
+          msgContainer.style.color = '#28a745';
+
+          //  Scroll to header section
+          const header = document.querySelector('header');
+          if (header) {
+            header.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+
+        } else {
+          msgContainer.innerText = `❌ ${data.message || `Failed (HTTP ${res.status})`}`;
+          msgContainer.style.color = '#dc3545';
+        }
+
+      } catch (err) {
+        console.error(err);
+        msgContainer.innerText = '❌ Something went wrong. Please try again.';
+        msgContainer.style.color = '#dc3545';
+
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = submitBtn.dataset._oldText || 'Send';
+        }
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script src="js/script.js"></script>
+
+<!-- Gsap animation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+
+
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+  integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas-1</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <section id="header" data-section="header" class="header">
+      <div class="container">
+        <nav class="navbar">
+          <div class="nav-container">
+            <a class="navbar-brand" data-logo="navbar" href="#">
+              <h5>Business Logo</h5>
+            </a>
+
+            <button class="menu-btn" id="menuToggle" aria-label="Toggle menu">
+              <span></span><span></span><span></span>
+            </button>
+
+            <div class="nav-links" id="navMenu">
+              <ul class="nav-box">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#services">Services</a></li>
+              </ul>
+            </div>
+            <a href="tel:+919123456789" class="btn nav-btn">+91-9123456789</a>
+          </div>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section id="hero" data-section="hero" class="hero">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-10 mx-auto hero-section">
+            <h1 class="heading">
+              Professional Solutions <br />
+              For Your Business
+            </h1>
+            <p class="mt-3 mb-4">
+              Use this hero section to introduce your business consulting
+              services with clarity and confidence. Explain who you help, what
+              problems you solve, and why clients should trust you—all in a
+              quick, impactful first glance.
+            </p>
+            <a href="#about" class="btn">Know More</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="floating-icon">
+      <a
+        class="floating-icon__btn"
+        href="https://wa.me/919123456789"
+        aria-label="WhatsApp"
+      >
+        <i class="bi bi-whatsapp" data-icon="whatsapp" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" data-section="about" class="about py-6">
+      <div class="container">
+        <div class="row g-4 about-content">
+          <!-- Text Column -->
+          <div class="col-12 col-lg-6">
+            <div class="about-text">
+              <h3>About the company</h3>
+              <p>
+                We work with growing businesses that need structure, clarity,
+                and a clear plan to move forward. From strategy and operations
+                to sales and client experience, we help you turn everyday chaos
+                into a streamlined, growth-ready system.
+                <br /><br />
+                Our team combines real-world business experience with practical
+                frameworks, so you’re not just getting ideas—you’re getting
+                execution support. Whether you’re refining your offer, improving
+                processes, or building a stronger brand presence, we’re here to
+                help you scale with confidence.
+              </p>
+            </div>
+          </div>
+
+          <!-- Image Column -->
+          <div class="col-12 col-lg-6">
+            <div class="about-image">
+              <img
+                src="assets/canvas-1/1.webp"
+                alt="About the company"
+                class="object-fit-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" data-section="services" class="services py-6">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12 col-lg-10 services-container">
+            <h3>Services We Offer</h3>
+            <p>
+              We help growing businesses simplify their strategy, organize their
+              operations, and build systems that actually support growth.
+              Whether you are just starting out or ready to scale, our
+              consulting services are designed to give you clarity, structure,
+              and a clear plan of action.
+            </p>
+            <p>
+              From business planning and financial guidance to sales, marketing,
+              and team productivity, we work alongside you to solve real
+              problems—not just on paper, but in the way your business runs
+              every day. So you can spend less time firefighting and more time
+              building what truly matters.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" data-section="contact" class="contact py-6">
+      <div class="container">
+        <div class="row contact-grid g-4">
+          <!-- Left Column: Contact Details -->
+          <div class="col-12 col-lg-6">
+            <div class="contact-left">
+              <div class="contact-list">
+                <div class="contact-item">
+                  <i
+                    class="bi bi-geo-alt"
+                    data-icon="location"
+                    aria-hidden="true"
+                  ></i>
+                  <p>
+                    E-123, ABC Business Plaza, XYZ Street,<br />
+                    New Delhi - 110077
+                  </p>
+                </div>
+
+                <div class="contact-item">
+                  <i
+                    class="bi bi-telephone-fill"
+                    data-icon="phone"
+                    aria-hidden="true"
+                  ></i>
+                  <p>
+                    <a href="tel:+919123456789" name="phone">
+                      +91-9123456789
+                    </a>
+                  </p>
+                </div>
+
+                <div class="contact-item">
+                  <i
+                    class="bi bi-envelope"
+                    data-icon="envelope"
+                    aria-hidden="true"
+                  ></i>
+                  <p>
+                    <a href="mailto:yourname@domainname.com" name="email">
+                      yourname@domainname.com
+                    </a>
+                  </p>
+                </div>
+              </div>
+
+              <div class="socials">
+                <a href="#" aria-label="Facebook">
+                  <i
+                    class="bi bi-facebook"
+                    data-icon="Facebook"
+                    style="color: #1877f2"
+                  ></i>
+                </a>
+                <a href="#" aria-label="Instagram">
+                  <i
+                    class="bi bi-instagram"
+                    data-icon="Instagram"
+                    style="color: #e4405f"
+                  ></i>
+                </a>
+                <a href="#" aria-label="LinkedIn">
+                  <i
+                    class="bi bi-linkedin"
+                    data-icon="linkedin"
+                    style="color: #0a66c2"
+                  ></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Image -->
+          <div class="col-12 col-lg-6">
+            <div class="contact-right">
+              <img
+                src="assets/canvas-1/2.webp"
+                class="object-fit-cover"
+                alt="Contact our consultancy team"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" data-section="footer" id="footer">
+      <div class="container">
+        <p class="py-0 m-0">Copyright © 2025. All Rights Reserved.</p>
+      </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

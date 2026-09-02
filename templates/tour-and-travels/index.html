@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Local Tour Guide</title>
+  <!-- Fav Icon -->
+  <link rel="icon" href="assets/fav-icon.png" type="image/x-icon">
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Bootstrap link -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+  <!-- jonsuh hamburger icon  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hamburgers/1.1.3/hamburgers.min.css" integrity="sha512-...your-integrity-hash..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+  <!-- Google Fonts -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" />
+
+  <style>
+    [class*="z-"] {
+      opacity: 0;
+    }
+
+    .z-fade-up-scroll.animate {
+      animation: zFadeUp .8s ease forwards;
+    }
+
+    @keyframes zFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .z-slide-left-scroll.animate {
+      animation: zSlideLeft .8s ease forwards;
+    }
+
+    @keyframes zSlideLeft {
+      from {
+        opacity: 0;
+        transform: translateX(60px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .z-slide-right-scroll.animate {
+      animation: zSlideRight .8s ease forwards;
+    }
+
+    @keyframes zSlideRight {
+      from {
+        opacity: 0;
+        transform: translateX(-60px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .z-zoom-in-scroll.animate {
+      animation: zZoomIn .8s ease forwards;
+    }
+
+    @keyframes zZoomIn {
+      from {
+        opacity: 0;
+        transform: scale(.5);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Back to Top Button -->
+  <button id="backToTop" class="back-to-top d-flex align-items-center justify-content-center" aria-label="Back to Top">
+    <i class="bi bi-arrow-up-short fs-3"></i>
+  </button>
+
+  <div class="bg-design-wrapper">
+    <!-- ===================== Header  ===================== -->
+    <header>
+      <div class="container" style="z-index: 2;">
+        <nav id="mainNavbar" class="navbar navbar-expand-lg py-3 transition-navbar" style="z-index: 4;">
+
+          <!-- Logo -->
+          <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
+            <span>Logo</span>
+          </a>
+
+          <!-- Toggle button -->
+          <!-- Toggle button with Elastic Hamburger -->
+          <button class="navbar-toggler hamburger hamburger--elastic d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-label="Toggle navigation">
+            <span class="hamburger-box">
+              <span class="hamburger-inner"></span>
+            </span>
+          </button>
+
+
+          <!-- Menu Items -->
+          <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
+            <ul class="navbar-nav ms-auto gap-lg-4 text-center font-montserrat">
+              <li class="nav-item py-lg-2 py-3 font-montserrat"><a class="nav-link p-0 " href="#hero">Home</a></li>
+              <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#popular-destinations">About</a></li>
+              <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#top-categories">Tours</a></li>
+              <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#review-highlight">Testimonials</a></li>
+
+              <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#travel-stories">Gallery</a></li>
+              <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#plan-your-journey">Contact</a></li>
+
+            </ul>
+
+          </div>
+
+        </nav>
+      </div>
+
+
+    </header>
+    <!-- ===================== Header Ends Here ===================== -->
+
+    <!-- ===================== Hero Section ===================== -->
+
+
+
+
+
+    <section id="hero" class="py-6">
+      <div class="container">
+        <div class="row g-4 align-items-stretch flex-column-reverse flex-lg-row">
+
+          <!-- LEFT: Big image + text -->
+          <div class="col-12 col-lg-9 position-relative hero-left">
+            <img src="assets/img/hero-bg.webp" alt="Hot Air Balloons" class="hero-main-img rounded-shape w-100 d-none d-lg-block" />
+
+            <!-- Text -->
+            <div class="hero-text p-4 p-sm-5">
+              <h2 class="heading display-6 main-heading mb-3">
+                Unforgettable<br />Journeys Await You
+              </h2>
+              <p class="text-muted mb-4 col-lg-11">
+                Discover breathtaking destinations with personalized guided tours
+              </p>
+              <a href="#" class="primary-btn">Book Your Adventure</a>
+            </div>
+          </div>
+
+          <!-- RIGHT: Stacked images -->
+          <div class="col-12 col-lg-3 d-flex flex-column gap-4 hero-right">
+            <img src="assets/img/hero a.webp" class="img-fluid rounded-shape first-img m-lg-0 m-auto" alt="City" />
+            <img src="assets/img/hero b.webp" class="img-fluid rounded-shape second-img m-lg-0 m-auto" alt="Desert" />
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== End Hero Section =================== -->
+
+    <!-- =============== Popular Destinations Section =============== -->
+    <section id="popular-destinations" class="py-6">
+      <div class="container">
+        <div class="row align-items-center gx-sm-5 gx-0 gy-md-0 gy-5">
+
+          <!-- Left: Image -->
+          <div class="col-md-7 position-relative" style="z-index: 2;">
+            <div class="card position-relative local-card">
+
+
+              <!-- Main image -->
+              <img src="assets/img/destination.webp" class="card-img" alt="Local Guide" />
+
+              <!-- Bottom arrow -->
+              <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+                <i class="bi bi-arrow-right fs-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right: Text content -->
+          <div class="col-md-5 text-md-start text-center" style="z-index: 2;">
+
+            <h2 class="text-md-start text-center display-6 main-heading mb-4">
+              Your Journey, My Passion
+            </h2>
+
+            <div class="d-flex flex-column gap-2 mb-4 ">
+
+              <p class="small muted m-0">Every journey I plan starts with one question: “What would make this unforgettable?” I’m here to bring that magic to your travel story.</p>
+              <p class="small muted m-0"> I’ve spent years exploring destinations, understanding cultures, and perfecting the art of planning seamless trips. Today, I bring that experience to every journey I craft — because your travel deserves more than a package. It deserves purpose..</p>
+
+
+            </div>
+
+            <a href="#" class="primary-btn ">Let's Plan Your Trip</a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    <!-- =========== End Popular Destinations Section =========== -->
+
+    <!-- ================== Top Categories Section ================== -->
+    <section id="top-categories" class="py-6">
+      <div class="container" style="z-index: 2;">
+        <h2 class="text-md-start text-center position-relative display-6 main-heading " style="z-index: 2;">
+          Tailored Tours for Every <br> Traveler
+        </h2>
+
+        <div class="row g-md-5 g-4 ">
+          <!-- Card 1 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-4" style="z-index: 2;">
+            <div class="card position-relative local-card hover-scale">
+              <!-- Top label -->
+              <div class="card-top-label">Royal Heritage Walk</div>
+
+              <!-- Main image -->
+              <img src="assets/img/top-categories e.webp" class="card-img" alt="Local Guide" />
+
+              <!-- Bottom arrow -->
+              <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+                <i class="bi bi-arrow-right fs-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+            <div class="card position-relative local-card hover-scale">
+              <!-- Top label -->
+              <div class="card-top-label">Mountain Escape</div>
+
+              <!-- Main image -->
+              <img src="assets/img/top-categories d.webp" class="card-img" alt="Local Guide" />
+
+              <!-- Bottom arrow -->
+              <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+                <i class="bi bi-arrow-right fs-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+            <div class="card position-relative local-card hover-scale">
+              <!-- Top label -->
+              <div class="card-top-label">Hidden City Gems</div>
+
+              <!-- Main image -->
+              <img src="assets/img/top-categories c.webp" class="card-img" alt="Local Guide" />
+
+              <!-- Bottom arrow -->
+              <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+                <i class="bi bi-arrow-right fs-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+          <!-- Card 4 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-4" style="z-index: 2;">
+            <div class="card position-relative local-card hover-scale">
+              <!-- Top label -->
+              <div class="card-top-label">Coastal Serenity</div>
+
+              <!-- Main image -->
+              <img src="assets/img/top-categories b.webp" class="card-img" alt="Local Guide" />
+
+              <!-- Bottom arrow -->
+              <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+                <i class="bi bi-arrow-right fs-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+            <div class="card position-relative  hover-scale local-card">
+              <!-- Top label -->
+              <div class="card-top-label">Wildlife Safari</div>
+
+              <!-- Main image -->
+              <img src="assets/img/top-categories a.webp" class="card-img" alt="Local Guide" />
+
+              <!-- Bottom arrow -->
+              <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+                <i class="bi bi-arrow-right fs-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+            <div class="card position-relative local-card hover-scale">
+              <!-- Top label -->
+              <div class="card-top-label">Culinary & Wine Tour</div>
+
+              <!-- Main image -->
+              <img src="assets/img/top-categories f.webp" class="card-img" alt="Local Guide" />
+
+              <!-- Bottom arrow -->
+              <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+                <i class="bi bi-arrow-right fs-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+          <!-- Repeat ends -->
+        </div>
+
+      </div>
+    </section>
+    <!-- ================ End Top Categories Section ================ -->
+
+    <img src="assets/img/design a.png" alt="background design" class="background-lines" style="width: 100%; max-width:100vw; max-height: 1850px;">
+  </div>
+  <!-- =================== Featured Locals Section =================== -->
+
+  <div class="bg-design-wrapper" style="overflow: visible;">
+
+
+    <section id="featured-locals" class="py-6">
+      <div class="container">
+        <h2 class="text-md-end text-center display-6 main-heading ">
+          Why Travel With a Local<br />Guide?
+        </h2>
+
+        <div class="row g-md-5 g-4" style="z-index: 2;">
+          <!-- Card 1 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-4" style="z-index: 2;">
+            <div class="card position-relative local-card hover-scale">
+              <!-- Top label -->
+              <div class="card-top-label">Small Groups</div>
+
+              <!-- Main image -->
+              <img src="assets/img/local-a.webp" class="card-img" alt="Local Guide" />
+
+              <!-- Bottom arrow -->
+              <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+                <i class="bi bi-arrow-right fs-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-4" style="z-index: 2;">
+            <div class="card position-relative local-card hover-scale">
+              <!-- Top label -->
+              <div class="card-top-label">Personalized Experience</div>
+
+              <!-- Main image -->
+              <img src="assets/img/local-c.webp" class="card-img" alt="Local Guide" />
+
+              <!-- Bottom arrow -->
+              <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+                <i class="bi bi-arrow-right fs-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-4" style="z-index: 2;">
+            <div class="card position-relative local-card hover-scale">
+              <!-- Top label -->
+              <div class="card-top-label">Certified & Trusted</div>
+
+              <!-- Main image -->
+              <img src="assets/img/local-b.webp" class="card-img" alt="Local Guide" />
+
+              <!-- Bottom arrow -->
+              <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+                <i class="bi bi-arrow-right fs-2 text-white"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Repeat ends -->
+        </div>
+      </div>
+    </section>
+    <!-- ================= End Featured Locals Section ================= -->
+
+    <!-- ===================== Review Highlight Section ===================== -->
+    <section id="review-highlight" class="py-6">
+      <div class="container">
+        <div class="row align-items-stretch g-4">
+          <!-- Left: Reviewer Image -->
+          <div class="col-md-4" style="z-index: 2;">
+            <div class="h-100">
+              <img src="assets/img/review-b.webp" alt="User" class="img-fluid border-round w-100 h-100 object-fit-cover" style="aspect-ratio: 10/12;" />
+            </div>
+          </div>
+
+          <!-- Right: Testimonial Box -->
+          <div class="col-md-8" style="z-index: 2;">
+            <div class="h-100 p-md-5 p-4 border-round" style="background: linear-gradient(180deg, #f4d06f, #fff)">
+              <span class="badge bg-dark text-white mb-3">Testimonial</span>
+              <h3 class="fw-bold display-6 mb-3">An Unforgettable<br />Journey!</h3>
+              <p class="mb-3 small">
+                Exploring India with Manish was the highlight of our trip! His
+                deep knowledge, hidden gems, and engaging storytelling made the
+                city come alive. Every detail was thoughtfully planned, making
+                our experience seamless and magical. Highly recommended for
+                anyone seeking an authentic, stress-free adventure!
+              </p>
+              <p class="fw-bold mb-0">Shalini Bhatia, India</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- =================== End Review Highlight Section =================== -->
+
+    <!-- ===================== Travel Stories Section ===================== -->
+    <section id="travel-stories" class="py-6">
+      <div class="container">
+        <!-- Heading -->
+        <h2 class="text-center display-6 main-heading ">
+          See the Magic Before You<br />Travel
+        </h2>
+
+
+
+        <!-- Card Grid 1-->
+        <div class="row g-4 h-100">
+          <!-- Left Column -->
+          <div class="col-lg-7 d-flex" style="z-index: 2;">
+            <div class="h-100">
+              <img src="assets/img/travel-a.webp" alt="Journey Video" class="border-round w-100 h-100 object-fit-cover" />
+            </div>
+          </div>
+
+          <!-- Right Column: Top Text Card + Bottom Image -->
+          <div class="col-lg-5" style="z-index: 2;">
+            <!-- Top Right: Text Card -->
+            <div class="h-100 p-md-5 p-4 border-round" style="background: linear-gradient(180deg, #fff, #f4d06f)">
+              <div class="px-3 py-2 mb-5 d-inline-block text-dark border-round small fw-bold" style="background-color: transparent; border: 1px solid black">
+                #Heritage #Architecture #History
+              </div>
+              <h3 class="fw-bold display-5 heading mb-3">Journey Through <br />Time</h3>
+              <p class="small mb-3">
+                Step into history with our curated collection of stunning
+                heritage sites. From towering castles to ancient ruins, immerse
+                yourself in the beauty and grandeur of civilizations past.
+              </p>
+
+              <p class="small mb-0">
+                Let our expert guides bring these stories to life with
+                captivating insights and fascinating legends that make every
+                visit unforgettable.
+              </p>
+            </div>
+
+            <!-- Bottom Right: Image/Video Card -->
+          </div>
+        </div>
+        <div class="py-lg-4 py-3"></div>
+
+        <!-- Card Grid 2-->
+        <div class="row g-4 h-100">
+          <!-- Left Column -->
+          <div class="col-lg-5">
+            <!-- Top Right: Text Card -->
+            <div class="h-100 p-md-5 p-4 border-round" style="background: linear-gradient(180deg, #a3daf2, #fff)">
+              <div class="px-3 py-2 mb-5 d-inline-block text-dark border-round small fw-bold" style="background-color: transparent; border: 1px solid black">
+                #Adventure #Nature #BreathtakingViews
+              </div>
+              <h3 class="fw-bold heading display-5 mb-3">Nature’s Wonders Unveiled</h3>
+              <p class="small mb-3">
+                Escape into nature’s beauty with our breathtaking outdoor tours.
+                Whether it's hiking through misty mountains, exploring lush
+                forests, or admiring cascading waterfalls, our gallery showcases
+                the magic of the natural world.
+              </p>
+
+              <p class="small mb-0">
+                Get ready to embrace adventure and witness landscapes that will
+                leave you in awe.
+              </p>
+            </div>
+
+            <!-- Bottom Right: Image/Video Card -->
+          </div>
+          <!-- Right Column: Top Text Card + Bottom Image -->
+
+          <div class="col-lg-7 d-flex">
+            <div class="h-100">
+              <img src="assets/img/travel-b.webp" alt="Journey Video" class="border-round w-100 h-100 object-fit-cover" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- =================== End Travel Stories Section =================== -->
+
+    <img src="assets/img/design b.png" alt="background design" class="background-lines" style="width: 100%; max-width:100vw; max-height: 1950px; top: 20%;">
+  </div>
+  <!-- ===================== FAQ Section ===================== -->
+  <section id="faq" class="py-6">
+    <div class="container border-round" style="background: linear-gradient(180deg, #f4d06f, #ffffff)">
+      <div class="container faq-inner">
+        <div class="row align-items-start g-4">
+          <!-- Full-width heading and arrow -->
+          <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold display-3 heading mb-0">Frequently Asked Questions</h2>
+            <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-sm-flex d-none hover-translate-x">
+              <i class="bi bi-arrow-right fs-2 text-white"></i>
+            </a>
+          </div>
+
+          <!-- Left: Accordion -->
+          <div class="col-lg-7">
+            <div class="accordion" id="faqAccordion">
+              <div class="accordion-item faq-item mb-3">
+                <h2 class="accordion-header" id="faq1">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                    What’s included in the tour package?
+                  </button>
+                </h2>
+                <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="faq1" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Our tours include a professional guide, entry tickets (if
+                    specified), and customized itineraries.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item faq-item mb-3">
+                <h2 class="accordion-header" id="faq2">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                    Can I customize my itinerary?
+                  </button>
+                </h2>
+                <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="faq2" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Yes, we offer tailored options based on your preferences
+                    and travel dates.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item faq-item mb-3">
+                <h2 class="accordion-header" id="faq3">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                    How do I book a tour?
+                  </button>
+                </h2>
+                <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="faq3" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Simply use our website’s booking tool or reach out to our
+                    support team.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item faq-item mb-3">
+                <h2 class="accordion-header" id="faq4">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                    What payment methods do you accept?
+                  </button>
+                </h2>
+                <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="faq4" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    We accept credit/debit cards, PayPal, and bank transfers.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item faq-item">
+                <h2 class="accordion-header" id="faq5">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
+                    What happens if I need to cancel my tour?
+                  </button>
+                </h2>
+                <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="faq5" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Cancellations are accepted with applicable refund
+                    policies, based on notice period.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Illustration -->
+          <div class="col-lg-5 text-center">
+            <img src="assets/img/faq.webp" alt="FAQ Illustration" class="img-fluid" style="max-height: 100%" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- =================== End FAQ Section =================== -->
+
+  <!-- ===================== Download App Section ===================== -->
+  <section id="app-promo" class="py-5">
+    <div class="container">
+
+      <div class="row g-4">
+
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+          <h2 class="text-md-start text-center display-6 main-heading ">
+            Travel Tips & <br> Insights
+          </h2>
+
+        </div>
+        <!-- Card 1 -->
+        <div class="col-12 col-sm-6 col-md-6 col-lg-4">
+          <div class="card position-relative local-card hover-scale">
+            <!-- Top label -->
+            <div class="card-top-label">India Travel</div>
+
+            <!-- Main image -->
+            <img src="assets/img/promo a.webp" class="card-img" alt="Local Guide" />
+
+            <!-- Bottom arrow -->
+            <a href="#" class="btn btn-dark arrow-btn align-items-center justify-content-center d-flex hover-translate-x">
+              <i class="bi bi-arrow-right fs-2 text-white"></i>
+            </a>
+          </div>
+          <h4 class="mt-3 fw-bold heading h2">10 Hidden Gems in <br>India</h4>
+          <p class="small muted">
+            India is more than just the Taj Mahal and Jaipur! Discover secret gardens, lesser-known art spots, and
+            historic passageways that locals adore.
+            These hidden gems offer a glimpse into the country’s authentic charm, perfect for travelers who want to
+            explore beyond the typical tourist trail.
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-12 col-sm-6 col-md-6 col-lg-4">
+          <div class="card position-relative local-card hover-scale">
+            <!-- Top label -->
+            <div class="card-top-label">Beyond Borders</div>
+
+            <!-- Main image -->
+            <img src="assets/img/promo b.webp" class="card-img" alt="Adventure Trip" />
+
+            <!-- Bottom arrow -->
+            <a href="#" class="btn btn-dark arrow-btn d-flex align-items-center justify-content-center hover-translate-x">
+              <i class="bi bi-arrow-right fs-2 text-white"></i>
+            </a>
+          </div>
+          <h4 class="mt-3 fw-bold heading h2">How to Plan an Adventure Trip</h5>
+            <p class="small muted">
+              Adventure trips require careful planning to maximize fun and minimize stress. From choosing the right gear
+              to mapping out breathtaking destinations, our expert tips will help you craft the ultimate journey.
+              Whether it's trekking in the Himalayas or scuba diving in Bali, get ready for an unforgettable experience!
+            </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <!-- =================== End Download App Section =================== -->
+
+  <!-- ===================== Plan Your Journey Form Section ===================== -->
+  <section id="plan-your-journey" class="py-6">
+    <div class="container border-round" style="background: linear-gradient(180deg, #fff, #a3daf2)">
+      <div class="container plan-your-journey_inner">
+        <div class="row align-items-start g-4">
+          <!-- Heading and Arrow -->
+          <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold display-3 heading mb-0">Let's Plan Your Journey</h2>
+            <a href="#" class="btn btn-dark arrow-btn d-sm-flex d-none align-items-center justify-content-center hover-translate-x">
+              <i class="bi bi-arrow-right fs-2 text-white"></i>
+            </a>
+          </div>
+
+          <!-- Left: Form -->
+          <div class="col-lg-7">
+            <form>
+              <div class="mb-4">
+                <input type="text" class="form-control rounded-pill" placeholder="Name" />
+              </div>
+              <div class="mb-4">
+                <input type="email" class="form-control rounded-pill" placeholder="Email" />
+              </div>
+              <div class="mb-4">
+                <input type="tel" class="form-control rounded-pill" placeholder="Phone" />
+              </div>
+              <div class="mb-4">
+                <textarea class="form-control rounded-pill" rows="1" placeholder="Message"></textarea>
+              </div>
+              <div class="mb-4">
+                <input type="text" class="form-control rounded-pill" placeholder="Preferred Tour" />
+              </div>
+            </form>
+          </div>
+
+          <!-- Right: Illustration -->
+          <div class="col-lg-5 text-center">
+            <img src="assets/img/pyj c.webp" alt="Plan Journey Illustration" class="img-fluid" style="max-height: 100%" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- =================== End Plan Your Journey Form Section =================== -->
+
+  <!-- ===================== Footer Section ===================== -->
+  <footer id="footer" class="text-white pt-5 ">
+    <div class="footer-top position-relative text-center">
+      <!-- Logo Circle -->
+      <div class="footer-logo-circle mx-auto ">
+        <span class="footer-logo-text">LOGO</span>
+      </div>
+    </div>
+
+    <!-- Footer Content -->
+    <div class="footer-content container mt-sm-5 mt-0">
+      <div class="row text-center text-md-start">
+        <!-- Quick Links -->
+        <div class="col-12 col-sm-6 col-md-3 mb-4">
+          <h6 class="fw-bold">Quick Links</h6>
+          <ul class="list-unstyled">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#popular-destinations">About</a></li>
+            <li><a href="#top-categories">Tours</a></li>
+            <li><a href="#plan-your-journey">Contact</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Us -->
+        <div class="col-12 col-sm-6 col-md-3 mb-4">
+          <h6 class="fw-bold">Contact Us</h6>
+          <ul class="list-unstyled">
+            <li><i class="bi bi-telephone"></i> +91-9123456789</li>
+            <li><i class="bi bi-envelope"></i> yourname@domainname.com</li>
+            <li><i class="bi bi-geo-alt"></i>E-123, ABC Plaza, XYZ Street, New Delhi - 110077</li>
+          </ul>
+        </div>
+
+        <!-- Links -->
+        <div class="col-12 col-sm-6 col-md-3 mb-4 ps-md-5 ps-0">
+          <h6 class="fw-bold">Links</h6>
+          <ul class="list-unstyled">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Term Of Use</a></li>
+          </ul>
+        </div>
+
+        <!-- Follow Us -->
+        <div class="col-12 col-sm-6 col-md-3 mb-4">
+          <h6 class="fw-bold">Follow Us</h6>
+          <div class="social-icons d-flex justify-content-md-start justify-content-center gap-3">
+            <a href="#"><i class="bi bi-instagram"></i></a>
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-youtube"></i></a>
+            <a href="#"><i class="bi bi-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom text-center py-3">
+      <small>© 2025 Manish Tours. All Rights Reserved.</small>
+    </div>
+  </footer>
+  <!-- =================== End Footer Section =================== -->
+
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+  <script src="js/script.js"></script>
+
+  <!-- Gsap animation -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script> -->
+
+  <!-- Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

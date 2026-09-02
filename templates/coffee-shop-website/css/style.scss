@@ -1,0 +1,1318 @@
+// :root {
+//   /* PRIMARY: Main brand color (Brown/Orange) */
+//   --primary-colors: #bc5c27;
+//   /* SECONDARY: Neutral/Muted tones (Dark Grey/Black for text/dark backgrounds) */
+//   --secondary-colors: #111112;
+//   /* TERRITORY: Third accent/highlight color (Light Tan/Off-White for light backgrounds/text contrast) */
+//   --territory-colors: #f8e9d5;
+// }
+
+body {
+  font-family: "Quicksand", sans-serif;
+  /* Default body text color is Primary on a white background */
+  color: var(--primary-colors, #bc5c27);
+}
+
+/* --- Utility Classes for Alignment --- */
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.text-align-center {
+  text-align: center;
+}
+.text-align-start {
+  text-align: start;
+}
+.text-align-right {
+  text-align: right;
+}
+
+/* --- Component Styles with Three Variables --- */
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: -moz-fit-content;
+  width: fit-content;
+
+  img {
+    height: 40px;
+
+    @media (max-width: 369.98px) {
+      height: 25px;
+    }
+  }
+
+  .logo-name {
+    margin-left: 5px;
+    font-family: "Quicksand", sans-serif;
+    font-size: 30px;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-weight: 800;
+
+    @media (max-width: 499.98px) {
+      font-size: 26px;
+    }
+  }
+}
+
+nav {
+  width: 100%;
+  /* Nav background is typically Light/Tertiary */
+  background: var(--territory-colors, #ffffff);
+  padding: 1.5rem 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 10;
+  /* Nav link/text color is Primary */
+  color: var(--primary-colors, #bc5c27);
+
+  .nav-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: 0;
+
+    li{
+      list-style: none;
+    }
+
+    .menu-link {
+      color: var(--primary-colors, #bc5c27);
+      text-decoration: none;
+      position: relative;
+      padding-bottom: 3px;
+      font-weight: 800;
+      font-size: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Quicksand", sans-serif;
+
+      .fa-chevron-down {
+        font-size: 12px;
+        margin-left: 2px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0%;
+        height: 2px;
+        background: var(--primary-colors, #bc5c27);
+        transition: width 0.3s ease;
+      }
+
+      &:hover::after {
+        width: 100%;
+      }
+
+      &:hover {
+        color: var(--primary-colors, #bc5c27);
+      }
+
+      &.active {
+        color: var(--primary-colors, #bc5c27);
+
+        &::after {
+          width: 100%;
+        }
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      position: absolute;
+      top: -100vh;
+      left: 0;
+      width: 100vw;
+      /* Mobile nav background is Tertiary */
+      background: var(--territory-colors, #ffffff);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2rem 1rem;
+      transition: top 0.4s ease;
+
+      &.active {
+        top: 100%;
+      }
+    }
+  }
+
+  .hamburger {
+    display: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    width: -moz-fit-content;
+    width: fit-content;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0;
+    margin-left: auto;
+
+    span {
+      width: 25px;
+      height: 3px;
+      /* Hamburger lines use Primary color */
+      background: var(--primary-colors, #bc5c27);
+      transition: 0.4s;
+    }
+
+    &.active {
+      span:nth-child(1) {
+        transform: rotate(45deg) translate(5.5px, 5.5px);
+      }
+      span:nth-child(2) {
+        opacity: 0;
+      }
+      span:nth-child(3) {
+        transform: rotate(-45deg) translate(5.5px, -5.5px);
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      display: flex;
+    }
+  }
+
+  .social-icons {
+    display: flex;
+    width: -moz-fit-content;
+    width: fit-content;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    gap: 1rem;
+
+    a {
+      /* Social icons use Primary color */
+      opacity: 1;
+      color: var(--primary-colors, #bc5c27);
+      &:hover {
+        color: var(--primary-colors, #bc5c27);
+      }
+    }
+  }
+}
+
+.button-div {
+  display: flex;
+  justify-content: flex-end;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.donate-now-btn {
+  width: -moz-fit-content;
+  width: fit-content;
+  border: 2px solid var(--primary-colors, #bc5c27);
+  text-decoration: none;
+  /* Text color inside Primary button uses Tertiary for contrast */
+  color: var(--territory-colors, #f8e9d5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 15px 30px;
+  border-radius: 30px;
+  /* Button background uses Primary color */
+  background-color: var(--primary-colors, #bc5c27);
+  font-size: clamp(12px, 4vw, 15px);
+  font-weight: 600;
+  transition: background 0.4s ease-in-out;
+
+  &:hover {
+    border-color: var(--primary-colors, #bc5c27);
+    /* Hover state background uses Tertiary color */
+    background-color: var(--territory-colors, #f8e9d5);
+    /* Hover state text uses Primary color */
+    color: var(--primary-colors, #bc5c27);
+  }
+}
+
+.each-section-name {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  /* Section name uses Primary color */
+  color: var(--primary-colors, #bc5c27);
+  text-transform: uppercase;
+}
+
+.each-section-heading {
+  font-size: clamp(24px, 4vw, 57px);
+  font-weight: 600;
+  margin: 1rem 0;
+  /* Heading uses Primary color */
+  color: var(--primary-colors, #bc5c27);
+  font-family: "Quicksand", sans-serif;
+}
+
+.custom-btn {
+  /* Custom CTA button uses Primary color as the main accent now */
+  background: var(--primary-colors, #c93a0d);
+  border: 1px solid var(--primary-colors, #c93a0d);
+  padding: 16px 40px;
+  /* Text color is Tertiary for contrast */
+  color: var(--territory-colors, #f8e9d5);
+  cursor: pointer;
+  transition: background 0.3s;
+  text-decoration: none;
+  border-radius: 0%;
+
+  @media (max-width: 767.98px) {
+    padding: 12px 24px;
+  }
+
+  &:hover {
+    /* Hover background is Tertiary */
+    background: var(--territory-colors, #f8e9d5);
+    /* Hover text is Primary */
+    color: var(--primary-colors, #c93a0d);
+  }
+}
+
+.each-section-description {
+  font-size: clamp(16px, 1.5vw, 19px);
+  line-height: 1.6;
+  /* Description text uses Primary color */
+  color: var(--primary-colors, #bc5c27);
+  margin-bottom: 1rem;
+  font-weight: 400;
+
+  @media (max-width: 399.98px) {
+    text-align: justify;
+  }
+}
+
+.scroll-top {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  width: 42px;
+  height: 42px;
+  border: 3px solid var(--primary-colors, #bc5c27);
+  border-radius: 50%;
+  /* Background is Tertiary */
+  background: var(--territory-colors, #ffffff);
+  /* Icon is Primary */
+  color: var(--primary-colors, #bc5c27);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: all 0.3s;
+  z-index: 1099;
+
+  &:hover {
+    background: var(--primary-colors, #bc5c27);
+    color: var(--territory-colors, #ffffff);
+    border-color: var(--primary-colors, #bc5c27);
+  }
+}
+
+.coffee-hero {
+  padding: 3rem 1.5rem;
+
+  .hero-content {
+    margin-bottom: 2rem;
+    align-items: center;
+    display: flex;
+
+    .hero-text h1 {
+      font-size: clamp(32px, 6vw, 106px);
+      font-weight: 700;
+      color: var(--primary-colors, #bc5c27);
+      line-height: 0.8;
+    }
+
+    .right-description {
+      margin-bottom: 0%;
+      margin-top: auto;
+
+      .each-section-description {
+        margin-bottom: 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      text-align: center;
+
+      .hero-text {
+        margin-bottom: 1.5rem;
+
+        h1 {
+          font-size: 2rem;
+        }
+      }
+    }
+  }
+
+  .hero-video {
+    margin: 2rem 0;
+
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 0px;
+    }
+  }
+
+  .hero-icons .icons-wrap {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+    img {
+      width: 500px;
+      height: 100px;
+      object-fit: cover;
+    }
+  }
+}
+
+.coffee-story {
+  padding-bottom: 50px;
+
+  @media (min-width: 991.98px) {
+    padding-bottom: 150px;
+  }
+
+  .coffee-image {
+    text-align: center;
+
+    img {
+      border-radius: 0px;
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  .coffee-image1 {
+    @media (min-width: 991.98px) {
+      margin-top: 170px;
+    }
+  }
+
+  .coffee-image2 {
+    position: relative;
+    margin-top: 0px;
+
+    @media (min-width: 991.98px) {
+      margin-bottom: 170px;
+    }
+
+    @media (max-width: 991.98px) {
+      margin-bottom: 100px;
+      margin-top: 20px;
+    }
+
+    .img-coffee-image2 {
+      position: relative;
+      z-index: 5;
+    }
+
+    .coffee-beans-decor {
+      position: absolute;
+      left: -80px;
+      bottom: -80px;
+      z-index: 0;
+
+      img {
+        max-width: 120px;
+      }
+    }
+  }
+
+  .right-image-div {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.scroll-container {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  background: transparent;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin-bottom: 50px;
+
+  @media (min-width: 991.98px) {
+    margin-bottom: 150px;
+  }
+
+  .scroll-content {
+    display: inline-block;
+    animation: scroll-left 40s linear infinite;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      font-size: clamp(32px, 8vw, 157px);
+      font-weight: bold;
+      /* Scroll text uses Tertiary color (light) for contrast on dark background */
+      color: var(--territory-colors, #f8e9d5);
+      vertical-align: middle;
+      font-family: "Quicksand", sans-serif;
+    }
+
+    img {
+      vertical-align: middle;
+      width: auto;
+      height: clamp(60px, 10vw, 160px);
+      object-fit: cover;
+    }
+  }
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(5%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.menu-section {
+  position: relative;
+  /* Background uses Secondary color (dark) */
+  background-color: var(--secondary-colors, #520f16);
+  /* Text uses Tertiary color (light) for contrast */
+  color: var(--territory-colors, #f8e9d5);
+  z-index: 3;
+  padding: 50px 0;
+  padding-bottom: 200px;
+
+  @media (min-width: 991.98px) {
+    padding: 150px 0rem;
+    padding-bottom: 200px;
+  }
+  @media (max-width: 767.98px) {
+    padding-bottom: 120px;
+  }
+  @media (max-width: 576.98px) {
+    padding-bottom: 90px;
+  }
+
+  svg {
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+
+    path {
+      /* SVG divider fill uses Secondary color (dark) */
+      fill: var(--secondary-colors, #111112);
+    }
+  }
+
+  .menu-items {
+    .menu-item {
+      background: transparent;
+      padding: 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      
+      @media (max-width: 991.98px) {
+        &:nth-child(3) {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+      }
+
+      img {
+        width: 110px;
+        height: 110px;
+        border-radius: 0rem;
+        object-fit: cover;
+
+        @media (max-width: 767.98px) {
+          max-width: 70px;
+          max-height: 70px;
+        }
+      }
+
+      .item-info {
+        flex: 1;
+        /* Item info text uses Tertiary color (light) */
+        color: var(--territory-colors, #f8e9d5);
+
+        h5 {
+          margin: 0;
+          font-size: clamp(16px, 2vw, 23px);
+          font-weight: 600;
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+
+          span {
+            font-size: clamp(16px, 2vw, 23px);
+            font-weight: 700;
+            /* Price text uses Primary color for accent */
+            color: var(--primary-colors, #91b202);
+          }
+        }
+
+        p {
+          margin: 0;
+          font-size: clamp(14px, 2vw, 16px);
+          font-weight: 400;
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+
+  .right-column {
+    @media (max-width: 991.98px) {
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 992px) {
+    .menu-title {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .menu-title {
+      font-size: 2rem;
+    }
+
+    .menu-item img {
+      width: 60px;
+      height: 60px;
+    }
+  }
+}
+
+.offer-section {
+  position: relative;
+  /* Background uses Secondary color (dark) */
+  background-color: var(--secondary-colors, #111112);
+  z-index: 10;
+
+  @media (min-width: 991.98px) {
+    padding-top: 150px;
+  }
+  @media (max-width: 991.98px) {
+    padding-top: 40px;
+  }
+  @media (max-width: 576.98px) {
+    padding-top: 20px;
+  }
+
+  .top-cup-of-coffee {
+    position: absolute;
+    top: -30%;
+    right: 5%;
+    z-index: 100;
+    padding: 0;
+
+    @media (max-width: 991.98px) {
+      top: -28%;
+      right: 0%;
+    }
+    @media (max-width: 767.98px) {
+      top: -8%;
+    }
+    @media (max-width: 576.98px) {
+      top: -6%;
+    }
+    @media (max-width: 499.98px) {
+      top: -90px;
+    }
+
+    img {
+      max-height: 400px;
+
+      @media (max-width: 767.98px) {
+        max-height: 300px;
+      }
+      @media (max-width: 576.98px) {
+        max-height: 200px;
+      }
+      @media (max-width: 499.98px) {
+        max-height: 150px;
+      }
+    }
+  }
+
+  .row {
+    @media (min-width: 567.98px) {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  .offer-card {
+    border-radius: 0rem;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    @media (min-width: 991.98px) {
+      height: 100vh;
+      padding: 1rem;
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 0.25rem;
+      margin-bottom: 1rem;
+    }
+
+    h5 {
+      font-size: 23px;
+      font-weight: 600;
+      color: var(--primary-colors, #bc5c27);
+      margin-bottom: 0.5rem;
+      /* Card heading uses Tertiary color (light) */
+      color: var(--territory-colors, #f8e9d5);
+    }
+
+    p {
+      /* Card description uses Tertiary color (light) */
+      color: var(--territory-colors, #f8e9d5);
+      text-align: start;
+    }
+  }
+
+  .offer-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    @media (max-width: 767.98px) {
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+
+      .each-section-description {
+        text-align: center;
+      }
+      .each-section-heading {
+        text-align: center;
+      }
+    }
+
+    .each-section-name {
+      /* Section name accent uses Primary color */
+      color: var(--primary-colors, #c93a0d);
+      text-align: start;
+      margin-bottom: 10px;
+    }
+  }
+
+  .each-section-heading {
+    /* Heading uses Tertiary color (light) */
+    color: var(--territory-colors, #f8e9d5);
+    text-align: start;
+  }
+
+  .each-section-description {
+    /* Description uses Tertiary color (light) */
+    color: var(--territory-colors, #f8e9d5);
+    margin-bottom: 90px;
+
+    @media (max-width: 767.98px) {
+      margin-bottom: 40px;
+    }
+  }
+
+  .only-for-border {
+    border-left: 1px solid var(--territory-colors, #f8e9d5);
+
+    @media (max-width: 991.98px) {
+      border: none;
+    }
+  }
+
+  @media (max-width: 992px) {
+    h2 {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    h2 {
+      font-size: 1.6rem;
+    }
+
+    .offer-card {
+      padding: 1rem;
+    }
+  }
+}
+
+.team-section {
+  /* Background uses Secondary color (dark) */
+  background-color: var(--secondary-colors, #111112);
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+
+  .team-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+
+    @media (max-width: 767.98px) {
+      flex-direction: column;
+    }
+
+    .each-section-name {
+      /* Section name accent uses Primary color */
+      color: var(--primary-colors, #c93a0d);
+    }
+
+    .each-section-heading {
+      font-size: clamp(24px, 5vw, 57px);
+      /* Heading uses Tertiary color (light) */
+      color: var(--territory-colors, #f8e9d5);
+      margin-top: 0px;
+      margin-bottom: auto;
+
+      span {
+        /* Highlight span uses Primary color */
+        color: var(--primary-colors, #bc5c27);
+      }
+    }
+  }
+
+  .team-card {
+    text-align: start;
+
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 0.25rem;
+      margin-bottom: 0.75rem;
+      object-fit: cover;
+    }
+
+    h5 {
+      font-size: clamp(16px, 2.2vw, 19px);
+      font-weight: 600;
+      /* Name uses Tertiary color (light) */
+      color: var(--territory-colors, #f8e9d5);
+      margin-bottom: 0.25rem;
+      text-align: start;
+    }
+
+    p {
+      font-size: clamp(14px, 2vw, 16px);
+      /* Designation uses Primary color for better contrast/readability */
+      color: var(--primary-colors, #f1d0be);
+      text-align: start;
+    }
+  }
+
+  @media (max-width: 992px) {
+    h2 {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 3rem 1rem;
+
+    h2 {
+      font-size: 1.6rem;
+    }
+
+    .team-card {
+      h5 {
+        font-size: 1rem;
+      }
+      p {
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
+
+.partners-testimonial {
+  /* Background uses Tertiary color (light) */
+  // background-color: var(--territory-colors, #ffffff);
+
+  .logos-row {
+    align-items: center;
+
+    @media (min-width: 1199.98px) {
+      margin-top: 100px;
+    }
+    @media (max-width: 1199.98px) {
+      margin-top: 80px;
+    }
+    @media (max-width: 767.98px) {
+      margin-top: 40px;
+    }
+
+    .logo-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        max-height: 80px;
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+        max-width: 100%;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    .partners-title {
+      font-weight: 600;
+      font-size: clamp(18px, 2.5vw, 30px);
+      /* Title uses Primary color */
+      color: var(--primary-colors, #bc5c27);
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .partners-title {
+        justify-content: center;
+        margin-top: 1rem;
+      }
+    }
+  }
+
+  .testimonial-row {
+    align-items: center;
+
+    @media (min-width: 991.98px) {
+      margin-top: 80px;
+    }
+    @media (max-width: 991.98px) {
+      margin-top: 60px;
+    }
+    @media (max-width: 767.98px) {
+      margin-top: 40px;
+    }
+
+    .testimonial-text {
+      .stars {
+        /* Stars use Primary color for accent */
+        color: var(--primary-colors, #ed8a19);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+
+      .quote {
+        font-size: clamp(20px, 3vw, 35px);
+        font-weight: 500;
+        /* Quote uses Primary color */
+        color: var(--primary-colors, #bc5c27);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+      }
+
+      .author {
+        font-size: 19px;
+        font-weight: 600;
+        /* Author uses Primary color */
+        color: var(--primary-colors, #bc5c27);
+        margin-bottom: 0.2rem;
+      }
+
+      .designation {
+        font-size: 1rem;
+        /* Designation uses Primary color for accent */
+        color: var(--primary-colors, #c93a0d);
+      }
+
+      @media (max-width: 768px) {
+        .quote {
+          font-size: 1rem;
+        }
+      }
+    }
+
+    .testimonial-media {
+      margin-top: 0px;
+
+      img {
+        width: 100%;
+        border-radius: 0.5rem;
+        object-fit: cover;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1rem;
+  }
+}
+
+.office-locations {
+  padding: 4rem 2rem;
+
+  .section-title {
+    margin-bottom: 2rem;
+
+    h2 {
+      /* Heading uses Primary color */
+      color: var(--primary-colors, #bc5c27);
+    }
+  }
+
+  .location-row {
+    /* Divider uses Tertiary color (light) */
+    border-top: 1px solid var(--territory-colors, #f8e9d5);
+    padding: 1.5rem 0;
+    align-items: center;
+
+    @media (max-width: 767.98px) {
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: start;
+      align-items: start;
+    }
+
+    &:nth-last-of-type(3) {
+      border-bottom: 1px solid var(--territory-colors, #f8e9d5);
+    }
+
+    h5 {
+      font-size: clamp(18px, 3vw, 35px);
+      font-weight: 600;
+      /* City name uses Primary color */
+      color: var(--primary-colors, #bc5c27);
+    }
+
+    .office-city {
+      display: flex;
+      align-items: center;
+
+      @media (max-width: 767.98px) {
+        justify-content: start;
+        padding-left: 0px;
+      }
+    }
+
+    .office-address,
+    .office-contact,
+    .office-link {
+      display: flex;
+      justify-content: center;
+
+      @media (max-width: 767.98px) {
+        justify-content: start;
+        padding: 5px 0;
+      }
+    }
+
+    .office-address p,
+    .office-contact p {
+      margin: 0;
+      /* Address/Contact text uses Primary color */
+      color: var(--primary-colors, #bc5c27);
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .office-link {
+      display: flex;
+      justify-content: end;
+
+      @media (max-width: 767.98px) {
+        justify-content: start;
+      }
+
+      a {
+        font-size: clamp(16px, 2vw, 19px);
+        font-weight: 500;
+        /* Link text uses Primary color */
+        color: var(--primary-colors, #bc5c27);
+        text-decoration: none;
+        transition: color 0.3s;
+
+        &:hover {
+          /* Link hover uses Primary color */
+          color: var(--primary-colors, #92471e);
+        }
+      }
+    }
+  }
+
+  .beans-row {
+    margin: 3rem 0;
+
+    .beans-media {
+      display: flex;
+      justify-content: start;
+
+      @media (max-width: 767.98px) {
+        justify-content: center;
+      }
+
+      img {
+        max-width: 350px;
+        height: auto;
+
+        @media (max-width: 767.98px) {
+          max-width: 200px;
+        }
+      }
+    }
+  }
+
+  .phone-row .phone-number {
+    text-align: center;
+    width: 100%;
+
+    h2 {
+      font-size: clamp(2rem, 10vw, 204px);
+      font-weight: 700;
+      /* Phone number uses Primary color */
+      color: var(--primary-colors, #bc5c27);
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1rem;
+
+    .section-title h2 {
+      text-align: center;
+    }
+
+    .location-row {
+      h5 {
+        margin-bottom: 0.5rem;
+      }
+      .office-link {
+        margin-top: 0.5rem;
+      }
+    }
+  }
+}
+
+.site-footer {
+  padding: 3rem 2rem 1rem;
+  /* Divider uses Tertiary color (light) */
+  border-top: 1px solid var(--territory-colors, #f8e9d5);
+
+  .footer-top {
+    margin-bottom: 2rem;
+
+    .footer-about {
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        img {
+          width: 40px;
+          height: 35px;
+          margin-right: 0.6rem;
+        }
+
+        h3 {
+          font-weight: 700;
+          /* Logo text uses Primary color */
+          color: var(--primary-colors, #bc5c27);
+          margin: 0;
+          font-size: 30px;
+          font-family: "Quicksand", sans-serif;
+        }
+      }
+
+      p {
+        /* Footer text uses Primary color */
+        color: var(--primary-colors, #bc5c27);
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+    }
+
+    .footer-contact,
+    .footer-links,
+    .footer-social {
+      h5 {
+        font-size: 19px;
+        font-weight: 600;
+        margin-bottom: 25px;
+        /* Heading uses Primary color */
+        color: var(--primary-colors, #bc5c27);
+        font-family: "Quicksand", sans-serif;
+      }
+
+      p,
+      ul,
+      li {
+        font-size: 1rem;
+        /* Link/contact text uses Primary color */
+        color: var(--primary-colors, #bc5c27);
+        margin: 0;
+        list-style: none;
+        padding: 0;
+        margin-bottom: 25px;
+      }
+
+      ul li {
+        margin-bottom: 25px;
+
+        a {
+          text-decoration: none;
+          color: var(--primary-colors, #bc5c27);
+          transition: color 0.3s;
+
+          &:hover {
+            color: var(--primary-colors, #bc5c27);
+          }
+        }
+      }
+    }
+
+    .footer-social {
+      .social-icons {
+        display: flex;
+        gap: 0.7rem;
+
+        a {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 36px;
+          height: 36px;
+          border: 1px solid var(--primary-colors, #bc5c27);
+          /* Icon uses Primary color */
+          color: var(--primary-colors, #bc5c27);
+          border-radius: 50%;
+          font-size: 0.9rem;
+          transition: all 0.3s;
+          text-decoration: none;
+
+          &:hover {
+            /* Hover background is Primary */
+            background: var(--primary-colors, #bc5c27);
+            /* Hover icon color is Tertiary (light) */
+            color: var(--territory-colors, #fff);
+          }
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    /* Divider uses Tertiary color (light) */
+    border-top: 1px solid var(--territory-colors, #f8e9d5);
+    padding-top: 1rem;
+    font-size: 0.9rem;
+
+    .footer-copy p {
+      margin: 0;
+      /* Copyright text uses Primary color */
+      color: var(--primary-colors, #bc5c27);
+    }
+
+    .footer-credit {
+      text-align: right;
+
+      p {
+        margin: 0;
+        /* Credit text uses Primary color */
+        color: var(--primary-colors, #bc5c27);
+
+        a {
+          text-decoration: none;
+          color: var(--primary-colors, #bc5c27);
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      text-align: center;
+
+      .footer-credit {
+        text-align: center;
+        margin-top: 0.5rem;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1rem;
+
+    .footer-about {
+      text-align: center;
+    }
+
+    .footer-contact,
+    .footer-links,
+    .footer-social {
+      text-align: center;
+    }
+
+    .footer-social .social-icons {
+      justify-content: center;
+    }
+  }
+}
+
+img {
+  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+video {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.img-wrapper-style {
+  text-align: center;
+}

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accountant</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+      integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <button id="backToTopBtn" class="btn">
+      <i class="bi bi-arrow-up" data-icon="arrow"></i>
+    </button>
+    <!-- Navbar Section -->
+    <header id="navbar" data-section="navbar" class="navbar-wrapper">
+      <div class="container">
+        <nav class="nav-wrapper">
+          <!-- Logo -->
+          <div class="logo" data-logo="navbar">
+            <!-- <img src="logo.png" alt="Joyce Roberts Logo" /> -->
+            <span>JOYCE ROBERT</span>
+          </div>
+
+          <!-- Right side (links + button) -->
+          <div class="nav-right">
+            <ul class="nav-links">
+              <li><a href="/#hero">Home</a></li>
+              <li><a href="/#about">About</a></li>
+              <li><a href="/#services">Services</a></li>
+              <li><a href="/#why-choose-me">Why Choose Me</a></li>
+              <li><a href="/#testimonials">Testimonials</a></li>
+              <li><a href="/#quote">Contact</a></li>
+            </ul>
+
+            <div class="nav-btn">
+              <a href="tel:91123456789" class="btnn">Get A Quote</a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <div class="menu-toggle"></div>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <!-- Hero Section -->
+    <section id="hero" data-section="hero" class="hero">
+      <div class="container">
+        <!-- Use Bootstrap row/cols for layout -->
+        <div class="row hero-wrapper g-4 g-md-0">
+          <!-- Text Column -->
+          <div class="col-lg-7 hero-text order-2 order-lg-1">
+            <h1>Your Trusted Accounting Partner Joyce Roberts</h1>
+            <p class="subtitle">Practical Financial Advice You Can Count On</p>
+            <p class="desc">
+              Invest your time and efforts on running your business. <br />
+              Leave the accounting to me.
+            </p>
+
+            <div class="hero-btns">
+              <a href="tel:91" class="btnn">Get A Free Quote</a>
+              <a href="#" class="btn btn-outline-light">Learn More</a>
+            </div>
+
+            <div class="hero-tags">
+              <span>
+                <div class="check">
+                  <i class="bi bi-check2" data-icon="check"></i>
+                </div>
+                Trusted
+              </span>
+              <span>
+                <div class="check">
+                  <i class="bi bi-check2" data-icon="check"></i>
+                </div>
+                Experienced
+              </span>
+              <span>
+                <div class="check">
+                  <i class="bi bi-check2" data-icon="check"></i>
+                </div>
+                Professional
+              </span>
+            </div>
+          </div>
+
+          <!-- Image Column -->
+          <div class="col-lg-5 hero-img order-1 order-lg-2">
+            <img
+              src="assets/images/accountant-cta.webp"
+              alt="Joyce Roberts"
+              class="img-fluid hero-img-inner"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- service section -->
+    <section id="services" data-section="services" class="services py-6">
+      <div class="container">
+        <div class="section-title">
+          <h6 class="section-subtitle">Services</h6>
+          <h2 class="section-heading">What I Do</h2>
+          <p class="section-description">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
+            tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+          </p>
+        </div>
+
+        <!-- Service Item 1 -->
+        <div class="service-item py-4 row g-4">
+          <div class="service-image col-lg-6">
+            <img
+              src="assets/images/accountant-service-1.webp"
+              alt="Accounting Service"
+            />
+          </div>
+          <div class="service-content col-lg-6">
+            <span class="service-number">01.</span>
+            <h3 class="service-title">Accounting Services</h3>
+            <p class="service-text">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip Lorem, ipsum dolor sit amet consectetur
+              adipisicing elit. Aspernatur dicta voluptatum labore non,
+              laboriosam assumenda numquam consequuntur autem consectetur
+              sapiente.
+            </p>
+            <a href="#" class="btn-readmore">Read More</a>
+          </div>
+        </div>
+
+        <!-- Service Item 2 (image on right on desktop) -->
+        <div class="service-item py-4 row g-4">
+          <div class="service-content col-lg-6">
+            <span class="service-number">02.</span>
+            <h3 class="service-title">Tax Services</h3>
+            <p class="service-text">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ipsum dolor sit amet consectetur adipisicing elit.
+              Aspernatur dicta voluptatum labore non, laboriosam assumenda
+              numquam consequuntur autem consectetur sapiente.
+            </p>
+            <a href="#" class="btn-readmore">Read More</a>
+          </div>
+          <div class="service-image col-lg-6">
+            <img
+              src="assets/images/accountant-service-3.webp"
+              alt="Accounting Service"
+            />
+          </div>
+        </div>
+
+        <!-- Service Item 3 -->
+        <div class="service-item pt-4 row g-4">
+          <div class="service-image col-lg-6">
+            <img
+              src="assets/images/accountant-service-2.webp"
+              alt="Accounting Service"
+            />
+          </div>
+          <div class="service-content col-lg-6">
+            <span class="service-number">03.</span>
+            <h3 class="service-title">Financial Advisory</h3>
+            <p class="service-text">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ipsum dolor sit amet consectetur adipisicing elit.
+              Aspernatur dicta voluptatum labore non, laboriosam assumenda
+              numquam consequuntur autem consectetur sapiente.
+            </p>
+            <a href="#" class="btn-readmore">Read More</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- why choose us -->
+    <section
+      id="why-choose-me"
+      data-section="why-choose-me"
+      class="py-6 why-choose-me"
+    >
+      <div class="container">
+        <!-- Section Title -->
+        <div class="section-title">
+          <h6 class="section-subtitle">Why Choose Me</h6>
+          <h2 class="section-heading">Accurate Record Keeping</h2>
+          <p class="section-description">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
+            tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+          </p>
+        </div>
+
+        <!-- Features Grid (Bootstrap) -->
+        <div class="features-grid row row-cols-1 row-cols-md-3 g-4">
+          <div class="col">
+            <div class="feature-card card-1">
+              <div class="feature-icon">
+                <i class="bi bi-calendar-check-fill" data-icon="check"></i>
+              </div>
+              <h3 class="feature-title">Always On Time</h3>
+              <p class="feature-text">
+                Click edit button to change this text. Lorem ipsum dolor sit
+                amet
+              </p>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="feature-card card-2">
+              <div class="feature-icon">
+                <i class="bi bi-pc" data-icon="pc"></i>
+              </div>
+              <h3 class="feature-title">Hard Working</h3>
+              <p class="feature-text">
+                Click edit button to change this text. Lorem ipsum dolor sit
+                amet
+              </p>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="feature-card card-3">
+              <div class="feature-icon">
+                <i class="bi bi-stopwatch-fill" data-icon="watch"></i>
+              </div>
+              <h3 class="feature-title">24/7 Availability</h3>
+              <p class="feature-text">
+                Click edit button to change this text. Lorem ipsum dolor sit
+                amet
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- testimonial -->
+    <section
+      id="testimonials"
+      data-section="testimonials"
+      class="py-6 testimonials"
+    >
+      <div class="container">
+        <!-- Section Title -->
+        <div class="section-title">
+          <h6 class="section-subtitle">Testimonials</h6>
+          <h2 class="section-heading">What My Clients Say?</h2>
+        </div>
+
+        <!-- Testimonials Grid -->
+        <div
+          class="testimonials-grid row row-cols-1 row-cols-md-3 g-4 py-5 mb-4"
+        >
+          <div class="col">
+            <div class="testimonial-card">
+              <div class="testimonial-icon">
+                <i class="bi bi-quote" data-icon="quote"></i>
+              </div>
+              <p class="testimonial-text">
+                Click edit button to change this text. Lorem ipsum dolor sit
+                amet, consectetur adipiscing elit. Ut elit tellus, luctus nec
+                ullamcorper mattis, pulvinar dapibus leo.
+              </p>
+              <h4 class="testimonial-name">Aanand kumar</h4>
+              <span class="testimonial-role">CEO &amp; Founder Crix</span>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="testimonial-card">
+              <div class="testimonial-icon">
+                <i class="bi bi-quote" data-icon="quote"></i>
+              </div>
+              <p class="testimonial-text">
+                Click edit button to change this text. Lorem ipsum dolor sit
+                amet, consectetur adipiscing elit. Ut elit tellus, luctus nec
+                ullamcorper mattis, pulvinar dapibus leo.
+              </p>
+              <h4 class="testimonial-name">Ankit singh</h4>
+              <span class="testimonial-role">Director at Dynamic</span>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="testimonial-card">
+              <div class="testimonial-icon">
+                <i class="bi bi-quote" data-icon="quote"></i>
+              </div>
+              <p class="testimonial-text">
+                Click edit button to change this text. Lorem ipsum dolor sit
+                amet, consectetur adipiscing elit. Ut elit tellus, luctus nec
+                ullamcorper mattis, pulvinar dapibus leo.
+              </p>
+              <h4 class="testimonial-name">Manish kumar</h4>
+              <span class="testimonial-role">Director at Initech</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logos Row -->
+        <div class="testimonials-logos row row-cols-2 row-cols-md-5 g-4 mb-5">
+          <div class="col">
+            <div class="logo-img-box">
+              <img src="assets/images/logo.png" alt="Logo 1" />
+            </div>
+          </div>
+          <div class="col">
+            <div class="logo-img-box">
+              <img src="assets/images/logo.png" alt="Logo 2" />
+            </div>
+          </div>
+          <div class="col">
+            <div class="logo-img-box">
+              <img src="assets/images/logo.png" alt="Logo 3" />
+            </div>
+          </div>
+          <div class="col">
+            <div class="logo-img-box">
+              <img src="assets/images/logo.png" alt="Logo 4" />
+            </div>
+          </div>
+          <div class="col">
+            <div class="logo-img-box">
+              <img src="assets/images/logo.png" alt="Logo 5" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- quote section -->
+    <section id="quote" data-section="quote" class="py-6 quote">
+      <div class="container">
+        <div class="quote-wrapper row g-4">
+          <!-- Left Side: Image -->
+          <div class="quote-image col-lg-6">
+            <div class="box-img-bg"></div>
+            <div class="img-container">
+              <img
+                src="assets/images/accountant-hero-1.webp"
+                alt="Smiling Woman"
+              />
+            </div>
+          </div>
+
+          <!-- Right Side: Form -->
+          <div class="quote-form col-lg-6">
+            <h6 class="form-subtitle">Free Estimation</h6>
+            <h2 class="form-title">Request A Quote</h2>
+
+            <form
+              action="http://127.0.0.1:8000/api/forms/submit"
+              method="post"
+              data-zigrow-form
+            >
+              <input
+                type="text"
+                name="name"
+                id="name"
+                class="form-control"
+                placeholder="Name*"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                id="email"
+                class="form-control"
+                placeholder="Email*"
+                required
+              />
+              <input
+                type="tel"
+                name="phone"
+                id="phone"
+                class="form-control"
+                placeholder="Phone Number*"
+                required
+              />
+              <input
+                type="number"
+                name="number"
+                id="number"
+                class="form-control"
+                placeholder="Number of Employees*"
+                required
+              />
+              <input
+                type="number"
+                name="number2"
+                id="number2"
+                class="form-control"
+                placeholder="Number of Incoming Invoices*"
+                required
+              />
+              <input
+                type="number"
+                name="number3"
+                id="number3"
+                class="form-control"
+                placeholder="Number of Outgoing Invoices*"
+                required
+              />
+              <button type="submit" class="btn-quote">Get a Free Quote</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer section -->
+    <footer id="footer" data-section="footer" class="py-6 footer">
+      <div class="container">
+        <div
+          class="footer-wrapper row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4 mb-4"
+        >
+          <!-- Logo + About -->
+          <div class="footer-box col">
+            <div class="footer-logo" data-logo="footer">
+              <!-- <img src="logo.png" alt="Logo" /> -->
+              <h4>Joyce Robert</h4>
+              <p>Leave the accounting to me</p>
+            </div>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
+              tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+            </p>
+          </div>
+
+          <!-- Contact Info -->
+          <div class="footer-box col">
+            <h5>Contact Info</h5>
+            <ul>
+              <p>E-123, ABC Plaza, XYZ Street, New Delhi - 110077</p>
+              <li><a href="#">+91-9123456789</a></li>
+              <li><a href="#">+91-9123456789</a></li>
+              <li><a href="#">yourname@domainname.com</a></li>
+            </ul>
+          </div>
+
+          <!-- Services -->
+          <div class="footer-box col">
+            <h5>Services</h5>
+            <ul>
+              <li><a href="#">Accounting Service</a></li>
+              <li><a href="#">Tax Service</a></li>
+              <li><a href="#">Financial Service</a></li>
+            </ul>
+          </div>
+
+          <!-- Get in Touch -->
+          <div class="footer-box col">
+            <h5>Get In Touch</h5>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
+              tellus, luctus nec ullamcorper mattis.
+            </p>
+            <div class="social-icons">
+              <a href="#"
+                ><i class="fab fa-facebook-f" data-icon="facebook"></i
+              ></a>
+              <a href="#"><i class="fab fa-twitter" data-icon="twitter"></i></a>
+              <a href="#"
+                ><i class="fab fa-linkedin-in" data-icon="linkedin"></i
+              ></a>
+              <a href="#"
+                ><i class="fas fa-envelope" data-icon="envelop"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="footer-bottom row align-items-center">
+          <div class="col-md-6 text-md-start text-center mb-2 mb-md-0">
+            <p>Copyright © 2025 Chartered Accountant</p>
+          </div>
+          <div class="col-md-6 text-md-end text-center">
+            <p>Powered by Chartered Accountant</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script> -->
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/app.js"></script>
+    <script>
+      (function () {
+        // Find ALL Zigrow forms
+        const forms = Array.from(
+          document.querySelectorAll("[data-zigrow-form]")
+        );
+        if (!forms.length) return;
+
+        // Helper: turn FormData into a plain object
+        function serializeForm(form) {
+          const fd = new FormData(form);
+          const raw = {};
+          for (const [name, value] of fd.entries()) {
+            const el = form.elements[name];
+            const isGroup =
+              el && el.length && el[0] && el[0].type === "checkbox";
+            if (isGroup) {
+              if (!raw[name]) raw[name] = [];
+              raw[name].push(value === "" ? true : value);
+            } else {
+              raw[name] = value;
+            }
+          }
+          return raw;
+        }
+
+        // Helper: pick primary value for quick list view
+        function pickPrimaryValue(raw) {
+          if (raw.email && String(raw.email).trim())
+            return String(raw.email).trim();
+          if (raw.phone && String(raw.phone).trim())
+            return String(raw.phone).trim();
+          const nameCombo = [raw.firstName, raw.lastName]
+            .filter(Boolean)
+            .join(" ")
+            .trim();
+          if (raw.name && String(raw.name).trim())
+            return String(raw.name).trim();
+          if (nameCombo) return nameCombo;
+          if (raw.message && String(raw.message).trim())
+            return String(raw.message).trim();
+          return "";
+        }
+
+        forms.forEach((form) => {
+          // Ensure hidden fields are filled
+          const domainInput = form.querySelector('input[name="domain"]');
+          const pageUrlInput = form.querySelector('input[name="page_url"]');
+          if (domainInput) domainInput.value = location.host;
+          if (pageUrlInput) pageUrlInput.value = location.href;
+
+          // Create a container for messages if not already exists
+          let msgContainer = form.querySelector(".form-submit-message");
+          if (!msgContainer) {
+            msgContainer = document.createElement("div");
+            msgContainer.className = "form-submit-message mt-2 text-sm";
+            form.appendChild(msgContainer);
+          }
+
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('[type="submit"]');
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.dataset._oldText = submitBtn.innerText;
+              submitBtn.innerText = "Submitting...";
+            }
+
+            // Clear previous message
+            msgContainer.innerText = "";
+            msgContainer.style.color = "";
+
+            try {
+              const raw = serializeForm(form);
+              const body = new URLSearchParams();
+              body.set(
+                "domain",
+                form.querySelector('input[name="domain"]')?.value ||
+                  location.host
+              );
+              body.set(
+                "form_key",
+                form.querySelector('input[name="form_key"]')?.value || "contact"
+              );
+              body.set(
+                "page_url",
+                form.querySelector('input[name="page_url"]')?.value ||
+                  location.href
+              );
+              body.set("payload", JSON.stringify(raw));
+
+              const primary = pickPrimaryValue(raw);
+              if (primary) body.set("value", primary);
+
+              if (raw._company) body.set("_company", raw._company);
+
+              const res = await fetch(form.action, {
+                method: "POST",
+                headers: { Accept: "application/json" },
+                body,
+              });
+
+              const data = await res.json().catch(() => ({}));
+              if (res.ok && (data.ok ?? true)) {
+                form.reset();
+                msgContainer.innerText =
+                  "✅ Thanks! Your request has been submitted.";
+                msgContainer.style.color = "#28a745"; // green success
+              } else {
+                msgContainer.innerText = `❌ ${
+                  data.message || `Failed (HTTP ${res.status})`
+                }`;
+                msgContainer.style.color = "#dc3545"; // red error
+              }
+            } catch (err) {
+              console.error(err);
+              msgContainer.innerText =
+                "❌ Something went wrong. Please try again.";
+              msgContainer.style.color = "#dc3545";
+            } finally {
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = submitBtn.dataset._oldText || "Send";
+              }
+            }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

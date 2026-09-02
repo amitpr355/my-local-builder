@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daycare</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- BACK TO TOP -->
+    <a
+      href="#hero"
+      id="backToTopBtn"
+      class="back-to-top"
+      aria-label="Back to top"
+    >
+      <i class="bi bi-arrow-up" data-icon="arrow-up"></i>
+    </a>
+    <div id="mouse-trail"><span class="d-none"></span></div>
+    <!-- NAVBAR -->
+    <nav class="custom-navbar" id="siteNav" data-section="navbar">
+      <div class="container custom-navbar__container">
+        <!-- Logo -->
+        <a href="#" class="logo" aria-label="Kidie home" data-logo="navbar"
+          ><span>Kid</span>ie</a
+        >
+
+        <!-- Toggle (NO button tag, span based) -->
+        <a
+          href="#"
+          class="menu-toggle"
+          id="menuToggle"
+          aria-label="Toggle menu"
+          aria-controls="mainNav"
+          aria-expanded="false"
+          role="button"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+
+        <!-- Menu -->
+        <div class="navbar-collapse" id="mainNav">
+          <ul class="nav-menu">
+            <li><a href="#hero" class="active">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#Program">Program</a></li>
+            <li><a href="#Admission">Admission</a></li>
+            <li><a href="#footer-cta">Contact</a></li>
+          </ul>
+
+          <a href="tel:+9123456789" class="btn-enroll" data-btn="navbar"
+            >Enroll now</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero" data-section="hero">
+      <div class="container">
+        <div class="row g-4 hero-row">
+          <!-- LEFT CONTENT -->
+          <div class="col-12 col-lg-6 hero-content">
+            <p class="hero-tagline">PLAY. EXPLORE. LEARN.</p>
+
+            <h1 class="hero-title">A secure space where children thrive.</h1>
+
+            <p class="hero-subtitle">
+              A thoughtfully designed environment that encourages creativity,
+              learning, and emotional development through guided activities.
+            </p>
+
+            <div class="hero-actions">
+              <a href="#" class="hero-btn" data-btn="hero">Enroll Your Child</a>
+
+              <!-- ⭐ BOOTSTRAP ICON STARS -->
+              <div class="hero-rating">
+                <span class="hero-stars">
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                </span>
+                <small>Trusted by 1,200+ parents</small>
+              </div>
+            </div>
+
+            <div class="hero-phone">
+              <span class="hero-phone-icon">
+                <i class="bi bi-telephone-fill" data-icon="phone"></i>
+              </span>
+              <span>+91 91234 56789</span>
+            </div>
+          </div>
+
+          <!-- RIGHT IMAGES -->
+          <div class="col-12 col-lg-6 hero-media">
+            <!-- IMAGE WRAPPER (separate as requested) -->
+            <div class="hero-media__images">
+              <div class="hero-media__img hero-media__img--primary">
+                <img
+                  src="assets/images/hero-2.webp"
+                  alt="Child learning happily"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="hero-media__img hero-media__img--secondary">
+                <img
+                  src="assets/images/hero-1.webp"
+                  alt="Child playing"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- about section -->
+    <section id="about" class="about-section py-6" data-section="about">
+      <div class="container">
+        <div class="row about-section__row">
+          <!-- Image -->
+          <div class="col-12 col-md-6">
+            <div class="about-section__media">
+              <div class="about-section__img">
+                <img
+                  src="assets/images/about.webp"
+                  alt="Child learning through play"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Text -->
+          <div class="col-12 col-md-6">
+            <div class="about-section__content">
+              <span class="about-section__label">ABOUT US</span>
+
+              <h2 class="about-section__title">
+                Helping you raise confident, curious kids
+              </h2>
+
+              <p class="about-section__text">
+                We create a warm learning environment where children explore,
+                discover, and build strong early-life skills through playful
+                routines.
+              </p>
+
+              <p class="about-section__text">
+                From guided activities to safe social interaction, our approach
+                supports healthy habits, better communication, and everyday
+                confidence—step by step.
+              </p>
+
+              <a href="#footer-cta" class="about-section__btn" data-btn="about">
+                Know more about us
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- testimonial section -->
+    <section
+      id="testimonial"
+      class="testimonial-section py-6"
+      data-section="testimonial"
+    >
+      <div class="container">
+        <div class="row">
+          <!-- Image -->
+          <div class="col-12 col-md-4">
+            <div class="testimonial-section__img">
+              <img
+                src="assets/images/testimonial.webp"
+                alt="Parent testimonial"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="col-12 col-md-8 testimonial-section__content-col">
+            <div class="testimonial-section__content">
+              <span class="testimonial-section__quote">
+                <i class="bi bi-quote" data-icon="quote"></i>
+              </span>
+
+              <p class="testimonial-section__text">
+                “The staff is incredibly warm and attentive. My child became
+                more confident, expressive, and happy within weeks.”
+              </p>
+
+              <p class="testimonial-section__sign">Signature</p>
+
+              <h5 class="testimonial-section__name">Yamini Singh</h5>
+              <p class="testimonial-section__role">Founder & Head of School</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- day care option -->
+    <section
+      id="Program"
+      class="day-care-options-section py-6"
+      data-section="program"
+    >
+      <div class="container">
+        <!-- Heading -->
+        <div class="row g-4">
+          <div class="col-12">
+            <div class="day-care-options-section__heading">
+              <h6 class="day-care-options-section__label">DAY CARE OPTIONS</h6>
+              <h2 class="day-care-options-section__title">
+                Age-based learning support <br />
+                for every milestone
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cards -->
+        <div class="row day-care-options-section__grid">
+          <!-- Card 1 -->
+          <div class="col-12 col-md-4">
+            <div class="day-care-options-section__card">
+              <div class="day-care-options-section__img">
+                <img
+                  src="assets/images/section-4a.webp"
+                  alt="Infant care program"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="day-care-options-section__body">
+                <h5 class="day-care-options-section__card-title">Infant</h5>
+                <p class="day-care-options-section__text">
+                  Gentle routines, sensory play, and early bonding activities to
+                  support comfort and healthy growth.
+                </p>
+                <a href="#" class="day-care-options-section__link">
+                  Learn More
+                  <i class="bi bi-arrow-right" data-icon="arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="col-12 col-md-4">
+            <div class="day-care-options-section__card">
+              <div class="day-care-options-section__img">
+                <img
+                  src="assets/images/section-4b.webp"
+                  alt="Toddler care program"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="day-care-options-section__body">
+                <h5 class="day-care-options-section__card-title">Toddlers</h5>
+                <p class="day-care-options-section__text">
+                  Structured play, language-building, and social habits that
+                  help children learn through fun and movement.
+                </p>
+                <a href="#" class="day-care-options-section__link">
+                  Learn More
+                  <i class="bi bi-arrow-right" data-icon="arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="col-12 col-md-4">
+            <div class="day-care-options-section__card">
+              <div class="day-care-options-section__img">
+                <img
+                  src="assets/images/section-4c.webp"
+                  alt="Preschool program"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="day-care-options-section__body">
+                <h5 class="day-care-options-section__card-title">Preschool</h5>
+                <p class="day-care-options-section__text">
+                  Confidence-building learning with art, numbers, stories, and
+                  group activities that prepare kids for school.
+                </p>
+                <a href="#" class="day-care-options-section__link">
+                  Learn More
+                  <i class="bi bi-arrow-right" data-icon="arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- day care -->
+    <section
+      id="admission"
+      class="pricing-section py-6"
+      data-section="admission"
+    >
+      <div class="container">
+        <p class="pricing-section__subheading">DAY CARE</p>
+        <h2 class="pricing-section__heading">Schedule & Tuition</h2>
+
+        <div class="row g-4 g-md-0 pricing-row">
+          <!-- Card 1 -->
+          <div class="col-12 col-md-4 pricing-section__col">
+            <div class="pricing-section__card">
+              <p class="pricing-section__number">01</p>
+              <h3 class="pricing-section__title">Half Day</h3>
+              <p class="pricing-section__text">
+                A calm and engaging half-day routine focused on play, learning,
+                and social interaction.
+              </p>
+
+              <div class="pricing-section__info">
+                <span class="pricing-section__time">
+                  <i class="bi bi-stopwatch-fill" data-icon="time"></i>
+                  8:30 – 12:00
+                </span>
+
+                <span class="pricing-section__price">₹1,800 / month</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="col-12 col-md-4 pricing-section__col">
+            <div class="pricing-section__card">
+              <p class="pricing-section__number">02</p>
+              <h3 class="pricing-section__title">Full Day</h3>
+              <p class="pricing-section__text">
+                A complete day program combining learning activities, meals,
+                rest, and creative play.
+              </p>
+
+              <div class="pricing-section__info">
+                <span class="pricing-section__time">
+                  <i class="bi bi-stopwatch-fill" data-icon="time"></i>
+                  8:30 – 3:30
+                </span>
+
+                <span class="pricing-section__price">₹2,300 / month</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="col-12 col-md-4 pricing-section__col">
+            <div class="pricing-section__card">
+              <p class="pricing-section__number">03</p>
+              <h3 class="pricing-section__title">Extended Day</h3>
+              <p class="pricing-section__text">
+                Extended care for working parents with structured learning and
+                relaxed evening routines.
+              </p>
+
+              <div class="pricing-section__info">
+                <span class="pricing-section__time">
+                  <i class="bi bi-stopwatch-fill" data-icon="time"></i>
+                  8:30 – 5:30
+                </span>
+
+                <span class="pricing-section__price">₹2,600 / month</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="pricing-section__note">
+          Admissions are based on age-group eligibility and availability.
+        </p>
+
+        <a href="#" class="pricing-section__btn" data-btn="pricing">Enroll Your Child</a>
+      </div>
+    </section>
+
+    <!-- why us section -->
+    <section class="why-us-section py-6" id="why-us" data-section="why-us">
+      <div class="container">
+        <div class="row">
+          <!-- LEFT -->
+          <div class="col-12 col-lg-6">
+            <div class="why-us-section__left">
+              <p class="why-us-section__subheading">Why Us</p>
+
+              <h2 class="why-us-section__heading">
+                The best early<br />learning experience
+              </h2>
+
+              <p class="why-us-section__desc">
+                A caring environment where children explore confidently, build
+                strong habits, and enjoy learning every day.
+              </p>
+
+              <ul class="why-us-section__features">
+                <li>
+                  <i class="bi bi-check-circle-fill" data-icon="check"></i>
+                  Holistic development focus
+                </li>
+                <li>
+                  <i class="bi bi-check-circle-fill" data-icon="check"></i>
+                  Friendly and trained teachers
+                </li>
+                <li>
+                  <i class="bi bi-check-circle-fill" data-icon="check"></i>
+                  Safe supervision throughout the day
+                </li>
+              </ul>
+
+              <a href="#about" class="why-us-section__btn" data-btn="why-us">
+                Know More
+              </a>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="col-12 col-lg-6">
+            <div class="why-us-section__right">
+              <div class="row">
+                <!-- Column 1 -->
+                <div class="col-12 col-sm-6">
+                  <div class="why-us-section__stack">
+                    <div class="why-us-section__card">
+                      <div class="why-us-section__icon">
+                        <i class="bi bi-heart-fill" data-icon="heart"></i>
+                      </div>
+                      <h3 class="why-us-section__card-title">Kindness</h3>
+                      <p class="why-us-section__card-text">
+                        We encourage empathy, sharing, and respectful behaviour
+                        in daily routines.
+                      </p>
+                    </div>
+
+                    <div class="why-us-section__card">
+                      <div class="why-us-section__icon">
+                        <i class="bi bi-emoji-smile-fill" data-icon="smile"></i>
+                      </div>
+                      <h3 class="why-us-section__card-title">Emotional</h3>
+                      <p class="why-us-section__card-text">
+                        Kids learn confidence, patience, and communication
+                        through guided play.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="col-12 col-sm-6">
+                  <div
+                    class="why-us-section__stack why-us-section__stack--down"
+                  >
+                    <div class="why-us-section__card">
+                      <div class="why-us-section__icon">
+                        <i class="bi bi-boombox" data-icon="creativity"></i>
+                      </div>
+                      <h3 class="why-us-section__card-title">Creativity</h3>
+                      <p class="why-us-section__card-text">
+                        Art, music, and imagination activities help children
+                        express ideas freely.
+                      </p>
+                    </div>
+
+                    <div class="why-us-section__card">
+                      <div class="why-us-section__icon">
+                        <i class="bi bi-graph-up" data-icon="growth"></i>
+                      </div>
+                      <h3 class="why-us-section__card-title">Innovation</h3>
+                      <p class="why-us-section__card-text">
+                        Smart learning games build problem-solving and early
+                        logic skills.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /row -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- gallery section -->
+    <section class="gallery-section py-6" id="gallery" data-section="gallery">
+      <div class="container">
+        <div class="row g-4">
+          <!-- img 1 (wide) -->
+          <div class="col-12 col-md-6 col-lg-6">
+            <div class="gallery-section__item gallery-section__item--wide">
+              <img src="assets/images/section-6a.webp" alt="Children playing" />
+            </div>
+          </div>
+
+          <!-- img 2 -->
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="gallery-section__item gallery-section__item--square">
+              <img src="assets/images/section-6b.webp" alt="Child in snow" />
+            </div>
+          </div>
+
+          <!-- img 3 -->
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="gallery-section__item gallery-section__item--square">
+              <img
+                src="assets/images/section-6c.webp"
+                alt="Child stacking blocks"
+              />
+            </div>
+          </div>
+
+          <!-- img 4 -->
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="gallery-section__item gallery-section__item--square">
+              <img
+                src="assets/images/section-6d.webp"
+                alt="Coloring activity"
+              />
+            </div>
+          </div>
+
+          <!-- img 5 -->
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="gallery-section__item gallery-section__item--square">
+              <img src="assets/images/section-6e.webp" alt="Smiling child" />
+            </div>
+          </div>
+
+          <!-- img 6 (wide) ✅ FIXED: col-md-6 (not 12) -->
+          <div class="col-12 col-md-6 col-lg-6">
+            <div class="gallery-section__item gallery-section__item--wide">
+              <img
+                src="assets/images/section-6f.webp"
+                alt="Kids with letter blocks"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- daily activity -->
+    <section
+      class="daily-activities-section py-6"
+      id="daily-activities"
+      data-section="daily-activities"
+    >
+      <div class="container">
+        <div class="row">
+          <!-- Heading -->
+          <div class="col-12">
+            <p class="daily-activities-section__subtitle">DAILY ACTIVITIES</p>
+            <h2 class="daily-activities-section__title">
+              Built to spark curiosity <br />
+              and confidence every day
+            </h2>
+          </div>
+
+          <!-- Video -->
+          <div class="col-12">
+            <div class="daily-activities-section__media">
+              <div class="daily-activities-section__img">
+                <img
+                  src="assets/images/daily-activity.webp"
+                  alt="Children enjoying activities"
+                  loading="lazy"
+                />
+              </div>
+
+              <!-- (If you want NO button tag, tell me. Keeping same layout for now.) -->
+              <a
+                href="#"
+                class="daily-activities-section__play"
+                aria-label="Play video"
+                data-btn="daily-activities"
+              >
+                <span aria-hidden="true">&#9658;</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- program -->
+    <section
+      class="program-highlights-section py-6"
+      id="program-highlights"
+      data-section="program-highlights"
+    >
+      <div class="container">
+        <div class="row program-highlights-section__row">
+          <!-- 1 -->
+          <div class="col-12 col-md-6 program-highlights-section__col">
+            <div class="program-highlights-section__item">
+              <h3 class="program-highlights-section__title">Morning Huddles</h3>
+              <p class="program-highlights-section__text">
+                Short circle-time routines that build confidence, improve
+                listening skills, and help children start the day with calm
+                energy.
+              </p>
+              <span class="program-highlights-section__divider"></span>
+            </div>
+          </div>
+
+          <!-- 2 -->
+          <div class="col-12 col-md-6 program-highlights-section__col">
+            <div class="program-highlights-section__item">
+              <h3 class="program-highlights-section__title">Learning Lab</h3>
+              <p class="program-highlights-section__text">
+                Hands-on stations for puzzles, language games,and help children
+                start numbers, and simple experiments—made fun and age-friendly.
+              </p>
+              <span class="program-highlights-section__divider"></span>
+            </div>
+          </div>
+
+          <!-- 3 -->
+          <div class="col-12 col-md-6 program-highlights-section__col">
+            <div class="program-highlights-section__item">
+              <h3 class="program-highlights-section__title">The Basics</h3>
+              <p class="program-highlights-section__text">
+                Everyday skills like sharing, routine building, manners, and
+                independence—so kids feel secure and capable.
+              </p>
+              <span class="program-highlights-section__divider"></span>
+            </div>
+          </div>
+
+          <!-- 4 -->
+          <div class="col-12 col-md-6 program-highlights-section__col">
+            <div class="program-highlights-section__item">
+              <h3 class="program-highlights-section__title">Superfoods</h3>
+              <p class="program-highlights-section__text">
+                Balanced snacks and smart food habits that support growth,
+                focus, and healthy energy through the day.
+              </p>
+              <span class="program-highlights-section__divider"></span>
+            </div>
+          </div>
+
+          <!-- 5 -->
+          <div class="col-12 col-md-6 program-highlights-section__col">
+            <div class="program-highlights-section__item">
+              <h3 class="program-highlights-section__title">Play Stations</h3>
+              <p class="program-highlights-section__text">
+                Creative corners for pretend play, blocks, art, and role-based
+                learning to build imagination and teamwork.
+              </p>
+              <!-- no divider for last row -->
+            </div>
+          </div>
+
+          <!-- 6 -->
+          <div class="col-12 col-md-6 program-highlights-section__col">
+            <div class="program-highlights-section__item">
+              <h3 class="program-highlights-section__title">Outdoor Play</h3>
+              <p class="program-highlights-section__text">
+                Safe outdoor movement activities that improve balance,
+                coordination, and social bonding in fresh air.
+              </p>
+              <!-- no divider for last row -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- meet teachers -->
+    <section
+      class="meet-teachers-section py-6"
+      id="meet-teachers"
+      data-section="meet-teachers"
+    >
+      <div class="container">
+        <div class="row">
+          <div class="col-12 meet-colom">
+            <p class="meet-teachers-section__subtitle">MEET THE TEACHERS</p>
+            <h2 class="meet-teachers-section__title">
+              Experts who help your <br />
+              child grow every day
+            </h2>
+          </div>
+        </div>
+
+        <div class="row meet-teachers-section__row">
+          <!-- Card 1 -->
+          <div class="col-12 col-md-4 meet-teachers-section__col">
+            <div class="meet-teachers-section__card">
+              <div class="meet-teachers-section__img">
+                <img
+                  src="assets/images/teacher-a.webp"
+                  alt="Teacher A"
+                  loading="lazy"
+                />
+              </div>
+              <h3 class="meet-teachers-section__name">Ananya Verma</h3>
+              <p class="meet-teachers-section__role">
+                Lead Educator • Early learners (1–2 yrs)
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="col-12 col-md-4 meet-teachers-section__col">
+            <div class="meet-teachers-section__card">
+              <div class="meet-teachers-section__img">
+                <img
+                  src="assets/images/teacher-b.webp"
+                  alt="Teacher B"
+                  loading="lazy"
+                />
+              </div>
+              <h3 class="meet-teachers-section__name">Ritika Sharma</h3>
+              <p class="meet-teachers-section__role">
+                Care Mentor • Tiny explorers (1–2 yrs)
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="col-12 col-md-4 meet-teachers-section__col">
+            <div class="meet-teachers-section__card">
+              <div class="meet-teachers-section__img">
+                <img
+                  src="assets/images/teacher-c.webp"
+                  alt="Teacher C"
+                  loading="lazy"
+                />
+              </div>
+              <h3 class="meet-teachers-section__name">Neha Singh</h3>
+              <p class="meet-teachers-section__role">
+                Learning Guide • Preschoolers (3–4 yrs)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- paresn testimonial -->
+    <section
+      class="parent-testimonial py-6"
+      id="parent-testimonial"
+      data-section="parent-testimonial"
+    >
+      <div class="container">
+        <p class="parent-testimonial__subtitle">WHAT PARENTS SAY</p>
+
+        <div class="parent-testimonial__card">
+          <div class="row g-0 parent-testimonial__row">
+            <!-- Image Column -->
+            <div class="col-12 col-md-5">
+              <div class="parent-testimonial__image-wrap">
+                <div class="parent-testimonial__image">
+                  <img
+                    src="assets/images/testimonial-b.webp"
+                    alt="Happy parent with child"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Column -->
+            <div class="col-12 col-md-7">
+              <div class="parent-testimonial__content">
+                <div class="parent-testimonial__content-inner">
+                  <i
+                    class="parent-testimonial__quote-icon"
+                    data-icon="quote"
+                    aria-hidden="true"
+                  ></i>
+
+                  <p class="parent-testimonial__text">
+                    The learning environment is calm, structured, and very
+                    supportive. My child feels more confident every day.
+                  </p>
+
+                  <p class="parent-testimonial__author">Ramita Jain</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer cta -->
+    <section class="footer-cta" id="footer-cta" data-section="footer-cta">
+      <!-- Background Image -->
+      <div class="footer-cta__bg" aria-hidden="true"><span class="d-none"></span></div>
+
+      <!-- Overlay -->
+      <div class="footer-cta__overlay">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 col-lg-10 mx-auto">
+              <div class="footer-cta__content">
+                <h2 class="footer-cta__title">More than just a joyful place</h2>
+
+                <p class="footer-cta__text">
+                  A nurturing environment where children feel safe, stay
+                  curious, and grow confidently with care and creativity.
+                </p>
+
+                <a href="#enroll" class="footer-cta__button" data-btn="footer-cta">
+                  Enroll your kid
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <footer class="site-footer" id="site-footer" data-section="site-footer">
+      <div class="container">
+        <div class="row site-footer__row">
+          <!-- Left: Copyright -->
+          <div class="col-12 col-md-6">
+            <p class="site-footer__copy">
+              © 2025. All Rights Reserved. Powered by Zigrow.
+            </p>
+          </div>
+
+          <!-- Right: Social -->
+          <div class="col-12 col-md-6">
+            <div class="site-footer__social">
+              <a href="#" aria-label="Facebook" target="_blank" rel="noopener">
+                <i
+                  class="bi bi-facebook"
+                  data-icon="facebook"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <a href="#" aria-label="Instagram" target="_blank" rel="noopener">
+                <i
+                  class="bi bi-instagram"
+                  data-icon="instagram"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <a href="#" aria-label="LinkedIn" target="_blank" rel="noopener">
+                <i
+                  class="bi bi-linkedin"
+                  data-icon="linkedin"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <a href="#" aria-label="Twitter" target="_blank" rel="noopener">
+                <i
+                  class="bi bi-twitter"
+                  data-icon="twitter"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

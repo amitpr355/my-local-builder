@@ -1,0 +1,695 @@
+// :root {
+//   --primary-colors: red;
+//   --secondary-colors: black;
+//   --territory-colors: green;
+// }
+
+// Variables
+$eachSectionBackgroundColor: #fefefe;
+$eachSectionBackgroundColor2: #f9f9f9;
+$lightBlueColor: #5fabb7;
+$heroSectionHeading: #1a174f;
+$eachSectionNameColor: #22272e;
+$starRatingColor: #fdd077;
+$textMutedColor: #6c757d;
+$aboutuspara: #444f5d;
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+// ==========================
+// HAMBURGER Z-INDEX
+// ==========================
+/* Reduce the outer container size */
+.hamburger {
+  z-index: 1051;
+  width: 24px; /* default is 40px, reduce as needed */
+  height: 24px; /* adjust height as per look */
+  display: flex;
+  padding: 0;
+}
+
+/* Reduce the box that contains the lines */
+.hamburger-box {
+  width: 24px;
+  height: 24px;
+}
+
+/* Reduce the inner lines */
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+  width: 24px;
+  height: 3px; /* thinner lines */
+}
+
+.nav-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar-menu-div {
+  a {
+    @media (max-width: 991.98px) {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+
+.nav-link {
+  position: relative;
+  color: var(--primary-colors, $eachSectionNameColor);
+  font-weight: 600;
+  text-decoration: none;
+  padding-bottom: 5px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background-color: currentColor;
+    transition: width 0.4s ease;
+  }
+
+  &:hover::after {
+    width: 100%; // Animate underline on hover
+  }
+
+  // Optional: text color change on hover
+  &:hover {
+    color: var(--primary-colors, $eachSectionNameColor);
+  }
+}
+
+@media (min-width: 991.98px) {
+  .nav-link.active {
+    color: var(--primary-colors, $eachSectionNameColor);
+    font-weight: 800;
+
+    &::after {
+      width: 100%; // Active link shows full underline
+      background-color: currentColor;
+    }
+  }
+}
+
+//////////////////////// Section 1 (Hero Section)
+.hero-section-people-div {
+  position: relative;
+}
+
+.avatar-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-img1 {
+  z-index: 4;
+}
+.avatar-img2 {
+  position: absolute;
+  left: 70%;
+  z-index: 3;
+}
+.avatar-img3 {
+  position: absolute;
+  left: 140%;
+  z-index: 2;
+}
+
+.avatar-img-text-div {
+  margin-left: 75px;
+}
+
+.hero-section-heading {
+  font-size: 70px;
+  font-weight: 400;
+  color: var(--primary-colors, $heroSectionHeading);
+  @media (max-width: 1199.98px) {
+    font-size: 3em;
+  }
+  @media (max-width: 400px) {
+    font-size: 2em;
+  }
+}
+
+.hero-section-para {
+  font-size: 24px;
+  color: var(--secondary-colors, $heroSectionHeading);
+}
+
+.about-section-para {
+  color: var(--secondary-colors, $aboutuspara);
+}
+
+.property-img {
+  border-top-left-radius: 0;
+  border-top-right-radius: 12vw;
+  border-bottom-left-radius: 12vw;
+  border-bottom-right-radius: 0;
+  max-width: 90%;
+}
+
+.btn-custom {
+  background-color: var(--territory-colors, $lightBlueColor);
+  color: $eachSectionBackgroundColor2;
+  padding: 12px 28px;
+  border-radius: 40px;
+  border: none;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.3), transparent);
+    transform: skewX(-25deg);
+    transition: left 0.5s ease;
+  }
+
+  &:hover {
+    background-color: #559fa3;
+    color: $eachSectionBackgroundColor2;
+    transform: scale(1.05);
+
+    &::after {
+      left: 125%;
+    }
+  }
+}
+
+// For the floating button
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--territory-colors, $lightBlueColor);
+  color: $eachSectionBackgroundColor2; /* Replace $yellowcolor with actual color */
+  border: 2px solid var(--territory-colors, $lightBlueColor);
+  transition: all 0.3s ease;
+  opacity: 0; /* Start hidden for GSAP animation */
+  transform: translateY(50px); /* Initial offset for slide-in */
+  &:hover {
+    background-color: rgb(73, 73, 73);
+    color: $eachSectionBackgroundColor2;
+    border-color: rgb(73, 73, 73);
+  }
+  .bi-arrow-up {
+    font-size: 25px;
+  }
+}
+
+//////////////////////// Section 2(About Us Section)
+.about-section {
+  background-color: $eachSectionBackgroundColor2;
+
+  .about-section-para {
+    @media (max-width: 991.98px) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+  }
+}
+
+.each-section-name {
+  font-size: 48px;
+  display: flex;
+  justify-content: start;
+  font-weight: 400;
+  @media (max-width: 991.98px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  @media (max-width: 575.98px) {
+    font-size: 32px;
+  }
+}
+
+//////////////////////// Section 3(Explore Section)
+.each-section-para {
+  display: flex;
+  justify-content: start;
+  @media (max-width: 991.98px) {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.exploreus-section {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+  border-radius: 0px;
+}
+
+.card-body h6 {
+  font-size: 1rem;
+}
+
+.other-details-of-properties {
+  color: black;
+  font-size: 14px;
+}
+
+.card-body p {
+  margin-bottom: 0.25rem;
+}
+
+//////////////////////// Section 4(Why Choose Us Section)
+.why-choose-section {
+  background-color: $eachSectionBackgroundColor2;
+  padding: 60px 20px;
+
+  .why-choose-title {
+    font-weight: bold;
+    font-size: 2.5rem;
+  }
+  .feature-list {
+    margin-top: 30px;
+    @media (max-width: 991.98px) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      // flex-direction: column;
+    }
+  }
+
+  .feature-list i {
+    background-color: var(--primary-colors, #50b9c6);
+    border-radius: 50%;
+    color: white;
+    padding: 8px;
+    margin-right: 10px;
+  }
+
+  .feature-list {
+    .feature-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      margin-top: 20px;
+      // padding-top: 20px;
+      @media (max-width: 991.98px) {
+        justify-content: center;
+        flex-direction: column;
+      }
+      span {
+        font-size: 18px;
+      }
+    }
+  }
+
+  .tick-icon i {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .rounded-img {
+    border-top-right-radius: 12vw;
+    border-bottom-left-radius: 12vw;
+    overflow: hidden;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  @media (max-width: 767px) {
+    .why-choose-title {
+      font-size: 2rem;
+    }
+  }
+}
+
+//////////////////////// Section 5(Properties Section)
+.popular-areas {
+  .city-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0px;
+    width: 100%;
+    img {
+      width: 100%;
+      flex: 1;
+      // height: 400px;
+      height: auto;
+      aspect-ratio: 2/4;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 0.3s ease;
+    }
+  }
+
+  .city-card.active img,
+  .city-card:hover img {
+    filter: grayscale(0%);
+  }
+
+  .city-name {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    font-weight: 600;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+  }
+}
+
+//////////////////////// Section 6(Common Question Section)
+.faq-section {
+  background-color: $eachSectionBackgroundColor;
+
+  .accordion {
+    button.accordion-button {
+      text-decoration: none;
+      font-size: 20px;
+      color: var(--secondary-colors, $textMutedColor);
+      background-color: $eachSectionBackgroundColor;
+      border: none;
+      box-shadow: none;
+
+      @media (max-width: 575.98px) {
+        font-size: 16px;
+      }
+
+      &:hover,
+      &:focus,
+      &:active {
+        text-decoration: none;
+        background-color: $eachSectionBackgroundColor;
+        outline: none;
+        box-shadow: none;
+      }
+    }
+
+    .accordion-body {
+      padding-left: 0;
+      @media (max-width: 575.98px) {
+        font-size: 14px;
+      }
+    }
+
+    .accordion-button:not(.collapsed) {
+      background-color: $eachSectionBackgroundColor;
+      border-bottom: none;
+      box-shadow: none;
+    }
+  }
+
+  .accordion-button {
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: none;
+    padding: 1rem 0;
+    outline: none;
+    border: none;
+
+    &:focus,
+    &:active {
+      background-color: transparent;
+      box-shadow: none;
+      outline: none;
+      border: none;
+    }
+  }
+
+  .accordion-button::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='black' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    transition: transform 0.3s ease;
+  }
+
+  .accordion-button:not(.collapsed)::after {
+    transform: rotate(-180deg);
+  }
+}
+
+//////////////////////// Section 7(Hear What People Say Section)
+.testimonials-section {
+  .rounded-start-image {
+    border-top-right-radius: 12vw;
+    border-bottom-left-radius: 12vw;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+  }
+
+  .testimonial-card {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid #eee;
+    transition: box-shadow 0.3s ease;
+    margin: 10px;
+    height: 330px;
+    @media (max-width: 455px) {
+      height: 420px;
+    }
+    @media (max-width: 767.98px) {
+      height: 280px;
+    }
+  }
+
+  .testimonial-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  }
+
+  .stars {
+    font-size: 1.5em;
+    letter-spacing: 1px;
+    color: $starRatingColor;
+    i {
+      font-size: 16px;
+    }
+  }
+
+  .testimonial-section-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    @media (max-width: 767.98px) {
+      display: none;
+    }
+  }
+
+  .rounded-circle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .testimonial-comment {
+    @media (max-width: 486px) {
+      font-size: 15px;
+    }
+  }
+
+  .testimonial-author-div {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    bottom: 10%;
+    left: 50%;
+    transform: translate(-50%);
+    @media (max-width: 767.98px) {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .swiper {
+    width: 100%;
+    height: 100%;
+    @media (min-width: 767.98px) {
+      display: none;
+    }
+  }
+
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    padding-left: 40px;
+    padding-right: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @media (max-width: 424.98px) {
+      padding-left: 2px;
+      padding-right: 2px;
+    }
+  }
+
+  .swiper {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: var(--territory-colors, $lightBlueColor); /* change arrow color */
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Optional: Bigger icons */
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    font-size: 25px;
+  }
+
+  .swiper-pagination-bullet {
+    background-color: #bbb; /* default dot color */
+    opacity: 1; /* make all dots fully visible */
+  }
+
+  .swiper-pagination-bullet-active {
+    background-color: var(
+      --territory-colors,
+      $lightBlueColor
+    ); /* active dot color (e.g., blue) */
+  }
+}
+
+//////////////////////// Section 8(Choice Section)
+.contact-help-section {
+  background-color: $eachSectionBackgroundColor2;
+
+  .form-check-label {
+    color: var(--secondary-colors, $textMutedColor);
+  }
+
+  /* Change checkbox background and border */
+  .form-check-input {
+    width: 18px;
+    height: 18px;
+    background-color: white; /* Unchecked background */
+    border: 1px solid #000; /* Border color */
+    border-radius: 0px; /* Optional rounded corners */
+    cursor: pointer;
+    box-shadow: none;
+  }
+
+  /* When checked: change background and tick color */
+  .form-check-input:checked {
+    background-color: #000; /* Fill color when checked */
+    border-color: #000;
+    box-shadow: none;
+  }
+}
+
+//////////////////////// Footer Section
+.footer-section {
+  background-color: var(--territory-colors, $eachSectionBackgroundColor);
+  color: var(--secondary-colors, #212529);
+  font-family: "Inter", sans-serif;
+  .footer-logo-div,
+  .footer-aboutus-div,
+  .footer-contactinfo-div,
+  .footer-location-div {
+    ul {
+      padding-left: 0;
+      @media (max-width: 767.98px) {
+        text-align: center;
+      }
+      li {
+        list-style: none;
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+  }
+
+  .footer-aboutus-div {
+    p {
+      @media (max-width: 767.98px) {
+        text-align: center;
+      }
+    }
+  }
+
+  .footer-logo-icon {
+    font-size: 2rem;
+  }
+
+  .footer-social-icons a {
+    color: var(--secondary-colors, #212529);
+  }
+
+  .footer-social-icons i {
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+}
+
+section {
+  scroll-margin-top: 60vh; /* equal to your navbar height */
+}
+
+input {
+  background-color: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  box-shadow: none;
+margin-bottom: 1rem;
+  width: 100%;
+}
+
+input:focus {
+  border-color: #000;
+  box-shadow: none;
+}
+
+/* Remove spinner arrows in Chrome, Safari, Edge */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove spinner arrows in Firefox */
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield; // Needed for Firefox
+}

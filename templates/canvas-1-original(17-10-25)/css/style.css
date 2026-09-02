@@ -1,0 +1,243 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #333;
+  line-height: 1.6;
+}
+
+#header {
+  background-color: #157347;
+}
+#header .navbar-brand h5 {
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+#header .nav-box a {
+  margin-right: 2.5rem;
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+#header .nav-box a:hover {
+  border-bottom: 2px solid white;
+}
+#header .nav-btn {
+  background-color: #ffffff;
+  color: #093561;
+  font-weight: bold;
+  border: none;
+  border-radius: 20px;
+  margin-left: 8rem;
+}
+#header .nav-btn:hover {
+  background-color: rgb(242.25, 242.25, 242.25);
+}
+@media (max-width: 991.98px) {
+  #header .nav-btn {
+    margin-left: 0rem;
+  }
+  #header .nav-box a {
+    margin: 0rem auto;
+  }
+}
+
+#hero {
+  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+  text-align: center;
+  padding: 6rem 0rem;
+}
+#hero h1 {
+  font-weight: 800;
+  color: #093561;
+}
+#hero p {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: auto;
+  color: gray;
+}
+#hero .btn {
+  background-color: #198754;
+  color: #ffffff;
+  padding: 0.7rem 4.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+}
+#hero .btn:hover {
+  background-color: rgb(21.015625, 113.484375, 70.6125);
+}
+
+.whatsapp-icon {
+  position: absolute;
+}
+.whatsapp-icon i {
+  position: fixed;
+  bottom: 5%;
+  right: 4%;
+  background-color: #157347;
+  z-index: 200;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 50%;
+  box-shadow: 10px 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+#about {
+  background-color: #f4f4f4;
+  padding: 60px 0px;
+}
+#about .about-tex {
+  text-align: start;
+}
+@media (max-width: 768px) {
+  #about .about-tex {
+    text-align: center;
+  }
+}
+#about .about-tex h3 {
+  color: #157347;
+  font-weight: 600;
+}
+#about .about-tex p {
+  font-size: 1.2rem;
+  color: gray;
+}
+#about img {
+  max-width: 600px;
+  height: 100%;
+}
+
+#services {
+  padding: 60px 0px;
+  background-color: #ffffff;
+}
+#services h3 {
+  color: #157347;
+  font-weight: 700;
+}
+#services p {
+  max-width: 800px;
+  margin: 10px auto;
+  color: gray;
+  font-size: 1.2rem;
+}
+
+#contact {
+  background-color: #f4f4f4;
+  padding: 60px 0px;
+}
+#contact .contact-box {
+  align-items: flex-start;
+  align-items: center;
+  margin-bottom: 15px;
+}
+#contact .contact-box i {
+  color: #157347;
+  font-size: 2rem;
+}
+@media (max-width: 565px) {
+  #contact .contact-box i {
+    font-size: 1.4rem;
+  }
+}
+#contact .contact-box p {
+  margin: 0;
+  color: gray;
+  font-size: 1.4rem;
+}
+@media (max-width: 565px) {
+  #contact .contact-box p {
+    font-size: 1rem;
+  }
+}
+#contact .contact-box a {
+  color: inherit;
+  text-decoration: none;
+}
+#contact .contact-box a:hover {
+  color: #198754;
+}
+#contact .contact-icon {
+  font-size: 2rem;
+}
+#contact .contact-icon i {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+#contact .contact-icon i:hover {
+  color: #198754;
+}
+#contact .contact-icon .icon-1 {
+  color: #1877f2;
+}
+#contact .contact-icon .icon-2 {
+  color: #e4405f;
+}
+#contact .contact-icon .icon-3 {
+  color: #0a66c2;
+}
+#contact .contact-img-box {
+  text-align: center;
+}
+#contact .contact-img-box img {
+  width: 100%;
+  max-width: 400px;
+}
+
+footer {
+  background-color: #157347;
+  color: #ffffff;
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  #header .nav-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hero-section {
+    max-width: 100%;
+  }
+  #about,
+  #contact,
+  #services {
+    padding: 30px 0px;
+  }
+  #about .about-tex,
+  #about .contact-section,
+  #about .contact-img-box,
+  #contact .about-tex,
+  #contact .contact-section,
+  #contact .contact-img-box,
+  #services .about-tex,
+  #services .contact-section,
+  #services .contact-img-box {
+    padding: 10px 0px;
+  }
+  #about .d-md-flex,
+  #contact .d-md-flex,
+  #services .d-md-flex {
+    flex-direction: column;
+  }
+  #hero {
+    padding: 30px 20px;
+  }
+  #hero h1 {
+    font-size: 2rem;
+  }
+  #hero .hero-section {
+    padding: 0rem 0rem;
+  }
+  .nav-btn {
+    font-size: 0.9rem;
+    padding: 8px 20px;
+  }
+}/*# sourceMappingURL=style.css.map */

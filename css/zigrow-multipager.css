@@ -1,0 +1,997 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Zigrow Multi Pager — Phase 2B Styles
+   Page dropdown, page row actions, modals, mobile pages bar.
+   Extracted from editor.html for maintainability.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ═══ Pages dropdown integrated into #top-panel navbar ═══ */
+
+/* Top panel must allow dropdown overflow and sit above fixed panels */
+#top-panel.topbar {
+  position: relative;
+  z-index: 42; /* above fixed #left-panel (z:10) */
+  overflow: visible;
+}
+#top-panel .topbar-center {
+  overflow: visible;
+}
+
+/* Container — sits as a flex child inside .topbar-center */
+.zp-navbar-pages {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Divider before pages block */
+.zp-navbar-pages .zp-divider-v {
+  width: 1px;
+  height: 22px;
+  background: color-mix(in oklab, var(--bs-emphasis-color) 15%, transparent);
+  opacity: 0.6;
+  border-radius: 1px;
+  margin-right: 10px;
+}
+
+/* Selector trigger button */
+.zp-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--bs-border-color, #d0d0d0);
+  border-radius: 8px;
+  background: var(--bs-body-bg, #fff);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--bs-body-color, #212529);
+  max-width: 220px;
+  white-space: nowrap;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  user-select: none;
+  line-height: 1.35;
+}
+.zp-selector:hover,
+.zp-selector.zp-open {
+  border-color: var(--zigrow-primary-500, #5b3df2);
+  box-shadow: 0 0 0 2.5px rgba(91, 61, 242, 0.1);
+}
+.zp-selector .zp-pages-icon {
+  font-size: 0.95rem;
+  opacity: 0.55;
+}
+.zp-selector-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+  display: inline-block;
+}
+.zp-selector .zp-chevron {
+  font-size: 0.65rem;
+  opacity: 0.45;
+  transition: transform 0.2s;
+  margin-left: 2px;
+}
+.zp-selector.zp-open .zp-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Dropdown panel ── */
+.zp-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 290px;
+  max-width: 360px;
+  max-height: 420px;
+  background: var(--bs-body-bg, #fff);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.14),
+    0 1.5px 6px rgba(0, 0, 0, 0.06);
+  z-index: 1060;
+  overflow: visible; /* don't clip the flex column children */
+  font-size: 0.82rem;
+}
+.zp-dropdown.zp-open {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dropdown header */
+.zp-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 8px;
+}
+.zp-dropdown-title {
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  color: var(--bs-body-color, #212529);
+}
+
+/* Horizontal dividers */
+.zp-dropdown-divider {
+  height: 1px;
+  background: var(--bs-border-color, #eee);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* Scrollable page list */
+#zp-dropdown-list {
+  overflow-y: auto;
+  max-height: 280px;
+  padding: 4px 0;
+}
+
+/* Page row item */
+.zp-dropdown .zp-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: background 0.12s;
+  user-select: none;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  color: var(--bs-body-color, #212529);
+  gap: 6px;
+}
+.zp-dropdown .zp-item:hover {
+  background: var(--bs-secondary-bg, #f6f6fa);
+}
+.zp-dropdown .zp-item.zp-active {
+  background: var(--zigrow-primary-50, #f4f2ff);
+  font-weight: 600;
+  border-left: 3px solid var(--zigrow-primary-500, #5b3df2);
+  padding-left: 13px;
+}
+.zp-dropdown .zp-item.zp-drag-over {
+  border-top: 2px solid var(--zigrow-primary-500, #5b3df2);
+}
+
+/* Home badge */
+.zigrow-home-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.56rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--zigrow-primary-500, #5b3df2);
+  color: #fff;
+  margin-left: 4px;
+  vertical-align: middle;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+.zigrow-home-badge i {
+  font-size: 0.6rem;
+}
+
+/* Drag handle */
+.zp-grip {
+  cursor: grab;
+  opacity: 0.28;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+}
+.zp-grip:hover {
+  opacity: 0.8;
+}
+
+/* Page name */
+.zp-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Row action icons */
+.zp-actions {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.zp-item:hover .zp-actions,
+.zp-item.zp-active .zp-actions {
+  opacity: 1;
+}
+.zp-actions .zp-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: 0.72rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 5px;
+  color: var(--bs-body-color, #999);
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.zp-actions .zp-act:hover {
+  background: var(--bs-secondary-bg, #f0f0f0);
+  color: var(--bs-body-color, #555);
+}
+.zp-actions .zp-act.zp-clone:hover {
+  background: var(--zigrow-primary-50, #f7f5ff);
+  color: var(--zigrow-primary-400, #7d6df7);
+}
+.zp-actions .zp-act.zp-rename:hover {
+  background: #fffbee;
+  color: #c4960f;
+}
+.zp-actions .zp-act.zp-delete:hover {
+  background: #fef0f0;
+  color: #d44a4a;
+}
+
+/* Free-user restricted state — visually disabled, still clickable to trigger pricing */
+.zp-actions .zp-act.zp-restricted {
+  opacity: 0.35;
+  cursor: not-allowed;
+  position: relative;
+}
+.zp-actions .zp-act.zp-restricted:hover {
+  background: transparent;
+  color: inherit;
+  opacity: 0.45;
+}
+/* Upgrade tooltip for free-user locked actions */
+.zp-actions .zp-act.zp-restricted[data-zp-tooltip]::after {
+  content: attr(data-zp-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: #1e1e2e;
+  color: #fff;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 1070;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.01em;
+}
+.zp-actions .zp-act.zp-restricted[data-zp-tooltip]::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #1e1e2e;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 1070;
+}
+.zp-actions .zp-act.zp-restricted[data-zp-tooltip]:hover::after,
+.zp-actions .zp-act.zp-restricted[data-zp-tooltip]:hover::before {
+  opacity: 1;
+}
+/* Tooltip for Add New Page button when restricted */
+.zp-add-new.zp-restricted[data-zp-tooltip] {
+  position: relative;
+}
+.zp-add-new.zp-restricted[data-zp-tooltip]::after {
+  content: attr(data-zp-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: #1e1e2e;
+  color: #fff;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 1070;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+.zp-add-new.zp-restricted[data-zp-tooltip]::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #1e1e2e;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 1070;
+}
+.zp-add-new.zp-restricted[data-zp-tooltip]:hover::after,
+.zp-add-new.zp-restricted[data-zp-tooltip]:hover::before {
+  opacity: 1;
+}
+.zp-add-new.zp-restricted {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: var(--bs-secondary-color, #6c757d);
+}
+.zp-add-new.zp-restricted:hover {
+  background: transparent;
+  color: var(--bs-secondary-color, #6c757d);
+  opacity: 0.5;
+}
+
+/* Add New Page footer button */
+.zp-add-new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--zigrow-primary-500, #5b3df2);
+  transition: background 0.15s;
+}
+.zp-add-new:hover {
+  background: var(--zigrow-primary-50, #f4f2ff);
+}
+.zp-add-new i {
+  font-size: 0.85rem;
+}
+
+/* Save-first notice */
+.zp-notice {
+  padding: 18px 16px;
+  text-align: center;
+  color: var(--bs-secondary-color, #6c757d);
+  font-size: 0.8rem;
+}
+
+/* ═══ Legacy sidebar Pages tab — hidden but preserved ═══ */
+.zigrow-pages-tab {
+  display: none !important;
+}
+#zigrow-pages-panel {
+  display: none !important;
+}
+
+/* ═══ General usability improvements (both themes) ═══ */
+
+/* Larger action-icon hit area */
+.zp-actions .zp-act {
+  width: 28px;
+  height: 28px;
+  font-size: 0.85rem;
+}
+
+/* Show actions on active row even without hover (touch / keyboard) */
+.zp-item.zp-active .zp-actions {
+  opacity: 1;
+}
+
+/* Bump drag-handle base opacity so it's discoverable */
+.zp-grip {
+  opacity: 0.38;
+}
+
+/* Better row padding for breathing room */
+.zp-dropdown .zp-item {
+  padding: 9px 16px;
+  gap: 8px;
+}
+
+/* Focus-visible ring for keyboard accessibility */
+.zp-actions .zp-act:focus-visible {
+  outline: 2px solid var(--zigrow-primary-400, #7d6df7);
+  outline-offset: 1px;
+}
+.zp-selector:focus-visible {
+  outline: 2px solid var(--zigrow-primary-400, #7d6df7);
+  outline-offset: 2px;
+}
+.zp-add-new:focus-visible {
+  outline: 2px solid var(--zigrow-primary-400, #7d6df7);
+  outline-offset: -2px;
+}
+.zp-item:focus-visible {
+  outline: 2px solid var(--zigrow-primary-400, #7d6df7);
+  outline-offset: -2px;
+}
+
+/* ═══ Dark mode overrides ═══ */
+[data-bs-theme="dark"] .zp-selector {
+  background: color-mix(in srgb, var(--bs-body-bg) 90%, #fff 10%);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: var(--bs-body-color);
+}
+[data-bs-theme="dark"] .zp-selector:hover,
+[data-bs-theme="dark"] .zp-selector.zp-open {
+  border-color: var(--zigrow-primary-400, #7d6df7);
+  box-shadow: 0 0 0 2.5px rgba(91, 61, 242, 0.22);
+}
+[data-bs-theme="dark"] .zp-selector .zp-pages-icon {
+  opacity: 0.7;
+}
+[data-bs-theme="dark"] .zp-selector .zp-chevron {
+  opacity: 0.6;
+}
+
+/* Dropdown panel */
+[data-bs-theme="dark"] .zp-dropdown {
+  background: color-mix(in srgb, var(--bs-body-bg) 95%, #fff 5%);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 36px rgba(0, 0, 0, 0.45),
+    0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Header */
+[data-bs-theme="dark"] .zp-dropdown-title {
+  color: var(--bs-body-color);
+}
+
+/* Dividers */
+[data-bs-theme="dark"] .zp-dropdown-divider {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Page rows */
+[data-bs-theme="dark"] .zp-dropdown .zp-item {
+  color: rgba(255, 255, 255, 0.88);
+}
+[data-bs-theme="dark"] .zp-dropdown .zp-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* Active / current page row */
+[data-bs-theme="dark"] .zp-dropdown .zp-item.zp-active {
+  background: rgba(91, 61, 242, 0.18);
+  border-left-color: var(--zigrow-primary-400, #7d6df7);
+  color: #fff;
+}
+
+/* Drag-over */
+[data-bs-theme="dark"] .zp-dropdown .zp-item.zp-drag-over {
+  border-top-color: var(--zigrow-primary-400, #7d6df7);
+}
+
+/* Drag handle */
+[data-bs-theme="dark"] .zp-grip {
+  opacity: 0.4;
+  color: rgba(255, 255, 255, 0.6);
+}
+[data-bs-theme="dark"] .zp-grip:hover {
+  opacity: 0.85;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Page name text */
+[data-bs-theme="dark"] .zp-name {
+  color: inherit;
+}
+
+/* Home badge - slightly brighter in dark mode */
+[data-bs-theme="dark"] .zigrow-home-badge {
+  background: var(--zigrow-primary-400, #7d6df7);
+  color: #fff;
+}
+
+/* Row action icons */
+[data-bs-theme="dark"] .zp-actions .zp-act {
+  color: rgba(255, 255, 255, 0.4);
+}
+[data-bs-theme="dark"] .zp-actions .zp-act:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+}
+[data-bs-theme="dark"] .zp-actions .zp-act.zp-set-home:hover {
+  background: rgba(91, 61, 242, 0.14);
+  color: var(--zigrow-primary-300, #a69bff);
+}
+[data-bs-theme="dark"] .zp-actions .zp-act.zp-clone:hover {
+  background: rgba(91, 61, 242, 0.14);
+  color: var(--zigrow-primary-300, #a69bff);
+}
+[data-bs-theme="dark"] .zp-actions .zp-act.zp-rename:hover {
+  background: rgba(255, 193, 7, 0.1);
+  color: #e5b200;
+}
+[data-bs-theme="dark"] .zp-actions .zp-act.zp-delete:hover {
+  background: rgba(220, 53, 69, 0.12);
+  color: #ef8888;
+}
+/* Dark mode restricted overrides */
+[data-bs-theme="dark"] .zp-actions .zp-act.zp-restricted {
+  opacity: 0.25;
+}
+[data-bs-theme="dark"] .zp-actions .zp-act.zp-restricted:hover {
+  background: transparent;
+  color: inherit;
+  opacity: 0.35;
+}
+/* Dark mode tooltip overrides */
+[data-bs-theme="dark"]
+  .zp-actions
+  .zp-act.zp-restricted[data-zp-tooltip]::after,
+[data-bs-theme="dark"] .zp-add-new.zp-restricted[data-zp-tooltip]::after {
+  background: #333348;
+  color: #e0e0e0;
+}
+[data-bs-theme="dark"]
+  .zp-actions
+  .zp-act.zp-restricted[data-zp-tooltip]::before,
+[data-bs-theme="dark"] .zp-add-new.zp-restricted[data-zp-tooltip]::before {
+  border-top-color: #333348;
+}
+[data-bs-theme="dark"] .zp-add-new.zp-restricted {
+  opacity: 0.3;
+  color: rgba(255, 255, 255, 0.35);
+}
+[data-bs-theme="dark"] .zp-add-new.zp-restricted:hover {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.35);
+  opacity: 0.4;
+}
+
+/* Add New Page button */
+[data-bs-theme="dark"] .zp-add-new {
+  color: var(--zigrow-primary-300, #a69bff);
+}
+[data-bs-theme="dark"] .zp-add-new:hover {
+  background: rgba(91, 61, 242, 0.15);
+  color: var(--zigrow-primary-200, #c7bfff);
+}
+
+/* Notice / empty state */
+[data-bs-theme="dark"] .zp-notice {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Scrollbar inside dropdown for dark mode */
+[data-bs-theme="dark"] #zp-dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+[data-bs-theme="dark"] #zp-dropdown-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+[data-bs-theme="dark"] #zp-dropdown-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+[data-bs-theme="dark"] #zp-dropdown-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ═══ Builder Page Modals (input + confirm) ═════════════════ */
+.zp-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 100010;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: zpFadeIn 0.15s ease-out;
+}
+@keyframes zpFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.zp-modal-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px 26px 22px;
+  min-width: 340px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  animation: zpSlideUp 0.2s ease-out;
+}
+@keyframes zpSlideUp {
+  from {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.zp-modal-box h4 {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+.zp-modal-box .zp-modal-msg {
+  margin: 0 0 18px;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.45;
+}
+.zp-modal-box input.zp-modal-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid #d0d0d0;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+.zp-modal-box input.zp-modal-input:focus {
+  border-color: var(--zigrow-primary-400, #7d6df7);
+}
+.zp-modal-box input.zp-modal-input.zp-input-error {
+  border-color: #d44a4a;
+}
+.zp-modal-box .zp-modal-error {
+  color: #d44a4a;
+  font-size: 0.8rem;
+  margin: 6px 0 0;
+  min-height: 1.1em;
+}
+.zp-modal-box .zp-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+.zp-modal-box .zp-modal-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
+}
+.zp-modal-box .zp-modal-btn.zp-btn-cancel {
+  background: #f0f0f0;
+  color: #555;
+}
+.zp-modal-box .zp-modal-btn.zp-btn-cancel:hover {
+  background: #e4e4e4;
+}
+.zp-modal-box .zp-modal-btn.zp-btn-primary {
+  background: var(--zigrow-primary-500, #5b3df2);
+  color: #fff;
+}
+.zp-modal-box .zp-modal-btn.zp-btn-primary:hover {
+  background: var(--zigrow-primary-600, #4a2fdc);
+}
+.zp-modal-box .zp-modal-btn.zp-btn-danger {
+  background: #d44a4a;
+  color: #fff;
+}
+.zp-modal-box .zp-modal-btn.zp-btn-danger:hover {
+  background: #c0392b;
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .zp-modal-box {
+  background: #1e1e2e;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+[data-bs-theme="dark"] .zp-modal-box h4 {
+  color: #e0e0e0;
+}
+[data-bs-theme="dark"] .zp-modal-box .zp-modal-msg {
+  color: #aaa;
+}
+[data-bs-theme="dark"] .zp-modal-box input.zp-modal-input {
+  background: #2a2a3e;
+  border-color: #444;
+  color: #e0e0e0;
+}
+[data-bs-theme="dark"] .zp-modal-box input.zp-modal-input:focus {
+  border-color: var(--zigrow-primary-400, #7d6df7);
+}
+[data-bs-theme="dark"] .zp-modal-box .zp-modal-btn.zp-btn-cancel {
+  background: #333348;
+  color: #ccc;
+}
+[data-bs-theme="dark"] .zp-modal-box .zp-modal-btn.zp-btn-cancel:hover {
+  background: #3e3e52;
+}
+
+/* ═══ Phase 2B: Mobile Pages bar ═══════════════════════════════
+   Positions the Pages dropdown as a standalone strip between
+   the top panel and the canvas on mobile.  Desktop untouched.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 767.98px) {
+  /* -- push canvas / header-height down to make room for pages bar -- */
+  body {
+    --builder-header-top-height: 115px !important;
+  }
+
+  /* -- Show center bar on mobile, but ONLY as a pages-bar host -- */
+  .topbar-center-navbar {
+    display: flex !important; /* override editornew.css display:none */
+    position: fixed;
+    top: 75px; /* sits right below #top-panel (75px on mobile) */
+    left: 0;
+    right: 0;
+    height: 40px;
+    z-index: 41; /* below top-panel (42) but above canvas */
+    background: var(--bs-body-bg);
+    border-bottom: 1px solid var(--bs-border-color);
+    padding: 0 10px;
+    align-items: center;
+    justify-content: stretch;
+    gap: 0;
+    overflow: visible;
+  }
+
+  /* Hide every child of topbar-center except .zp-navbar-pages */
+  /* .topbar-center-navbar > *:not(.zp-navbar-pages) {
+    display: none !important;
+  } */
+
+  /* -- Pages container fills the bar -- */
+  .zp-navbar-pages {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Hide the vertical divider on mobile (not needed in standalone bar) */
+  .zp-navbar-pages .zp-divider-v {
+    display: none;
+  }
+
+  /* -- Selector trigger – stretch full-width -- */
+  .zp-selector {
+    width: 100%;
+    max-width: none;
+    justify-content: flex-start;
+    padding: 6px 12px;
+    font-size: 0.84rem;
+    border-radius: 6px;
+    min-height: 32px;
+  }
+  .zp-selector-label {
+    max-width: calc(100vw - 100px);
+    flex: 1;
+  }
+  .zp-selector .zp-chevron {
+    margin-left: auto;
+  }
+
+  /* -- Dropdown panel – safe full-width mobile position -- */
+  .zp-dropdown {
+    position: fixed;
+    top: 115px; /* below pages-bar (75 + 40) */
+    left: 6px;
+    right: 6px;
+    min-width: 0;
+    max-width: none;
+    width: auto;
+    max-height: calc(100vh - 160px); /* leave room at bottom */
+    border-radius: 10px;
+    box-shadow:
+      0 10px 40px rgba(0, 0, 0, 0.22),
+      0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Scrollable list fills available space */
+  #zp-dropdown-list {
+    max-height: calc(100vh - 270px);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* -- Touch-friendly page rows -- */
+  .zp-dropdown .zp-item {
+    padding: 11px 14px;
+    gap: 10px;
+    min-height: 44px; /* iOS recommended tap target */
+    font-size: 0.88rem;
+  }
+
+  /* Always show action buttons on mobile (no hover) */
+  .zp-actions {
+    opacity: 1 !important;
+  }
+
+  /* Larger action button tap targets */
+  .zp-actions .zp-act {
+    width: 34px;
+    height: 34px;
+    font-size: 0.92rem;
+    border-radius: 6px;
+  }
+
+  /* Drag handle – better tap area & visibility */
+  .zp-grip {
+    font-size: 1rem;
+    padding: 4px;
+    opacity: 0.45;
+  }
+
+  /* Page name – stable truncation at comfortable width */
+  .zp-name {
+    font-size: 0.88rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  /* Home badge – slightly bigger for readability */
+  .zigrow-home-badge {
+    font-size: 0.6rem;
+    padding: 2px 7px;
+  }
+
+  /* Active row – stronger visual on mobile */
+  .zp-dropdown .zp-item.zp-active {
+    border-left-width: 3px;
+    padding-left: 11px;
+  }
+
+  /* Add New Page button – prominent CTA on mobile */
+  .zp-add-new {
+    padding: 13px 16px;
+    font-size: 0.88rem;
+    min-height: 44px;
+  }
+
+  /* Dropdown header */
+  .zp-dropdown-header {
+    padding: 12px 14px 8px;
+  }
+  .zp-dropdown-title {
+    font-size: 0.86rem;
+  }
+}
+
+/* ═══ Mobile dark-mode overrides for pages bar ═══ */
+@media (max-width: 767.98px) {
+  [data-bs-theme="dark"] .topbar-center-navbar {
+    background: var(--bs-body-bg);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  [data-bs-theme="dark"] .zp-dropdown {
+    box-shadow:
+      0 10px 44px rgba(0, 0, 0, 0.55),
+      0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+  /* Pressed/active state for selector on dark mobile */
+  [data-bs-theme="dark"] .zp-selector:active {
+    background: color-mix(in srgb, var(--bs-body-bg) 82%, #fff 18%);
+  }
+  /* Row pressed state */
+  [data-bs-theme="dark"] .zp-dropdown .zp-item:active {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  /* Action buttons pressed state */
+  [data-bs-theme="dark"] .zp-actions .zp-act:active {
+    background: rgba(255, 255, 255, 0.16);
+  }
+}
+
+/* ═══ Page-switch loader overlay ═══════════════════════════════
+   Lightweight overlay shown during multipager page switching.
+   Reuses builder's existing loader aesthetic.
+   ═══════════════════════════════════════════════════════════ */
+.zp-page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(2px);
+  transition: opacity 0.2s;
+}
+.zp-page-loader .zp-loader-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--bs-border-color, #dee2e6);
+  border-top-color: var(--zigrow-primary-500, #5b3df2);
+  border-radius: 50%;
+  animation: zpSpin 0.65s linear infinite;
+}
+@keyframes zpSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+[data-bs-theme="dark"] .zp-page-loader {
+  background: rgba(30, 30, 46, 0.8);
+}
+[data-bs-theme="dark"] .zp-page-loader .zp-loader-spinner {
+  border-color: rgba(255, 255, 255, 0.15);
+  border-top-color: var(--zigrow-primary-400, #7d6df7);
+}
+
+/* ═══ JS floating tooltip (replaces CSS pseudo-element tooltips to avoid overflow clipping) ═══ */
+.zp-floating-tooltip {
+  position: fixed;
+  transform: translateX(-50%) translateY(-100%);
+  white-space: nowrap;
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: #1e1e2e;
+  color: #fff;
+  pointer-events: none;
+  z-index: 100000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.01em;
+  display: none;
+}
+[data-bs-theme="dark"] .zp-floating-tooltip {
+  background: #333348;
+  color: #e0e0e0;
+}
+
+/* Disable old CSS pseudo-element tooltips — JS floating tooltip handles these now */
+.zp-actions .zp-act.zp-restricted[data-zp-tooltip]::after,
+.zp-actions .zp-act.zp-restricted[data-zp-tooltip]::before,
+.zp-add-new.zp-restricted[data-zp-tooltip]::after,
+.zp-add-new.zp-restricted[data-zp-tooltip]::before,
+.zp-add-new.zp-disabled[data-zp-tooltip]::after,
+.zp-add-new.zp-disabled[data-zp-tooltip]::before {
+  display: none !important;
+}
+
+/* Add New Page button disabled at page limit */
+.zp-add-new.zp-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: var(--bs-secondary-color, #6c757d);
+  pointer-events: auto; /* allow hover for tooltip */
+}
+.zp-add-new.zp-disabled:hover {
+  background: transparent;
+  color: var(--bs-secondary-color, #6c757d);
+}
+[data-bs-theme="dark"] .zp-add-new.zp-disabled {
+  opacity: 0.3;
+  color: rgba(255, 255, 255, 0.35);
+}
+[data-bs-theme="dark"] .zp-add-new.zp-disabled:hover {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.35);
+}

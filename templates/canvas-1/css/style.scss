@@ -1,0 +1,531 @@
+/*========================================
+  Global CSS Variables
+=========================================*/
+:root {
+  --primary-colors: #157347;
+  --secondary-colors: gray;
+  --territory-colors: #093561;
+  --bg-color: #f8f9fa;
+  --btn-color: #198754;
+  --white: #ffffff;
+  --gray-light: #f4f4f4;
+  --font-stack: "Segoe UI", sans-serif;
+}
+
+// Global Styles
+
+body {
+  font-family: var(--font-stack);
+  margin: 0;
+  padding: 0;
+  background-color: var(--white);
+  color: #333;
+  line-height: 1.6;
+}
+
+@mixin primary-btn {
+  width: fit-content;
+  background-color: var(--white);
+  color: var(--heading-color);
+  font-weight: bold;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 24px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+.py-6 {
+  padding: 3rem 0;
+}
+// Header
+
+.header {
+  background-color: var(--primary-colors);
+  position: relative;
+  z-index: 1000;
+
+  /* Grid makes centering trivial */
+  .nav-container {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    position: relative;
+  }
+
+  .navbar-brand {
+    justify-self: start;
+
+    h5 {
+      color: var(--white);
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  /* hamburger */
+  .menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    width: 40px;
+    height: 32px;
+    justify-self: end;
+
+    span {
+      width: 28px;
+      height: 3px;
+      background-color: var(--white);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    &.active span:nth-child(1) {
+      transform: translateY(9px) rotate(45deg);
+    }
+    &.active span:nth-child(2) {
+      opacity: 0;
+    }
+    &.active span:nth-child(3) {
+      transform: translateY(-9px) rotate(-45deg);
+    }
+  }
+
+  /* center the nav links always */
+  .nav-links {
+    // justify-self: center; /* centers block in the grid area */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* centers content inside */
+    gap: 2rem;
+    transition: all 0.3s ease;
+  }
+
+  .nav-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    gap: 2.5rem;
+    margin: 0;
+    padding: 0;
+
+    a {
+      text-decoration: none;
+      color: var(--white);
+      font-weight: 700;
+      font-size: 0.95rem;
+      position: relative;
+
+      &:hover::after {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: var(--white);
+      }
+    }
+  }
+
+  .nav-btn {
+    @include primary-btn;
+    &:hover {
+      box-shadow: 0 6px 20px var(--white);
+    }
+  }
+
+  /* responsive */
+  @media (max-width: 992px) {
+    .menu-btn {
+      display: flex;
+    }
+
+    .nav-links {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+
+      background-color: var(--primary-colors);
+
+      gap: 1.5rem;
+      padding: 0;
+
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: max-height 0.4s ease, opacity 0.3s ease, transform 0.3s ease,
+        padding 0.25s ease;
+    }
+
+    .nav-links.active {
+      max-height: 420px;
+      opacity: 1;
+      transform: translateY(0);
+      padding: 28px 0;
+      background-color: color-mix(in srgb, var(--primary-colors), white 6%);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-box {
+      flex-direction: column;
+      gap: 1.1rem;
+
+      a {
+        font-size: 1.05rem;
+      }
+    }
+
+    /* button aligned last in dropdown */
+    .nav-btn {
+      width: max-content;
+      display: none;
+    }
+  }
+}
+
+// Hero Section
+.hero {
+  background: linear-gradient(to bottom, var(--bg-color), var(--white));
+  text-align: center;
+  padding: 6rem 0;
+
+  .heading {
+    font-weight: 800;
+    font-size: 4.5rem;
+    color: var(--territory-colors);
+  }
+
+  p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: auto;
+    color: var(--secondary-colors);
+  }
+
+  @media (max-width: 992px) {
+    .heading {
+      font-size: 3.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .heading {
+      font-size: 2.5rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      padding: 0 1rem;
+    }
+  }
+
+  .btn {
+    @include primary-btn;
+    background-color: var(--primary-colors);
+    color: var(--white);
+
+    &:hover {
+      box-shadow: 0 6px 20px var(--primary-colors);
+    }
+  }
+}
+
+// WhatsApp Icon
+.floating-icon {
+  .floating-icon__btn {
+    position: fixed;
+    right: clamp(12px, 3vw, 24px);
+    bottom: clamp(12px, 3vw, 24px);
+    width: clamp(44px, 4.2vw, 56px);
+    height: clamp(44px, 4.2vw, 56px);
+
+    background-color: var(--primary-colors);
+    color: var(--white, #fff);
+    border-radius: 50%;
+    text-decoration: none;
+    z-index: 200;
+    cursor: pointer;
+
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+
+    /* ✅ icon always center (no matter which icon you use) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .floating-icon__btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .floating-icon__btn i {
+    font-size: clamp(18px, 2vw, 22px);
+    line-height: 1;
+  }
+
+  /* Optional: smaller tap area adjustments for very small screens */
+  @media (max-width: 360px) {
+    .floating-icon__btn {
+      right: 10px;
+      bottom: 10px;
+    }
+  }
+}
+
+// About Section
+.about {
+  background-color: var(--gray-light);
+  // padding: 60px 0;
+
+  /* Bootstrap row now handles the 2-column layout */
+  .about-content {
+    align-items: center;
+  }
+
+  .about-text {
+    text-align: left;
+
+    h3 {
+      color: var(--primary-colors);
+      font-weight: 600;
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: var(--secondary-colors);
+      line-height: 1.8;
+    }
+  }
+
+  .about-image {
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 10px;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      height: auto;
+      aspect-ratio: 12/12;
+      border-radius: 10px;
+    }
+  }
+
+  @media (max-width: 992px) {
+    .about-content {
+      text-align: center;
+    }
+
+    .about-text {
+      text-align: center;
+    }
+    .about-image {
+      margin: 0 auto;
+    }
+  }
+}
+
+// Services Section
+.services {
+  background-color: var(--white);
+  // padding: 60px 0;
+  text-align: center;
+
+  h3 {
+    color: var(--primary-colors);
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  p {
+    color: var(--secondary-colors);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin: 10px auto;
+    max-width: 800px;
+  }
+
+  @media (max-width: 768px) {
+    .services-container {
+      width: 95%;
+      padding: 0 10px;
+    }
+
+    h3 {
+      font-size: 1.8rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+}
+
+// Contact Section
+.contact {
+  background-color: var(--gray-light);
+
+  /* Bootstrap row now controls the main two-column layout */
+  .contact-grid {
+    align-items: center;
+  }
+
+  .contact-list {
+    display: grid;
+    gap: 16px;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    i {
+      color: var(--primary-colors);
+      font-size: 2rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--secondary-colors);
+      font-size: 1.2rem;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+        color: var(--btn-color);
+      }
+    }
+  }
+
+  .socials {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 0;
+    font-size: 2rem;
+
+    i {
+      cursor: pointer;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: var(--btn-color);
+      }
+    }
+
+    a {
+      line-height: 0;
+    }
+  }
+
+  .contact-right {
+    text-align: center;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      height: auto;
+      border-radius: 10px;
+      display: inline-block;
+    }
+  }
+
+  /* 🔽 Tablet & Mobile (below 992px) – center everything */
+  @media (max-width: 992px) {
+    .contact-grid {
+      align-items: center;
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .contact-left {
+      text-align: center;
+    }
+
+    .contact-item {
+      justify-content: center; /* center icon + text horizontally */
+    }
+
+    .socials {
+      justify-content: center; /* center social icons */
+    }
+  }
+
+  @media (max-width: 565px) {
+    .contact-item i {
+      font-size: 1.4rem;
+    }
+
+    .contact-item p {
+      font-size: 1rem;
+    }
+  }
+}
+
+// Footer
+.footer {
+  background-color: var(--primary-colors);
+  color: var(--white);
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9rem;
+}
+
+// Responsive Global Adjustments
+@media (max-width: 768px) {
+  #header .nav-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-section {
+    max-width: 100%;
+  }
+
+  #hero {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .hero-section {
+      padding: 0;
+    }
+  }
+
+  .nav-btn {
+    font-size: 0.9rem;
+    padding: 8px 20px;
+  }
+}

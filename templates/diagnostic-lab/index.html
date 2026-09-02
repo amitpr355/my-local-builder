@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diagnostic-lab</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Custom Cursor -->
+    <div class="cursor"><span class="d-none"></span></div>
+    <div class="cursor-outline"><span class="d-none"></span></div>
+
+    <a href="#" id="backToTopBtn" class="back-to-top" aria-label="Back to top">
+      <i class="bi bi-arrow-up" data-icon="arrow-up"></i>
+    </a>
+
+    <!-- Navbar Section -->
+    <header id="navbar" class="site-navbar" data-section="navbar">
+      <div class="container">
+        <nav class="site-navbar__wrap">
+          <!-- Logo -->
+          <div class="site-navbar__logo">
+            <span data-logo="navbar">PointLab</span>
+          </div>
+
+          <!-- Right -->
+          <div class="site-navbar__right">
+            <ul class="site-navbar__links" id="navMenu">
+              <li><a href="#hero">Home</a></li>
+              <li><a href="#research">About Us</a></li>
+              <li><a href="#facilities">Services</a></li>
+              <li><a href="#testimonials">Testimonial</a></li>
+              <li><a href="#newsletter-section">Contact Us</a></li>
+            </ul>
+
+            <div class="site-navbar__btns">
+              <a
+                href="tel:+9123456789"
+                class="site-navbar__cta"
+                data-btn="navbar"
+              >
+                Make An Appointment
+              </a>
+            </div>
+          </div>
+
+          <!-- Toggle (span based) -->
+          <button
+            class="site-navbar__toggle"
+            id="navToggle"
+            type="button"
+            aria-label="Toggle navigation"
+            aria-controls="navMenu"
+            aria-expanded="false"
+          >
+            <span class="site-navbar__bar" data-icon="menu-line"></span>
+            <span class="site-navbar__bar" data-icon="menu-line"></span>
+            <span class="site-navbar__bar" data-icon="menu-line"></span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- hero section -->
+    <section id="hero" class="hero-section" data-section="hero">
+      <div class="container">
+        <div class="row hero-section__row g-4">
+          <!-- Left -->
+          <div class="col-lg-7 col-xl-6 hero-section__content-col">
+            <span class="hero-section__subtitle"
+              >Welcome to PointLab Diagnostics</span
+            >
+
+            <h1 class="hero-section__title">
+              Accurate Tests Faster Reports Trusted Results.
+            </h1>
+
+            <p class="hero-section__text">
+              From routine blood work to advanced pathology, we deliver precise
+              lab testing with strict quality control and quick turnaround—so
+              your treatment decisions stay confident and timely.
+            </p>
+
+            <div class="hero-section__buttons">
+              <a
+                href="tel:+9123456789"
+                class="hero-section__btn hero-section__btn--primary"
+                data-btn="hero"
+              >
+                Make An Appointment
+              </a>
+              <a
+                href="#services"
+                class="hero-section__btn hero-section__btn--outline"
+                data-btn="hero"
+              >
+                Learn More
+              </a>
+            </div>
+          </div>
+
+          <!-- Right -->
+          <div class="col-lg-5 col-xl-6 hero-section__image-col">
+            <div class="hero-section__image-wrap">
+              <img
+                src="assets/images/diagnostic-hero.webp"
+                alt="Doctor in Lab"
+                class="hero-section__image img-fluid"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Certification Section -->
+    <section
+      id="certification"
+      class="certification-section py-6"
+      data-section="certification"
+    >
+      <div class="container">
+        <div class="row align-items-center gy-4">
+          <!-- Title -->
+          <div class="col-lg-3 col-md-4">
+            <div class="certification-section__title">
+              <span class="certification-section__title-text"
+                >Our Lab Certifications</span
+              >
+            </div>
+          </div>
+
+          <!-- Line -->
+          <div class="col-lg-3 col-md-2">
+            <span class="certification-section__line" aria-hidden="true"></span>
+          </div>
+
+          <!-- Logos -->
+          <div class="col-lg-6 col-md-6">
+            <div class="row g-4 certification-section__logos">
+              <div class="col-4 col-sm-3">
+                <div class="certification-section__logo">
+                  <img
+                    src="assets/images/logo.png"
+                    alt="NABL Approved Laboratory"
+                  />
+                </div>
+              </div>
+
+              <div class="col-4 col-sm-3">
+                <div class="certification-section__logo">
+                  <img
+                    src="assets/images/logo.png"
+                    alt="ISO 15189 Accredited"
+                  />
+                </div>
+              </div>
+
+              <div class="col-4 col-sm-3">
+                <div class="certification-section__logo">
+                  <img
+                    src="assets/images/logo.png"
+                    alt="Clinical Pathology Certified"
+                  />
+                </div>
+              </div>
+
+              <div class="col-4 col-sm-3">
+                <div class="certification-section__logo">
+                  <img
+                    src="assets/images/logo.png"
+                    alt="Hospital Partner Certified"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Facilities Section -->
+    <section
+      id="facilities"
+      class="facilities-section py-6"
+      data-section="facilities"
+    >
+      <div class="container">
+        <div class="row g-0 align-items-stretch">
+          <!-- LEFT SIDE (UNCHANGED) -->
+          <div class="col-lg-6">
+            <div class="facilities-left">
+              <img
+                src="assets/images/diagnostic-service.webp"
+                alt="Laboratory"
+                class="facilities-left__image"
+              />
+
+              <div class="facilities-left__overlay">
+                <h4>Our Main Service</h4>
+                <p>
+                  Comprehensive blood tests, thyroid & diabetes screening, and
+                  preventive health packages with accurate reports and quick
+                  turnaround.
+                </p>
+                <a href="#">
+                  Learn More
+                  <i class="bi bi-arrow-right" data-icon="arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT SIDE -->
+          <div class="col-lg-6">
+            <div class="row g-0 h-100">
+              <!-- TOP WHITE (50%) -->
+              <div class="col-md-6">
+                <div class="facilities-card facilities-card--white h-100">
+                  <h4>Our Facilities</h4>
+                  <p>
+                    Automated analyzers, certified technicians, and strict
+                    hygiene protocols to ensure precise diagnostics.
+                  </p>
+                  <a href="#">
+                    Learn More
+                    <i class="bi bi-arrow-right" data-icon="arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+
+              <!-- TOP GREEN (50%) -->
+              <div class="col-md-6">
+                <div class="facilities-card facilities-card--green h-100">
+                  <h4>Our Location</h4>
+                  <p>
+                    E-123, ABC Plaza, XYZ Street,<br />
+                    New Delhi – 110077
+                  </p>
+                  <a href="#">
+                    Get Directions
+                    <i class="bi bi-arrow-right" data-icon="arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+
+              <!-- BOTTOM BLUE (100%) -->
+              <div class="col-12">
+                <div class="facilities-card facilities-card--blue h-100">
+                  <h4>Make An Appointment</h4>
+                  <p>
+                    Choose your preferred slot and get instant confirmation.
+                    Reports delivered via SMS/Email.
+                  </p>
+
+                  <div class="appointment-actions">
+                    <a
+                      href="tel:+919123456789"
+                      class="btn-outline"
+                      data-btn="apointment"
+                    >
+                      Start Now
+                    </a>
+
+                    <div class="appointment-contact">
+                      <span class="phone-icon">
+                        <i class="bi bi-telephone-fill" data-icon="phone"></i>
+                      </span>
+                      <div>
+                        <small>Book An Appointment</small>
+                        <strong>+91-9123456789</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- reaserch section -->
+    <section
+      id="research"
+      class="research-section py-6"
+      data-section="research"
+    >
+      <div class="container">
+        <div class="row g-4">
+          <!-- Left Image -->
+          <div class="col-12 col-lg-6">
+            <div class="research-section__image-wrap">
+              <img
+                src="assets/images/diagnostic-research.webp"
+                alt="Research Team"
+                class="research-section__image"
+              />
+            </div>
+          </div>
+
+          <!-- Right Content -->
+          <div class="col-12 col-lg-6">
+            <div class="research-section__content">
+              <h2 class="research-section__title">
+                We Use Advanced Research Technology for Accurate Diagnostics
+              </h2>
+
+              <p class="research-section__text">
+                Our laboratory follows strict sample-handling standards and
+                modern testing methods to deliver reliable reports. From routine
+                blood panels to advanced pathology screening, every test goes
+                through quality checks before results are shared with patients
+                and doctors.
+              </p>
+
+              <hr class="research-section__divider" />
+
+              <!-- Quote Text (NO blockquote) -->
+              <p class="research-section__quote-text">
+                “Precision and patient safety are our priorities—because every
+                report supports an important medical decision.”
+              </p>
+
+              <div class="research-section__author">
+                <p class="research-section__signature">Signature</p>
+                <p class="research-section__author-info">
+                  <strong class="research-section__author-name"
+                    >Anish Singh</strong
+                  ><br />
+                  Founder &amp; CEO, PointLab Diagnostics
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- /Right -->
+        </div>
+      </div>
+    </section>
+
+    <!-- review section -->
+    <section id="reviews" class="reviews-section py-6" data-section="reviews">
+      <div class="container">
+        <div class="reviews-section__box">
+          <div class="row g-0">
+            <!-- Overall Rating -->
+            <div class="col-12 col-md-6 col-lg-3">
+              <a
+                href="#"
+                class="reviews-section__card reviews-section__card--overall"
+                aria-label="Overall rating"
+              >
+                <span class="reviews-section__rating">4.7</span>
+
+                <span class="reviews-section__stars">
+                  <span class="reviews-section__of">of 5</span>
+
+                  <i
+                    class="bi bi-star-fill"
+                    data-icon="star"
+                    aria-hidden="true"
+                  ></i>
+                  <i
+                    class="bi bi-star-fill"
+                    data-icon="star"
+                    aria-hidden="true"
+                  ></i>
+                  <i
+                    class="bi bi-star-fill"
+                    data-icon="star"
+                    aria-hidden="true"
+                  ></i>
+                  <i
+                    class="bi bi-star-fill"
+                    data-icon="star"
+                    aria-hidden="true"
+                  ></i>
+                  <i
+                    class="bi bi-star-fill reviews-section__star-muted"
+                    data-icon="star"
+                    aria-hidden="true"
+                  ></i>
+                </span>
+              </a>
+            </div>
+
+            <!-- Google -->
+            <div class="col-12 col-md-6 col-lg-3">
+              <a
+                href="#"
+                class="reviews-section__card reviews-section__card--platform"
+                aria-label="Google rating"
+              >
+                <span class="reviews-section__source">G+</span>
+
+                <span class="reviews-section__meta">
+                  <span class="reviews-section__score">4.8/5</span>
+                  <span class="reviews-section__count"
+                    >1,860 Patient Reviews</span
+                  >
+                </span>
+              </a>
+            </div>
+
+            <!-- Lab Verified -->
+            <div class="col-12 col-md-6 col-lg-3">
+              <a
+                href="#"
+                class="reviews-section__card reviews-section__card--platform"
+                aria-label="Verified rating"
+              >
+                <i
+                  class="bi bi-star-fill reviews-section__icon"
+                  data-icon="verified-star"
+                  aria-hidden="true"
+                ></i>
+
+                <span class="reviews-section__meta">
+                  <span class="reviews-section__score">4.6/5</span>
+                  <span class="reviews-section__count"
+                    >1,630 Verified Reports</span
+                  >
+                </span>
+              </a>
+            </div>
+
+            <!-- Facebook -->
+            <div class="col-12 col-md-6 col-lg-3">
+              <a
+                href="#"
+                class="reviews-section__card reviews-section__card--platform"
+                aria-label="Facebook rating"
+              >
+                <i
+                  class="bi bi-facebook reviews-section__icon"
+                  data-icon="facebook"
+                  aria-hidden="true"
+                ></i>
+
+                <span class="reviews-section__meta">
+                  <span class="reviews-section__score">4.7/5</span>
+                  <span class="reviews-section__count"
+                    >2,100 Community Reviews</span
+                  >
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- expertise -->
+    <section
+      id="expertise"
+      class="expertise-section py-5"
+      data-section="expertise"
+    >
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="expertise-section__header">
+              <h2 class="expertise-section__title">Our Expertise</h2>
+              <p class="expertise-section__subtitle">
+                Trusted lab testing with accurate reports, modern equipment, and
+                strict quality checks.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Card 1 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <a href="#" class="expertise-section__card">
+              <div class="expertise-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-Expertise-2.webp"
+                  alt="Pathology Testing"
+                  class="expertise-section__img"
+                />
+              </div>
+
+              <div class="expertise-section__content">
+                <h3 class="expertise-section__card-title">Pathology Testing</h3>
+                <p class="expertise-section__card-text">
+                  Biopsy and tissue analysis with verified reporting and careful
+                  sample handling.
+                </p>
+                <span class="expertise-section__link">
+                  Learn More
+                  <i
+                    class="bi bi-arrow-right"
+                    data-icon="arrow-right"
+                    aria-hidden="true"
+                  ></i>
+                </span>
+              </div>
+            </a>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <a href="#" class="expertise-section__card">
+              <div class="expertise-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-Expertise-1.webp"
+                  alt="Blood Test & Biochemistry"
+                  class="expertise-section__img"
+                />
+              </div>
+
+              <div class="expertise-section__content">
+                <h3 class="expertise-section__card-title">
+                  Blood &amp; Biochemistry
+                </h3>
+                <p class="expertise-section__card-text">
+                  CBC, sugar, thyroid, liver and kidney profiles with fast
+                  turnaround time.
+                </p>
+                <span class="expertise-section__link">
+                  Learn More
+                  <i
+                    class="bi bi-arrow-right"
+                    data-icon="arrow-right"
+                    aria-hidden="true"
+                  ></i>
+                </span>
+              </div>
+            </a>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <a href="#" class="expertise-section__card">
+              <div class="expertise-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-Expertise-3.webp"
+                  alt="Clinical Research Support"
+                  class="expertise-section__img"
+                />
+              </div>
+
+              <div class="expertise-section__content">
+                <h3 class="expertise-section__card-title">
+                  Clinical Research Support
+                </h3>
+                <p class="expertise-section__card-text">
+                  Quality-controlled workflows for specialized testing and
+                  research support.
+                </p>
+                <span class="expertise-section__link">
+                  Learn More
+                  <i
+                    class="bi bi-arrow-right"
+                    data-icon="arrow-right"
+                    aria-hidden="true"
+                  ></i>
+                </span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- trust us -->
+    <section
+      id="trust-us"
+      class="trust-us-section py-6"
+      data-section="trust-us"
+    >
+      <div class="container">
+        <div class="row g-4 align-items-center">
+          <!-- Left Side -->
+          <div class="col-12 col-lg-5">
+            <div class="trust-us-section__media">
+              <div class="trust-us-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-trust-us.webp"
+                  alt="Modern diagnostic laboratory"
+                  class="trust-us-section__img"
+                />
+              </div>
+
+              <a
+                href="https://www.youtube.com/"
+                class="trust-us-section__play"
+                aria-label="Play the video"
+              >
+                <i
+                  class="bi bi-play-fill"
+                  data-icon="play"
+                  aria-hidden="true"
+                ></i>
+                <span class="trust-us-section__play-text" data-btn="trust-us"
+                  >Play The Video</span
+                >
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Side -->
+          <div class="col-12 col-lg-7">
+            <div class="trust-us-section__content">
+              <h2 class="trust-us-section__title">Why People Trust Us</h2>
+              <p class="trust-us-section__desc">
+                From sample collection to final reporting, we follow strict
+                hygiene, calibrated instruments, and multi-step verification—so
+                your results stay accurate, clear, and doctor-ready.
+              </p>
+
+              <div class="row g-3">
+                <!-- Feature 1 -->
+                <div class="col-12 col-md-6">
+                  <div class="trust-us-section__feature">
+                    <span class="trust-us-section__icon">
+                      <i
+                        class="bi bi-beaker"
+                        data-icon="lab"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                    <div class="trust-us-section__feature-body">
+                      <h3 class="trust-us-section__feature-title">
+                        High Quality Lab
+                      </h3>
+                      <p class="trust-us-section__feature-text">
+                        Certified processes, clean zones, and quality checks on
+                        every batch.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="col-12 col-md-6">
+                  <div class="trust-us-section__feature">
+                    <span class="trust-us-section__icon">
+                      <i
+                        class="bi bi-award"
+                        data-icon="expertise"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                    <div class="trust-us-section__feature-body">
+                      <h3 class="trust-us-section__feature-title">
+                        Unmatched Expertise
+                      </h3>
+                      <p class="trust-us-section__feature-text">
+                        Experienced technicians and pathologists reviewing
+                        results carefully.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="col-12 col-md-6">
+                  <div class="trust-us-section__feature">
+                    <span class="trust-us-section__icon">
+                      <i
+                        class="bi bi-clipboard-check"
+                        data-icon="results"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                    <div class="trust-us-section__feature-body">
+                      <h3 class="trust-us-section__feature-title">
+                        Precise Results
+                      </h3>
+                      <p class="trust-us-section__feature-text">
+                        Cross-verified reports with reference ranges for better
+                        clarity.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="col-12 col-md-6">
+                  <div class="trust-us-section__feature">
+                    <span class="trust-us-section__icon">
+                      <i
+                        class="bi bi-person-check"
+                        data-icon="staff"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+                    <div class="trust-us-section__feature-body">
+                      <h3 class="trust-us-section__feature-title">
+                        Qualified Staff
+                      </h3>
+                      <p class="trust-us-section__feature-text">
+                        Trained staff for safe collection, labeling, and quick
+                        processing.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /row -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- case studies -->
+    <section
+      id="case-studies"
+      class="case-studies-section py-6"
+      data-section="case-studies"
+    >
+      <div class="container">
+        <!-- Header -->
+        <div class="row">
+          <div class="col-12">
+            <div class="case-studies-section__header">
+              <h2 class="case-studies-section__title">Latest Case Studies</h2>
+              <p class="case-studies-section__subtitle">
+                Real diagnostic stories—from early detection to successful
+                treatment planning—supported by accurate lab reports and careful
+                verification.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Image Grid (Bootstrap cols) -->
+        <div class="row g-4">
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="case-studies-section__item">
+              <div class="case-studies-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-case-studies-1.webp"
+                  alt="Case study: blood test screening"
+                  class="case-studies-section__img"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="case-studies-section__item">
+              <div class="case-studies-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-case-studies-2.webp"
+                  alt="Case study: lab sample processing"
+                  class="case-studies-section__img"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="case-studies-section__item">
+              <div class="case-studies-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-case-studies-3.webp"
+                  alt="Case study: pathology analysis"
+                  class="case-studies-section__img"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="case-studies-section__item">
+              <div class="case-studies-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-case-studies-4.webp"
+                  alt="Case study: microscope research"
+                  class="case-studies-section__img"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="case-studies-section__item">
+              <div class="case-studies-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-case-studies-5.webp"
+                  alt="Case study: patient testing workflow"
+                  class="case-studies-section__img"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="case-studies-section__item">
+              <div class="case-studies-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-case-studies-6.webp"
+                  alt="Case study: report verification"
+                  class="case-studies-section__img"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- testimonial -->
+    <section
+      id="testimonial"
+      class="testimonial-section py-6"
+      data-section="testimonial"
+    >
+      <div class="container">
+        <div class="row g-4 testimonial-row">
+          <!-- Left Content -->
+          <div class="col-12 col-lg-4">
+            <div class="testimonial-section__info">
+              <h2 class="testimonial-section__title">
+                What Patients Say About Us
+              </h2>
+              <p class="testimonial-section__desc">
+                Patients trust our diagnostic lab for clean sample collection,
+                on-time reports, and clear result explanations that help doctors
+                take faster decisions.
+              </p>
+
+              <a
+                href="#"
+                class="testimonial-section__viewall"
+                aria-label="View all testimonials"
+              >
+                View All Testimonials
+                <i
+                  class="bi bi-arrow-right"
+                  data-icon="arrow-right"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Content (Card) -->
+          <div class="col-12 col-lg-8">
+            <div class="testimonial-section__card">
+              <div class="row g-0">
+                <!-- Image -->
+                <div class="col-12 col-md-4">
+                  <div class="testimonial-section__img-wrap">
+                    <img
+                      src="assets/images/diagnostic-about-us.webp"
+                      alt="Patient review"
+                      class="testimonial-section__img"
+                    />
+                  </div>
+                </div>
+
+                <!-- Text -->
+                <div class="col-12 col-md-8">
+                  <div class="testimonial-section__text">
+                    <h4 class="testimonial-section__name">Ankit Rao</h4>
+
+                    <p class="testimonial-section__quote">
+                      “My blood report was delivered the same day, and the
+                      values were explained clearly. The lab was hygienic and
+                      the staff was very professional. Highly recommended for
+                      routine tests.”
+                    </p>
+
+                    <div class="testimonial-section__footer">
+                      <span
+                        class="testimonial-section__stars"
+                        aria-label="5 star rating"
+                      >
+                        <i
+                          class="bi bi-star-fill"
+                          data-icon="star"
+                          aria-hidden="true"
+                        ></i>
+                        <i
+                          class="bi bi-star-fill"
+                          data-icon="star"
+                          aria-hidden="true"
+                        ></i>
+                        <i
+                          class="bi bi-star-fill"
+                          data-icon="star"
+                          aria-hidden="true"
+                        ></i>
+                        <i
+                          class="bi bi-star-fill"
+                          data-icon="star"
+                          aria-hidden="true"
+                        ></i>
+                        <i
+                          class="bi bi-star-fill"
+                          data-icon="star"
+                          aria-hidden="true"
+                        ></i>
+                      </span>
+
+                      <span
+                        class="testimonial-section__source"
+                        aria-label="Google reviews"
+                      >
+                        G+
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /card -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- testimonial 2 -->
+    <section
+      id="testimonials"
+      class="testimonials-2 py-6"
+      data-section="testimonials"
+    >
+      <div class="container">
+        <div class="row g-4">
+          <!-- Testimonial 1 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="testimonials-2__card">
+              <div class="testimonials-2__header">
+                <span class="testimonials-2__stars">
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                </span>
+                <span class="testimonials-2__source">G+</span>
+              </div>
+
+              <p class="testimonials-2__text">
+                The diagnostic reports were accurate and delivered on time.
+                Staff explained every parameter clearly which helped my doctor
+                start treatment immediately.
+              </p>
+
+              <div class="testimonials-2__footer">
+                <div class="testimonials-2__avatar">
+                  <img
+                    src="assets/images/testimonials-2.png"
+                    alt="Manish Singh"
+                  />
+                </div>
+                <div class="testimonials-2__author">
+                  <h4>Manish Singh</h4>
+                  <span>Cardiac Patient</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Testimonial 2 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="testimonials-2__card">
+              <div class="testimonials-2__header">
+                <span class="testimonials-2__stars">
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                </span>
+                <span class="testimonials-2__source">G+</span>
+              </div>
+
+              <p class="testimonials-2__text">
+                Clean laboratory, polite staff, and fast blood test results.
+                Booking was easy and reports were shared digitally without
+                delay.
+              </p>
+
+              <div class="testimonials-2__footer">
+                <div class="testimonials-2__avatar">
+                  <img
+                    src="assets/images/testimonials-3.png"
+                    alt="Navneet Singh"
+                  />
+                </div>
+                <div class="testimonials-2__author">
+                  <h4>Navneet Singh</h4>
+                  <span>Diabetes Patient</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Testimonial 3 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="testimonials-2__card">
+              <div class="testimonials-2__header">
+                <span class="testimonials-2__stars">
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                  <i class="bi bi-star-fill" data-icon="star"></i>
+                </span>
+                <span class="testimonials-2__source">G+</span>
+              </div>
+
+              <p class="testimonials-2__text">
+                Home sample collection was smooth and hygienic. Reports were
+                easy to understand and shared with my physician directly.
+              </p>
+
+              <div class="testimonials-2__footer">
+                <div class="testimonials-2__avatar">
+                  <img
+                    src="assets/images/testimonials-1.png"
+                    alt="Nicky Verma"
+                  />
+                </div>
+                <div class="testimonials-2__author">
+                  <h4>Nicky Verma</h4>
+                  <span>Wellness Screening</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- team section -->
+    <section id="team" class="team-section py-6" data-section="team">
+      <div class="container">
+        <!-- Header -->
+        <div class="row">
+          <div class="col-12">
+            <div class="team-section__header">
+              <h2 class="team-section__title">PointLab Expert Team</h2>
+              <p class="team-section__subtitle">
+                Our laboratory is led by certified professionals with years of
+                experience in diagnostics, pathology, and clinical testing.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Members -->
+        <div class="row g-4">
+          <!-- Member 1 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="team-section__card">
+              <div class="team-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-team-3.webp"
+                  alt="Mahi Singh"
+                  class="team-section__img"
+                />
+              </div>
+              <div class="team-section__info">
+                <h4 class="team-section__name">Mahi Singh</h4>
+                <span class="team-section__role">
+                  Head of Laboratory Department
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Member 2 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="team-section__card">
+              <div class="team-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-team-1.webp"
+                  alt="Anish Roy"
+                  class="team-section__img"
+                />
+              </div>
+              <div class="team-section__info">
+                <h4 class="team-section__name">Anish Roy</h4>
+                <span class="team-section__role">Senior Pathologist</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Member 3 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="team-section__card">
+              <div class="team-section__img-wrap">
+                <img
+                  src="assets/images/diagnostic-team-2.webp"
+                  alt="Suman Sharma"
+                  class="team-section__img"
+                />
+              </div>
+              <div class="team-section__info">
+                <h4 class="team-section__name">Suman Sharma</h4>
+                <span class="team-section__role">Laboratory Technician</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- apointment section -->
+    <section
+      id="appointment"
+      class="appointment-section py-6"
+      data-section="appointment"
+    >
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="appointment-section__content">
+              <h2 class="appointment-section__title">
+                Get One Step Ahead of Disease
+              </h2>
+
+              <p class="appointment-section__desc">
+                Regular health checkups help detect problems early. Our
+                diagnostic lab ensures accurate reports, hygienic sample
+                collection, and timely delivery to support faster medical
+                decisions.
+              </p>
+
+              <a
+                href="tel:+9123456789"
+                class="appointment-section__cta"
+                aria-label="Make an appointment"
+                data-btn="apointment"
+              >
+                Make An Appointment
+                <i
+                  class="bi bi-arrow-right"
+                  data-icon="arrow-right"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- newsleater -->
+    <section
+      id="newsletter-section"
+      class="newsletter-section py-6"
+      data-section="newsletter"
+    >
+      <div class="container">
+        <!-- TOP ROW -->
+        <div class="row align-items-center gy-4">
+          <!-- LEFT -->
+          <div class="col-lg-6">
+            <div class="newsletter-section__left">
+              <span class="newsletter-section__icon">
+                <i class="bi bi-envelope-fill" data-icon="envelope"></i>
+              </span>
+
+              <div class="newsletter-section__text">
+                <span class="newsletter-section__title"
+                  >Subscribe To Our Newsletter</span
+                >
+                <span class="newsletter-section__desc">
+                  Stay in touch with us to get latest news and special offers.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="col-lg-6">
+            <div class="newsletter-section__right">
+              <form
+                id="newsletterFormFix"
+                action="http://127.0.0.1:8000/api/forms/submit"
+                method="post"
+                data-zigrow-form
+                class="newsletter-section__form"
+              >
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Your email address"
+                  aria-label="Email address"
+                  required
+                />
+
+                <button
+                  type="submit"
+                  class="newsletter-section__btn"
+                  data-btn="newsleater"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM ROW -->
+        <div class="row pt-5 g-4 newsletter-section__bottom-row">
+          <div class="col-lg-4 col-md-6">
+            <div class="newsletter-section__contact">
+              <span class="newsletter-section__contact-icon">
+                <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+              </span>
+
+              <div class="newsletter-section__contact-text">
+                <span class="title">Address</span>
+                <span class="value">
+                  E-123, ABC Plaza, XYZ Street, New Delhi&nbsp;–&nbsp;110077
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6">
+            <div class="newsletter-section__contact">
+              <span class="newsletter-section__contact-icon">
+                <i class="bi bi-telephone-fill" data-icon="phone"></i>
+              </span>
+
+              <div class="newsletter-section__contact-text">
+                <span class="title">Call Us</span>
+                <span class="value">+91-9123456789</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6">
+            <div class="newsletter-section__contact">
+              <span class="newsletter-section__contact-icon">
+                <i class="bi bi-envelope-fill" data-icon="mail"></i>
+              </span>
+
+              <div class="newsletter-section__contact-text">
+                <span class="title">Email Us</span>
+                <span class="value">yourname@domainname.com</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer section -->
+    <section
+      id="footer-section"
+      class="footer-section py-6"
+      data-section="footer"
+    >
+      <div class="container">
+        <!-- TOP -->
+        <div class="row gy-4">
+          <!-- ABOUT -->
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-section__about">
+              <div class="footer-section__brand">
+                <span class="footer-section__brand-name" data-logo="footer"
+                  >PointLab</span
+                >
+              </div>
+
+              <span class="footer-section__about-text">
+                Trusted diagnostic testing with modern equipment, strict quality
+                checks, and quick report delivery for families and clinics.
+              </span>
+            </div>
+          </div>
+
+          <!-- SERVICES -->
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-section__col">
+              <span class="footer-section__title">Our Main Services</span>
+
+              <ul class="footer-section__list">
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#">Sample Collection</a>
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#"
+                    >Blood &amp; Biochemistry</a
+                  >
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#"
+                    >Thyroid &amp; Diabetes Tests</a
+                  >
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#"
+                    >Pathology Screening</a
+                  >
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#"
+                    >Home Sample Pickup</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- USEFUL LINKS -->
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-section__col">
+              <span class="footer-section__title">Useful Links</span>
+
+              <ul class="footer-section__list">
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#">About Our Lab</a>
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#">Book a Test</a>
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#">Health Packages</a>
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#"
+                    >Reports &amp; Support</a
+                  >
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#">Meet Our Team</a>
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#">Contact</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- EXTRA LINKS -->
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-section__col">
+              <span class="footer-section__title footer-section__title--hidden"
+                >More</span
+              >
+
+              <ul class="footer-section__list">
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#">Careers</a>
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#">Privacy Policy</a>
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#"
+                    >Terms &amp; Conditions</a
+                  >
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#">Testimonials</a>
+                </li>
+                <li class="footer-section__item">
+                  <a class="footer-section__link" href="#">FAQs</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- DIVIDER -->
+        <hr class="footer-section__divider" />
+
+        <!-- BOTTOM -->
+        <div class="row gy-2">
+          <div class="col-md-6">
+            <span class="footer-section__bottom-text"
+              >Copyright © 2026 All Right Reserved</span
+            >
+          </div>
+
+          <div class="col-md-6">
+            <span
+              class="footer-section__bottom-text footer-section__bottom-text--right"
+              >Powered by Zigrow</span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/app.js"></script>
+    <script>
+      (function () {
+        // Find ALL Zigrow forms
+        const forms = Array.from(
+          document.querySelectorAll("[data-zigrow-form]")
+        );
+        if (!forms.length) return;
+
+        // Helper: turn FormData into a plain object
+        function serializeForm(form) {
+          const fd = new FormData(form);
+          const raw = {};
+          for (const [name, value] of fd.entries()) {
+            const el = form.elements[name];
+            const isGroup =
+              el && el.length && el[0] && el[0].type === "checkbox";
+            if (isGroup) {
+              if (!raw[name]) raw[name] = [];
+              raw[name].push(value === "" ? true : value);
+            } else {
+              raw[name] = value;
+            }
+          }
+          return raw;
+        }
+
+        // Helper: pick primary value for quick list view
+        function pickPrimaryValue(raw) {
+          if (raw.email && String(raw.email).trim())
+            return String(raw.email).trim();
+          if (raw.phone && String(raw.phone).trim())
+            return String(raw.phone).trim();
+          const nameCombo = [raw.firstName, raw.lastName]
+            .filter(Boolean)
+            .join(" ")
+            .trim();
+          if (raw.name && String(raw.name).trim())
+            return String(raw.name).trim();
+          if (nameCombo) return nameCombo;
+          if (raw.message && String(raw.message).trim())
+            return String(raw.message).trim();
+          return "";
+        }
+
+        forms.forEach((form) => {
+          // Ensure hidden fields are filled
+          const domainInput = form.querySelector('input[name="domain"]');
+          const pageUrlInput = form.querySelector('input[name="page_url"]');
+          if (domainInput) domainInput.value = location.host;
+          if (pageUrlInput) pageUrlInput.value = location.href;
+
+          // Create a container for messages if not already exists
+          let msgContainer = form.querySelector(".form-submit-message");
+          if (!msgContainer) {
+            msgContainer = document.createElement("div");
+            msgContainer.className = "form-submit-message mt-2 text-sm";
+            form.appendChild(msgContainer);
+          }
+
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('[type="submit"]');
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.dataset._oldText = submitBtn.innerText;
+              submitBtn.innerText = "Submitting...";
+            }
+
+            // Clear previous message
+            msgContainer.innerText = "";
+            msgContainer.style.color = "";
+
+            try {
+              const raw = serializeForm(form);
+              const body = new URLSearchParams();
+              body.set(
+                "domain",
+                form.querySelector('input[name="domain"]')?.value ||
+                  location.host
+              );
+              body.set(
+                "form_key",
+                form.querySelector('input[name="form_key"]')?.value || "contact"
+              );
+              body.set(
+                "page_url",
+                form.querySelector('input[name="page_url"]')?.value ||
+                  location.href
+              );
+              body.set("payload", JSON.stringify(raw));
+
+              const primary = pickPrimaryValue(raw);
+              if (primary) body.set("value", primary);
+
+              if (raw._company) body.set("_company", raw._company);
+
+              const res = await fetch(form.action, {
+                method: "POST",
+                headers: { Accept: "application/json" },
+                body,
+              });
+
+              const data = await res.json().catch(() => ({}));
+              if (res.ok && (data.ok ?? true)) {
+                form.reset();
+                msgContainer.innerText =
+                  "✅ Thanks! Your request has been submitted.";
+                msgContainer.style.color = "#28a745"; // green success
+              } else {
+                msgContainer.innerText = `❌ ${
+                  data.message || `Failed (HTTP ${res.status})`
+                }`;
+                msgContainer.style.color = "#dc3545"; // red error
+              }
+            } catch (err) {
+              console.error(err);
+              msgContainer.innerText =
+                "❌ Something went wrong. Please try again.";
+              msgContainer.style.color = "#dc3545";
+            } finally {
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = submitBtn.dataset._oldText || "Send";
+              }
+            }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

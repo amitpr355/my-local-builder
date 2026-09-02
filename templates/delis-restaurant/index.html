@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delis restuaren</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <a href="#" id="backToTopBtn" class="back-to-top" aria-label="Back to top">
+      <i class="bi bi-arrow-up" data-icon="arrow-up" aria-hidden="true"></i>
+    </a>
+
+    <!-- Navbar -->
+    <header id="main-header" class="main-header" data-section="main-header">
+      <div class="container nav-wrapper">
+        <a href="#hero" class="logo" aria-label="Resto Home">
+          <span class="dot"></span>
+          <span class="logo-text" data-logo="navbar">RESTO</span>
+        </a>
+
+        <nav id="navbar" class="nav-links">
+          <a href="#hero">Home</a>
+          <a href="#atmosphere">About Us</a>
+          <a href="#menu-section">Menu</a>
+          <a href="#testimonials">Testimonial</a>
+          <a href="#footer">Contact</a>
+          <a href="#reservation" class="btn-reservation" data-btn="navbar"
+            >Reservation</a
+          >
+        </nav>
+
+        <!-- 3 LINE HAMBURGER -->
+        <a
+          href="#navbar"
+          class="nav-toggle"
+          id="nav-toggle"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+        >
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section" data-section="hero">
+      <span class="hero-section__overlay" aria-hidden="true"></span>
+
+      <div class="container hero-section__vcenter">
+        <div class="row">
+          <div class="col-12 col-lg-10 col-xl-8 hero-section__col">
+            <div class="hero-section__content">
+              <span class="hero-section__tagline">GOOD PLACE. GOOD FOOD.</span>
+
+              <h1 class="hero-section__title">
+                A Warm Table, Fresh Flavours<br />
+                In The Heart Of New York
+              </h1>
+
+              <p class="hero-section__subtext">
+                From wood-fired classics to chef’s seasonal specials, every
+                plate is made fresh with locally sourced ingredients—served
+                warm, fast, and full of flavour.
+              </p>
+
+              <span class="hero-section__rule" aria-hidden="true"></span>
+
+              <a href="#atmosphere" class="hero-section__scroll">
+                <i
+                  class="bi bi-mouse2"
+                  data-icon="mouse"
+                  aria-hidden="true"
+                ></i>
+                <span>SCROLL DOWN</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- atmosphere section-->
+    <section
+      id="atmosphere"
+      class="atmosphere-section py-6"
+      data-section="atmosphere"
+    >
+      <div class="container">
+        <div class="row atmosphere-section__row">
+          <!-- LEFT -->
+          <div class="col-12 col-lg-6">
+            <div class="atmosphere-section__left">
+              <h2 class="atmosphere-section__title">
+                Discover The Good<br />
+                Atmosphere Of RESTO.
+              </h2>
+
+              <p class="atmosphere-section__intro">
+                Step into a space where warm lighting, fresh aromas, and
+                friendly service set the mood. From morning coffee to late-night
+                bites, RESTO feels like your favourite corner in the city.
+              </p>
+
+              <div class="atmosphere-section__feature">
+                <div class="atmosphere-section__img-wrap">
+                  <img
+                    src="assets/images/delis-Atmosphare-1.webp"
+                    alt="Good Vibes"
+                    class="atmosphere-section__img"
+                  />
+                </div>
+
+                <h4 class="atmosphere-section__feature-title">Good Vibes</h4>
+                <p class="atmosphere-section__feature-text">
+                  Hand-crafted decor, soft music, and a welcoming vibe that
+                  makes every visit feel special.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="col-12 col-lg-6">
+            <div class="atmosphere-section__right">
+              <div class="atmosphere-section__feature">
+                <div class="atmosphere-section__img-wrap">
+                  <img
+                    src="assets/images/delis-Atmosphare-3.webp"
+                    alt="Cozy Place"
+                    class="atmosphere-section__img"
+                  />
+                </div>
+
+                <h4 class="atmosphere-section__feature-title">Cozy Place</h4>
+                <p class="atmosphere-section__feature-text">
+                  A calm, comfortable setting designed for dates, family
+                  dinners, and quick lunch breaks.
+                </p>
+              </div>
+
+              <div class="atmosphere-section__feature">
+                <div class="atmosphere-section__img-wrap">
+                  <img
+                    src="assets/images/delis-Atmosphare-2.webp"
+                    alt="Relax Atmosphere"
+                    class="atmosphere-section__img"
+                  />
+                </div>
+
+                <h4 class="atmosphere-section__feature-title">
+                  Relax Atmosphere
+                </h4>
+                <p class="atmosphere-section__feature-text">
+                  Take a seat, slow down, and enjoy chef specials—plus live
+                  music evenings that make the night memorable.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ FOOD OVERLAY (absolute, does NOT push layout) -->
+      <div class="atmosphere-section__food" aria-hidden="true">
+        <div
+          class="atmosphere-section__food-item atmosphere-section__food-item--pancakes"
+        >
+          <img
+            src="assets/images/delis-cake.webp"
+            alt=""
+            class="atmosphere-section__food-img"
+          />
+        </div>
+
+        <div
+          class="atmosphere-section__food-item atmosphere-section__food-item--coffee"
+        >
+          <img
+            src="assets/images/delis-coffe.webp"
+            alt=""
+            class="atmosphere-section__food-img"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- menu section -->
+    <section
+      id="menu-section"
+      class="menu-section py-6"
+      data-section="menu-section"
+    >
+      <div class="container">
+        <!-- HEADER -->
+        <div class="row">
+          <div class="col-12">
+            <div class="menu-section__header">
+              <span class="menu-section__subtitle">Our Menu</span>
+              <h2 class="menu-section__title">Get Relax. Eat</h2>
+              <p class="menu-section__desc">
+                Crafted for cravings—fresh starters, smoky grills, and
+                comforting plates made with seasonal ingredients. Pair it with a
+                signature drink and take your time.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- MENU LIST (2 columns using bootstrap grid) -->
+        <div class="row menu-section__grid">
+          <!-- Column 1 -->
+          <div class="col-12 col-lg-6">
+            <div class="menu-section__column">
+              <div class="menu-section__item">
+                <div class="menu-section__item-row">
+                  <span class="menu-section__item-name"
+                    >Lemon Garlic Green Beans</span
+                  >
+                  <span class="menu-section__item-price">15.00</span>
+                </div>
+                <span class="menu-section__item-desc"
+                  >Lemon / Garlic / Beans</span
+                >
+              </div>
+
+              <div class="menu-section__item">
+                <div class="menu-section__item-row">
+                  <span class="menu-section__item-name"
+                    >Bacon-Wrapped Shrimp</span
+                  >
+                  <span class="menu-section__item-price">21.50</span>
+                </div>
+                <span class="menu-section__item-desc"
+                  >Bacon / Shrimp / Garlic</span
+                >
+              </div>
+
+              <div class="menu-section__item">
+                <div class="menu-section__item-row">
+                  <span class="menu-section__item-name"
+                    >Lamb-Beef Kofte Skewers</span
+                  >
+                  <span class="menu-section__item-price">18.50</span>
+                </div>
+                <span class="menu-section__item-desc"
+                  >Lamb / Herbs / Yogurt Dip</span
+                >
+              </div>
+
+              <div class="menu-section__item">
+                <div class="menu-section__item-row">
+                  <span class="menu-section__item-name"
+                    >Char-Grilled Oysters (5)</span
+                  >
+                  <span class="menu-section__item-price">20.00</span>
+                </div>
+                <span class="menu-section__item-desc"
+                  >Oyster / Ginger / Butter</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="col-12 col-lg-6">
+            <div class="menu-section__column">
+              <div class="menu-section__item">
+                <div class="menu-section__item-row">
+                  <span class="menu-section__item-name"
+                    >Creamy Mushroom Pasta</span
+                  >
+                  <span class="menu-section__item-price">17.00</span>
+                </div>
+                <span class="menu-section__item-desc"
+                  >Mushroom / Cream / Parmesan</span
+                >
+              </div>
+
+              <div class="menu-section__item">
+                <div class="menu-section__item-row">
+                  <span class="menu-section__item-name"
+                    >Wood-Fired Margherita</span
+                  >
+                  <span class="menu-section__item-price">16.50</span>
+                </div>
+                <span class="menu-section__item-desc"
+                  >Tomato / Basil / Mozzarella</span
+                >
+              </div>
+
+              <div class="menu-section__item">
+                <div class="menu-section__item-row">
+                  <span class="menu-section__item-name"
+                    >Slow-Cooked BBQ Ribs</span
+                  >
+                  <span class="menu-section__item-price">24.00</span>
+                </div>
+                <span class="menu-section__item-desc"
+                  >BBQ / Spices / House Sauce</span
+                >
+              </div>
+
+              <div class="menu-section__item">
+                <div class="menu-section__item-row">
+                  <span class="menu-section__item-name"
+                    >Classic Chocolate Lava</span
+                  >
+                  <span class="menu-section__item-price">11.00</span>
+                </div>
+                <span class="menu-section__item-desc"
+                  >Chocolate / Vanilla / Warm Cake</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BUTTON (a tag only) -->
+        <div class="row">
+          <div class="col-12">
+            <div class="menu-section__button">
+              <a href="#" class="menu-section__btn-view" data-btn="menu"
+                >View All Menu</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- signature section -->
+    <section
+      id="signature-menu"
+      class="signature-menu-section py-6"
+      data-section="signature-menu"
+    >
+      <span class="signature-menu-section__overlay" aria-hidden="true"></span>
+
+      <div class="container">
+        <div class="row align-items-center signature-menu-section__row">
+          <div class="col-12 col-md-10 col-lg-7">
+            <div class="signature-menu-section__content">
+              <span class="signature-menu-section__subtitle">HOMEMADE</span>
+              <h2 class="signature-menu-section__title">Signature Menu</h2>
+              <p class="signature-menu-section__desc">
+                Our chef’s favourites—slow-cooked sauces, wood-fired bites, and
+                seasonal specials made fresh every day. Simple ingredients, bold
+                flavour, and plates worth sharing.
+              </p>
+
+              <!-- optional link (a tag only) -->
+              <a href="#menu-section" class="signature-menu-section__link">
+                Explore Today’s Specials
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- gallery section -->
+    <section id="gallery" class="gallery-section py-6" data-section="gallery">
+      <div class="container">
+        <div class="row g-4 gallery-section__row">
+          <div class="col-12 col-sm-6 col-lg-4 gallery-section__col">
+            <div class="gallery-section__item">
+              <div class="gallery-section__img-wrap">
+                <img
+                  src="assets/images/delis-gallery-1.webp"
+                  alt="Fine Dining"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4 gallery-section__col">
+            <div class="gallery-section__item">
+              <div class="gallery-section__img-wrap">
+                <img
+                  src="assets/images/delis-gallery-4.webp"
+                  alt="Group Eating"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4 gallery-section__col">
+            <div class="gallery-section__item">
+              <div class="gallery-section__img-wrap">
+                <img
+                  src="assets/images/delis-gallery-3.webp"
+                  alt="Friends Toasting"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4 gallery-section__col">
+            <div class="gallery-section__item">
+              <div class="gallery-section__img-wrap">
+                <img
+                  src="assets/images/delis-gallery-2.webp"
+                  alt="Outdoor Dining"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4 gallery-section__col">
+            <div class="gallery-section__item">
+              <div class="gallery-section__img-wrap">
+                <img
+                  src="assets/images/delis-gallery-5.webp"
+                  alt="Korean Food"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4 gallery-section__col">
+            <div class="gallery-section__item">
+              <div class="gallery-section__img-wrap">
+                <img
+                  src="assets/images/delis-gallery-6.webp"
+                  alt="Restaurant Kitchen"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- team section -->
+    <section id="team" class="team-section py-6" data-section="team">
+      <div class="container">
+        <div class="row team-section__row">
+          <!-- LEFT -->
+          <div class="col-12 col-md-6">
+            <div class="team-section__left">
+              <h2 class="team-section__title">Meet The Team Of<br />RESTO</h2>
+
+              <p class="team-section__desc">
+                Behind every perfect plate is a team that cares. From our head
+                chef’s signature sauces to the warm service on the floor—RESTO
+                is built by people who love food and love hosting.
+              </p>
+
+              <div class="team-section__img-wrap team-section__img-wrap--left">
+                <img
+                  src="assets/images/delis-team-2.webp"
+                  alt="Chef 1"
+                  class="team-section__img"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="col-12 col-md-6">
+            <div class="team-section__right">
+              <div class="team-section__img-wrap team-section__img-wrap--top">
+                <img
+                  src="assets/images/delis-team-1.webp"
+                  alt="Chef 2"
+                  class="team-section__img team-section__img--narrow"
+                />
+              </div>
+
+              <div
+                class="team-section__img-wrap team-section__img-wrap--bottom"
+              >
+                <img
+                  src="assets/images/delis-team-3.webp"
+                  alt="Chef 3"
+                  class="team-section__img"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- testimonial section -->
+    <section
+      id="testimonials"
+      class="testimonials-section py-6"
+      data-section="testimonials"
+    >
+      <span class="testimonials-section__overlay" aria-hidden="true"></span>
+
+      <div class="container">
+        <div class="testimonials-section__header">
+          <span class="testimonials-section__subtitle">TESTIMONIALS</span>
+          <h2 class="testimonials-section__title">What They Say</h2>
+        </div>
+
+        <div class="row testimonials-section__row">
+          <!-- Card 1 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="testimonials-section__card">
+              <div class="testimonials-section__img-wrap">
+                <img
+                  src="assets/images/testimonials-1.png"
+                  alt="Amit Kumar"
+                  class="testimonials-section__img"
+                />
+              </div>
+
+              <p class="testimonials-section__text">
+                The flavours were unreal—fresh, perfectly seasoned, and served
+                piping hot. The staff helped us pick great dishes and everything
+                arrived right on time.
+              </p>
+
+              <h4 class="testimonials-section__name">AMIT KUMAR</h4>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="testimonials-section__card">
+              <div class="testimonials-section__img-wrap">
+                <img
+                  src="assets/images/testimonial-2.png"
+                  alt="Manish Kumar"
+                  class="testimonials-section__img"
+                />
+              </div>
+
+              <p class="testimonials-section__text">
+                Calm vibe, clean seating, and food that tastes homemade but
+                looks premium. Their chef’s special pasta and mocktails are a
+                must-try.
+              </p>
+
+              <h4 class="testimonials-section__name">MANISH KUMAR</h4>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="testimonials-section__card">
+              <div class="testimonials-section__img-wrap">
+                <img
+                  src="assets/images/testimonials-3.png"
+                  alt="Samir Kumar"
+                  class="testimonials-section__img"
+                />
+              </div>
+
+              <p class="testimonials-section__text">
+                Perfect for family dinners. Quick service, warm hospitality, and
+                every dish felt freshly prepared. We’ll definitely come back
+                again.
+              </p>
+
+              <h4 class="testimonials-section__name">SAMIR KUMAR</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- reservation section -->
+    <section
+      id="reservation"
+      class="reservation-section py-6"
+      data-section="reservation"
+    >
+      <div class="container reservation-section__container">
+        <div class="row justify-content-center">
+          <div class="col-12 col-lg-10 col-xl-8">
+            <div class="reservation-section__content">
+              <h2 class="reservation-section__title">Reservation</h2>
+
+              <p class="reservation-section__text">
+                Reserve your table in minutes and enjoy fresh plates, warm
+                service, and the perfect dining vibe—ideal for date nights,
+                family dinners, and celebrations.
+              </p>
+
+              <a
+                href="#contact"
+                class="reservation-section__btn"
+                data-btn="reservation"
+              >
+                BOOK A TABLE NOW
+              </a>
+
+              <div class="reservation-section__phone">
+                <span class="reservation-section__phone-label">
+                  TELEPHONE RESERVATIONS
+                </span>
+                <h3 class="reservation-section__phone-number">12 34 56 7890</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Decorative Image (separate div as you asked) -->
+        <div class="reservation-section__decor" aria-hidden="true">
+          <img src="assets/images/delis-cake.webp" alt="Pancakes" />
+        </div>
+      </div>
+    </section>
+
+    <!-- footer section -->
+    <section id="footer" class="footer-section py-6" data-section="footer">
+      <div class="container">
+        <!-- TOP -->
+        <div class="row footer-section__top">
+          <!-- Col 1 -->
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="footer-section__logo">
+              <span class="footer-section__logo-icon" aria-hidden="true"></span>
+              <span class="footer-section__logo-text" data-logo="footer"
+                >RESTO</span
+              >
+            </div>
+
+            <p class="footer-section__text">
+              Fresh ingredients, warm hospitality, and a dining space made for
+              long conversations. Come for the flavours—stay for the vibe.
+            </p>
+
+            <div class="footer-section__social">
+              <a href="#" aria-label="Facebook">
+                <i
+                  class="bi bi-facebook"
+                  data-icon="facebook"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <a href="#" aria-label="Twitter">
+                <i
+                  class="bi bi-twitter"
+                  data-icon="twitter"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <a href="#" aria-label="Instagram">
+                <i
+                  class="bi bi-instagram"
+                  data-icon="instagram"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <a href="#" aria-label="YouTube">
+                <i
+                  class="bi bi-youtube"
+                  data-icon="youtube"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <a href="#" aria-label="Community">
+                <i class="bi bi-fan" data-icon="fan" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Col 2 -->
+          <div class="col-12 col-md-6 col-lg-3">
+            <h4 class="footer-section__title">Our Location</h4>
+
+            <p class="footer-section__text">
+              E-123, ABC Plaza, XYZ Street,<br />
+              New Delhi - 110077 <br />
+              +91-9123456789 <br />
+              yourname@domainname.com
+            </p>
+
+            <a href="#" class="footer-section__link">Get Location</a>
+          </div>
+
+          <!-- Col 3 -->
+          <div class="col-12 col-md-6 col-lg-3">
+            <h4 class="footer-section__title">Quick Link</h4>
+
+            <ul class="footer-section__list">
+              <li class="footer-section__list-item">
+                <a class="footer-section__list-link" href="#hero">Home</a>
+              </li>
+              <li class="footer-section__list-item">
+                <a class="footer-section__list-link" href="#atmosphere"
+                  >About Us</a
+                >
+              </li>
+              <li class="footer-section__list-item">
+                <a class="footer-section__list-link" href="#menu-section"
+                  >Menu</a
+                >
+              </li>
+              <li class="footer-section__list-item">
+                <a class="footer-section__list-link" href="#testimonials"
+                  >Testimonial</a
+                >
+              </li>
+              <li class="footer-section__list-item">
+                <a class="footer-section__list-link" href="#reservation"
+                  >Contact Us</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Col 4 -->
+          <div class="col-12 col-md-6 col-lg-3">
+            <h4 class="footer-section__title">Opening Hours</h4>
+
+            <p class="footer-section__text">
+              Sunday to Wednesday<br />
+              9AM – 10.30PM
+            </p>
+
+            <p class="footer-section__text">
+              Thursday, Friday, Saturday<br />
+              9AM – 12.30AM
+            </p>
+
+            <a href="#reservation" class="footer-section__btn" data-btn="footer"
+              >RESERVATION</a
+            >
+          </div>
+        </div>
+
+        <!-- BOTTOM -->
+        <div class="footer-section__bottom">
+          <span class="footer-section__bottom-text">
+            Copyright © 2025 All Right Reserved
+          </span>
+          <span class="footer-section__bottom-text"> Powered by Zigrow </span>
+        </div>
+      </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>

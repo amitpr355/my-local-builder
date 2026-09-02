@@ -1,0 +1,758 @@
+$primary-color: #4caf50;
+/* Navbar */
+#navbar {
+  width: 100%;
+  position: absolute; // default at top
+  top: 0;
+  left: 0;
+  padding: 1rem 0;
+  z-index: 1000;
+  transition: background 0.3s ease, padding 0.3s ease;
+
+  .nav-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo a {
+    font-size: 2rem;
+    font-weight: 800;
+    color: $primary-color;
+    text-decoration: none;
+
+    span {
+      font-size: 2.5rem;
+      color: $primary-color;
+    }
+  }
+
+  .nav-menu ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+
+    li a {
+      position: relative;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #fff;
+      transition: color 0.3s ease;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 0%;
+        height: 2px;
+        background: $primary-color;
+        transition: width 0.3s ease;
+      }
+
+      &:hover,
+      &.active {
+        color: $primary-color;
+      }
+
+      &:hover::after,
+      &.active::after {
+        width: 100%;
+      }
+    }
+  }
+
+  .menu-toggle {
+    display: none;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  /* Sticky version after scrolling */
+  &.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 0.7rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .nav-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      padding: 1.5rem 0;
+      text-align: center;
+
+      ul {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+    }
+
+    .menu-toggle {
+      display: block;
+    }
+
+    .nav-menu.active {
+      display: block;
+      animation: slideDown 0.3s ease-in-out;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hero Section */
+#hero {
+  position: relative;
+  background: url("../assets/images/dietitian-hero.webp") no-repeat center center/cover;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+
+  /* Overlay */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); // adjust darkness here
+    z-index: 1;
+  }
+
+  .container {
+    position: relative;
+    z-index: 2; // ensures text stays above overlay
+  }
+
+  .hero-content {
+    max-width: 700px;
+    margin: 0 auto;
+
+    .brand-title {
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+
+      span {
+        color: #fff;
+      }
+    }
+
+    .subtitle {
+      margin-top: 1rem;
+      font-size: 1.25rem;
+      font-weight: 400;
+    }
+
+    .btn-custom {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background-color: #4caf50;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #43a047;
+      }
+    }
+  }
+}
+#backToTopBtn {
+  position: fixed;
+  bottom: 5%;
+  right: 1%;
+  display: none;
+  z-index: 1000;
+  color: white;
+  font-size: 1.4rem;
+  border-radius: 50%;
+  background-color: $primary-color;
+  box-shadow: 0 12px 12px rgba(53, 51, 51, 0.6);
+  &:hover {
+    background-color: $primary-color;
+  }
+}
+/* Responsive typography */
+@media (max-width: 768px) {
+  #hero .brand-title {
+    font-size: 3rem;
+  }
+
+  #hero .subtitle {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #hero .brand-title {
+    font-size: 2.25rem;
+  }
+
+  #hero .subtitle {
+    font-size: 0.9rem;
+  }
+}
+// about section
+#about {
+  background: #f7f7f7; // light gray background
+  .about-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: center; // ensures image stays aligned at top
+  }
+
+  .about-text {
+    flex: 1 1 50%;
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+
+      span {
+        color: #4caf50;
+      }
+    }
+
+    .underline {
+      width: 50px;
+      height: 3px;
+      background: #4caf50;
+      margin: 1.5rem 0rem;
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      color: #555;
+    }
+
+    .consult {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+
+      span {
+        color: #000;
+      }
+    }
+
+    .btn-custom {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      background: #4caf50;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: #43a047;
+      }
+    }
+  }
+
+  .about-image {
+    flex: 1 1 45%;
+    img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 2/2;
+      object-fit: cover;
+      display: block;
+      padding: 0 3rem 2rem 3rem;
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .about-wrapper {
+      flex-direction: column;
+    }
+
+    .about-text,
+    .about-image {
+      flex: 1 1 100%;
+    }
+  }
+}
+// how it work
+#how-it-works {
+  background: #f7f7f7;
+
+  .section-header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 3rem auto;
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .underline {
+      width: 80px;
+      height: 3px;
+      background: #4caf50;
+      margin: 0.75rem auto 1.5rem auto;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.6;
+    }
+  }
+
+  .cards-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+  }
+
+  .card-custom {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    flex: 1 1 calc(33.333% - 2rem);
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon {
+      font-size: 3rem;
+      color: #4caf50;
+      margin-bottom: 1rem;
+
+      /* placeholders for icons (replace with SVG or font icons) */
+      .icon-chat::before {
+        content: "💬";
+      }
+      .icon-video::before {
+        content: "🎥";
+      }
+      .icon-salad::before {
+        content: "🥗";
+      }
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-underline {
+      width: 40px;
+      height: 2px;
+      background: #333;
+      margin: 0 auto 1rem auto;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-custom {
+      display: inline-block;
+      padding: 0.6rem 1.5rem;
+      background: #4caf50;
+      color: #fff;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background: #43a047;
+      }
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .card-custom {
+      flex: 1 1 calc(50% - 2rem);
+    }
+  }
+
+  @media (max-width: 576px) {
+    .card-custom {
+      flex: 1 1 100%;
+    }
+  }
+}
+// appointment
+#appointment {
+  background: url("../assets/images/dietitian-testimonial.webp") center/cover no-repeat;
+  position: relative;
+  z-index: 1;
+
+  // Overlay
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1); // adjust opacity as needed
+    z-index: -1;
+  }
+
+  .appointment-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .appointment-content {
+    flex: 1 1 50%;
+    color: #fff;
+    position: relative; // make sure it's above overlay
+
+    h2 {
+      font-size: 2.4rem;
+      font-weight: 600;
+      margin-bottom: 1.6rem;
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      max-width: 500px;
+    }
+
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 600;
+
+      span {
+        color: #fff;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .appointment-form {
+    flex: 1 1 45%;
+    background: #f9f9f9;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative; // stays above overlay
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+      }
+
+      textarea {
+        resize: none;
+      }
+
+      .btn-custom {
+        padding: 0.6rem 1.5rem;
+        background: #4caf50;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 30px;
+        border: none;
+        width: fit-content;
+        cursor: pointer;
+        transition: background 0.3s ease;
+
+        &:hover {
+          background: #43a047;
+        }
+      }
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .appointment-content,
+    .appointment-form {
+      flex: 1 1 100%;
+    }
+  }
+}
+// testimonial
+#testimonial {
+  background: #f8f9fa;
+
+  .testimonial-wrapper {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .testimonial-img {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+
+    img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #eaeaea;
+    }
+
+    .quote-icon {
+      position: absolute;
+      bottom: 0;
+      right: -10px;
+      background: #4caf50;
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: bold;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .testimonial-text {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .testimonial-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .testimonial-img img {
+      width: 80px;
+      height: 80px;
+    }
+
+    .testimonial-text {
+      font-size: 0.95rem;
+      padding: 0 1rem;
+    }
+
+    .testimonial-name {
+      font-size: 1rem;
+    }
+  }
+}
+// featured
+#featured {
+  background: #fff;
+
+  .featured-wrapper {
+    text-align: center;
+
+    .featured-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #00695c; // accent color
+      margin-bottom: 2rem;
+    }
+
+    .featured-logos {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+
+      img {
+        max-height: 80px;
+        max-width: 120px;
+        object-fit: contain;
+        transition: filter 0.3s ease, transform 0.3s ease;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .featured-logos {
+      gap: 1.5rem;
+
+      img {
+        max-height: 40px;
+        max-width: 100px;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .featured-logos {
+      gap: 1rem;
+
+      img {
+        max-height: 35px;
+        max-width: 80px;
+      }
+    }
+  }
+}
+// footer testimonial
+#footer {
+  position: relative; // allow overlay positioning
+  background: url("../assets/images/dietitian-footer.webp") no-repeat center center/cover;
+  color: #fff;
+  text-align: center;
+  z-index: 1;
+
+  // Overlay
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); // adjust darkness (0.6 = 60%)
+    z-index: -1; // keep overlay behind content
+  }
+
+  .footer-content {
+    position: relative; // ensure content is above overlay
+    max-width: 700px;
+    margin: 0 auto;
+
+    .logo {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #6ed36e;
+
+      span {
+        color: #fff;
+      }
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      margin: 10px 0 20px;
+      font-weight: 400;
+    }
+
+    .footer-nav {
+      margin-bottom: 20px;
+
+      a {
+        color: #fff;
+        margin: 0 5px;
+        text-decoration: none;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #6ed36e;
+        }
+      }
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 3rem;
+
+      a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        background: #fff;
+        color: #000;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: #6ed36e;
+          color: #fff;
+        }
+      }
+    }
+  }
+}
+#copyright {
+  background: #111; // dark background
+  color: #aaa;
+  text-align: center;
+  // padding:  0;
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+
+    a {
+      color: #6ed36e;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

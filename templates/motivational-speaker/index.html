@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Motivational Speaker</title>
+    <!-- Fav Icon -->
+    <link rel="icon" href="assets/fav-icon.png" type="image/png" />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Bootstrap link -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+
+    <!-- jonsuh hamburger icon  -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/hamburgers/1.1.3/hamburgers.min.css"
+      integrity="sha512-...your-integrity-hash..."
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- Swiper CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
+    />
+
+    <!-- Google Fonts  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap" rel="stylesheet">
+    <!-- Google Material Icons CDN -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Back to Top Button -->
+    <button
+      id="backToTop"
+      class="back-to-top d-flex align-items-center justify-content-center"
+      aria-label="Back to Top"
+    >
+      <i class="bi bi-arrow-up-short fs-3"></i>
+    </button>
+
+
+      <!-- Header -->
+  <header>
+    <nav id="mainNavbar" class="navbar navbar-expand-lg py-3 transition-navbar">
+      <div class="container">
+
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
+        <img src="assets/img/logo.png" alt="" class="img-fluid">
+        </a>
+
+        <!-- Toggle button -->
+        <!-- Toggle button with Elastic Hamburger -->
+        <button class="navbar-toggler hamburger hamburger--elastic d-lg-none" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarContent" aria-label="Toggle navigation">
+          <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+          </span>
+        </button>
+
+
+        <!-- Menu Items -->
+        <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
+          <ul class="navbar-nav mx-auto gap-lg-4 text-center font-montserrat">
+            <li class="nav-item py-lg-2 py-3 font-montserrat"><a class="nav-link p-0 " href="#hero">Home</a></li>
+            <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#about">About</a></li>
+            <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#features">Events</a></li>
+            <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#testimonials">Testimonials</a></li>
+
+            <li class="nav-item py-lg-2 py-3"><a class="nav-link p-0" href="#download-ebook">Contact</a></li>
+
+          </ul>
+         <div class="d-lg-block ">
+                        <a href="tel:+1234567890" class="call-now-btn nav-btn">
+                            <i class="bi bi-telephone-fill me-2"></i> Book a Call
+                        </a>
+                    </div>
+
+      </div>
+    </nav>
+
+
+  </header>
+  <!-- Header Ends Here -->
+    <!-- ===================== Hero Section Start ===================== -->
+<section id="hero" class="position-relative text-center text-white py-5">
+  <div class="hero-content  px-3">
+    <h1 class="display-3 fw-normal playfair-font">Find Your Professional Life Coach</h1>
+    <p class="lead mx-auto mb-4" style="max-width: 640px;">
+      Empowering Lives Through Inspiring Stories and Transformative Words That Ignite Change and Foster Growth in Every Individual
+    </p>
+    <div class="social-icons mb-4">
+      <a href="#" class="text-white mx-2"><i class="bi bi-twitter"></i></a>
+      <a href="#" class="text-white mx-2"><i class="bi bi-facebook"></i></a>
+      <a href="#" class="text-white mx-2"><i class="bi bi-instagram"></i></a>
+    </div>
+    <a href="#" class="secondary-btn rounded-3 fw-semibold ">
+      Get Started For Free!
+    </a>
+  </div>
+
+  <div class="hero-image-wrapper">
+    <img src="assets/img/Motivational hero.webp" alt="Hero" class="img-fluid shadow ">
+  </div>
+</section>
+
+    <!-- ===================== Hero Section End ======================= -->
+
+    <!-- ===================== About Section Start ==================== -->
+    <section id="about" class="position-relative py-6">
+      <div class="">
+        <div class="text-center mb-5">
+           <h6 class="main-heading mb-md-3 mb-2">About Me</h6>
+        </div>
+        <div class="row align-items-center g-lg-5 g-0 ">
+          <!-- Left: Image -->
+          <div class="col-lg-6 position-relative">
+            <img
+              src="assets/img/Motivation Section 2.webp"
+              alt="user"
+              class="img-fluid rounded-4 shadow about-img"
+            />
+          </div>
+
+          <!-- Right: Text Card -->
+          <div class="col-lg-6">
+            <div
+              class="about-card bg-white rounded-4  shadow position-relative"
+            >
+              <h5 class="fw-semibold mb-2 playfair-font heading">Abhijeet Jain</h5>
+              <p class=" mb-4 sub-heading">Empowering Lives Through Words</p>
+              <p class="mb-4 main-subpara">
+                Hello, I’m Abhijeet Jain, a motivational speaker, storyteller, and
+                advocate for personal growth. With years of experience inspiring
+                individuals, teams, and organizations, I believe in the
+                transformative power of words. My journey is a testament to
+                resilience, determination, and the pursuit of purpose.
+              </p>
+              <a href="#" class="primary-btn">Read more</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== About Section End ====================== -->
+
+    <!-- ===================== Services Section Start ================= -->
+    <section id="services" class="py-6">
+      <div class="container text-center">
+        <!-- Heading -->
+        <h6 class="main-heading mb-md-3 mb-2">My Values</h6>
+        <p class="main-subpara mb-5">
+          As a motivational speaker, storyteller, and advocate for personal
+          growth, I believe in the power of resilience, authenticity, and
+          connection. My mission is to inspire individuals to embrace their
+          unique journeys.
+        </p>
+
+        <!-- Cards Row -->
+        <div class="row g-4 justify-content-center">
+          <!-- Card 1 -->
+          <div class="col-md-4">
+            <div
+              class="service-card h-100 text-start p-4 rounded-4 shadow-sm transition"
+            >
+              <h5 class="mb-3">Commitment</h5>
+              <p class="mb-0">
+                Hello, I'm [Speaker’s Name], a motivational speaker,
+                storyteller, and advocate for personal growth. With years of
+                experience.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="col-md-4">
+            <div
+              class="service-card h-100 text-start p-4 rounded-4 shadow-sm transition"
+            >
+              <h5 class="fw-semibold mb-3">Inspiration</h5>
+              <p class="mb-0">
+                My journey began in [Year], when I realized the power of words
+                to transform lives. I have dedicated my life to helping others
+                find their voices.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 3 (Highlighted) -->
+          <div class="col-md-4">
+            <div
+              class="service-card h-100 text-start p-4 rounded-4 shadow-sm transition"
+            >
+              <h5 class="fw-semibold mb-3">Empowerment</h5>
+              <p class="mb-0">
+                Through workshops and seminars, I empower individuals to take
+                charge of their lives, embrace change, and turn their dreams
+                into actionable goals.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Services Section End =================== -->
+
+    <!-- ===================== Stats / Achievements Start ============= -->
+    <section id="stats" class="bg-light py-lg-5">
+      <div class="container">
+        <!-- Desktop View -->
+        <div
+          class=" d-flex flex-md-row flex-column justify-content-between align-items-center text-center"
+        >
+          <div class="stat-item px-4">
+            <h4 class="fw-semibold mb-1">15+</h4>
+            <p class="small mb-0 text-muted">Years Experience</p>
+          </div>
+          <div class="divider"></div>
+
+          <div class="stat-item px-4">
+            <h4 class="fw-semibold mb-1">30+</h4>
+            <p class="small mb-0 text-muted">Trusted Partners</p>
+          </div>
+          <div class="divider"></div>
+
+          <div class="stat-item px-4">
+            <h4 class="fw-semibold mb-1">95%</h4>
+            <p class="small mb-0 text-muted">Problem Solved</p>
+          </div>
+          <div class="divider"></div>
+
+          <div class="stat-item px-4">
+            <h4 class="fw-semibold mb-1">2,000+</h4>
+            <p class="small mb-0 text-muted">Satisfied Clients</p>
+          </div>
+        </div>
+
+    
+      </div>
+    </section>
+
+    <!-- ===================== Stats / Achievements End =============== -->
+
+    <section id="video" class="py-6">
+      <div class="container">
+        <div
+          class="video-wrapper position-relative rounded overflow-hidden shadow"
+        >
+          <img
+            src="assets/img/video-img.webp"
+            alt="Video Preview"
+            class="img-fluid w-100 video-image"
+          />
+          <a
+            href="#"
+            class="play-button position-absolute top-50 start-50 translate-middle"
+          >
+            <i class="bi bi-play-circle-fill"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Featured Video or Image Section Start == -->
+    <section id="features" class="py-5">
+      <div class="container">
+        <div class="text-center">
+          <h6 class="main-heading mb-md-3 mb-2">Event Schedule</h6>
+          <p class="main-subpara mb-5">
+            Hello, I’m [Speaker’s Name], a motivational speaker, storyteller,
+            and advocate for personal growth. With years of experience inspiring
+            individuals.
+          </p>
+        </div>
+        <div class="row g-4">
+          <!-- Event Card -->
+          <div class="col-md-6 col-lg-6">
+            <div class="event-card d-flex py-sm-4 px-3 py-3 align-items-start">
+              <div class="event-date text-center me-4">
+                <span class="day">9</span>
+                <span class="month">Nov</span>
+              </div>
+              <div class="event-details">
+                <div class="d-flex flex-sm-row flex-column gap-5 mb-3">
+                  <p class="mb-1 text-muted">
+                    <i class="bi bi-geo-alt-fill me-1"></i>BNDC Nusa Dua
+                  </p>
+                  <p class="mb-1 text-muted">
+                    <i class="bi bi-clock-fill me-1"></i>10:00 A.M – End
+                  </p>
+                </div>
+                <h6 class="mb-0">
+                  Discovering Your Inner Strength: A Life Coaching Workshop
+                </h6>
+              </div>
+            </div>
+            <div class="divider "></div>
+          </div>
+
+          <div class="col-md-6 col-lg-6">
+            <div class="event-card d-flex py-sm-4 px-3 py-3 align-items-start">
+              <div class="event-date text-center me-4">
+                <span class="day">9</span>
+                <span class="month">Nov</span>
+              </div>
+              <div class="event-details">
+                <div class="d-flex flex-sm-row flex-column gap-5 mb-3">
+                  <p class="mb-1 text-muted">
+                    <i class="bi bi-geo-alt-fill me-1"></i>BNDC Nusa Dua
+                  </p>
+                  <p class="mb-1 text-muted">
+                    <i class="bi bi-clock-fill me-1"></i>10:00 A.M – End
+                  </p>
+                </div>
+                <h6 class="mb-0">
+                  Discovering Your Inner Strength: A Life Coaching Workshop
+                </h6>
+              </div>
+            </div>
+            <div class="divider "></div>
+          </div>
+
+           <div class="col-md-6 col-lg-6">
+            <div class="event-card d-flex py-sm-4 px-3 py-3 align-items-start">
+              <div class="event-date text-center me-4">
+                <span class="day">9</span>
+                <span class="month">Nov</span>
+              </div>
+              <div class="event-details">
+                <div class="d-flex flex-sm-row flex-column gap-5 mb-3">
+                  <p class="mb-1 text-muted">
+                    <i class="bi bi-geo-alt-fill me-1"></i>BNDC Nusa Dua
+                  </p>
+                  <p class="mb-1 text-muted">
+                    <i class="bi bi-clock-fill me-1"></i>10:00 A.M – End
+                  </p>
+                </div>
+                <h6 class="mb-0">
+                  Discovering Your Inner Strength: A Life Coaching Workshop
+                </h6>
+              </div>
+            </div>
+      
+          </div>
+
+           <div class="col-md-6 col-lg-6">
+            <div class="event-card d-flex py-sm-4 px-3 py-3 align-items-start">
+              <div class="event-date text-center me-4">
+                <span class="day">9</span>
+                <span class="month">Nov</span>
+              </div>
+              <div class="event-details">
+                <div class="d-flex flex-sm-row flex-column gap-5 mb-3">
+                  <p class="mb-1 text-muted">
+                    <i class="bi bi-geo-alt-fill me-1"></i>BNDC Nusa Dua
+                  </p>
+                  <p class="mb-1 text-muted">
+                    <i class="bi bi-clock-fill me-1"></i>10:00 A.M – End
+                  </p>
+                </div>
+                <h6 class="mb-0">
+                  Discovering Your Inner Strength: A Life Coaching Workshop
+                </h6>
+              </div>
+            </div>
+          </div>
+          <!-- Repeat the above .col-md-6 block 3 more times for a total of 4 -->
+          <!-- You can duplicate and adjust content as needed -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Featured Video or Image Section End ==== -->
+
+    <!-- ===================== Testimonials Section Start ============= -->
+    <section id="testimonials" class="py-6">
+      <div class="container">
+
+        <div class="text-center">
+          <h6 class="main-heading mb-md-3 mb-2">Testimonials</h6>
+         <h2 class="fw-bold main-subpara mb-5">What People Say About Me</h2>
+        </div>
+       
+
+        <div class="swiper mySwiper">
+          <div class="swiper-wrapper">
+            <!-- Testimonial Slide 1 -->
+            <div class="swiper-slide">
+              <div class="testimonial-card p-4 ">
+                <div class="stars text-warning mb-2">★★★★★</div>
+                <p class="testimonial-text mb-4 col-md-9  ">
+                  “I was very impressed by the avion service, lorem ipsum is
+                  simply free text used by copytyping.”
+                </p>
+                <div class="divider"></div>
+                <div class="d-flex align-items-center">
+                  <img
+                    src="assets/img/testimonial a.webp"
+                    alt="Edna"
+                    class="rounded-circle me-3"
+                    width="50"
+                    height="50"
+                  />
+                  <div>
+                    <h6 class="mb-0 customer-full_name">Deepak Tiwari</h6>
+                    <small class="customer-name">Customer</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="testimonial-card p-4 ">
+                <div class="stars text-warning mb-2">★★★★★</div>
+                <p class="testimonial-text mb-4 col-md-9  ">
+                  “I was very impressed by the avion service, lorem ipsum is
+                  simply free text used by copytyping.”
+                </p>
+                <div class="divider"></div>
+                <div class="d-flex align-items-center">
+                  <img
+                    src="assets/img/testimonial b.webp"
+                    alt="Edna"
+                    class="rounded-circle me-3"
+                    width="50"
+                    height="50"
+                  />
+                  <div>
+                    <h6 class="mb-0  customer-full_name">Neha Verma</h6>
+                    <small class="customer-name">Customer</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="testimonial-card p-4 ">
+                <div class="stars text-warning mb-2">★★★★★</div>
+                <p class="testimonial-text mb-4 col-md-9  ">
+                  “I was very impressed by the avion service, lorem ipsum is
+                  simply free text used by copytyping.”
+                </p>
+                <div class="divider"></div>
+                <div class="d-flex align-items-center">
+                  <img
+                    src="assets/img/testimonial c.webp"
+                    alt="Edna"
+                    class="rounded-circle me-3"
+                    width="50"
+                    height="50"
+                  />
+                  <div>
+                    <h6 class="mb-0 customer-full_name">Manish Tyagi</h6>
+                    <small class="customer-name">Customer</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+           
+
+            <!-- Add more .swiper-slide blocks as needed -->
+          </div>
+
+          <!-- Optional Pagination -->
+          <div class="swiper-pagination mt-4"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Testimonials Section End =============== -->
+
+    <!-- ===================== Download eBook CTA Start ===================== -->
+<section id="download-ebook" class="py-5 bg-light">
+  <div class="container text-center">
+    <h5 class="fw-bold mb-2">Get My Free eBook</h5>
+    <p class="text-muted mb-4" style="max-width:500px;margin:auto;">
+      Learn practical steps to improve your mindset and productivity. Enter your email to receive instant access.
+    </p>
+
+    <form id="ebookForm" class="row g-2 justify-content-center" style="max-width:700px;margin:auto;">
+      <div class="col-md-3">
+        <input type="text" class="form-control" id="fullName" placeholder="Your Name" required>
+      </div>
+      <div class="col-md-6">
+        <input type="email" class="form-control" id="email" placeholder="Your Email" required>
+      </div>
+      <div class="col-md-3 d-grid">
+        <button type="submit" class="primary-btn rounded-3">Download</button>
+      </div>
+    </form>
+
+    <div class="small text-muted mt-2">
+      <i class="bi bi-shield-check me-1"></i>No spam. Unsubscribe anytime.
+    </div>
+    <div id="ebookMessage" class="small mt-2"></div>
+  </div>
+</section>
+
+<!-- ===================== Download eBook CTA End ======================= -->
+
+
+    <!-- ===================== Footer Section Start =================== -->
+    <footer id="footer" class="py-5">
+      <div class="container">
+        <div class="row border-top pt-4 text-white">
+          <div class="col-md-5 mb-4 mb-md-0">
+            <a href="#">
+
+              <img src="assets/img/logo.png" alt="" class="footer-logo img-fluid">
+            </a>
+            </div>
+
+          <div class="col-md-3 mb-4 mb-md-0">
+            <h6 class=" fw-semibold mb-3">Reach us</h6>
+            <p class="mb-1">
+              <i class="bi bi-telephone me-2"></i>+91 12345 67859
+            </p>
+            <p class="mb-1">
+              <i class="bi bi-envelope me-2"></i>yourname@domainname.com
+            </p>
+            <p>
+              <i class="bi bi-geo-alt me-2"></i>E-123, ABC Plaza, XYZ Street, New Delhi - 110077 
+            </p>
+          </div>
+
+          <div class="col-md-2 mb-4 mb-md-0">
+            <h6 class="text-uppercase fw-semibold mb-3">Company</h6>
+            <ul class="list-unstyled">
+              <li><a href="#about">About</a></li>
+              <li><a href="#features">Services</a></li>
+              <li><a href="#download-ebook">Contact</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-2">
+            <h6 class="text-uppercase fw-semibold mb-3">Legal</h6>
+            <ul class="list-unstyled">
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms & Services</a></li>
+              <li><a href="#">Terms of Use</a></li>
+              <li><a href="#">Refund Policy</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ===================== Footer Section End ===================== -->
+  </body>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+  <script src="js/script.js"></script>
+
+  <!-- Gsap animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Bootstrap -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+    crossorigin="anonymous"
+  ></script>
+</html>

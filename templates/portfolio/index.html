@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Portfolio</title>
+  </head>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Bootstrap link -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    crossorigin="anonymous"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+  />
+
+  <!-- jonsuh hamburger icon  -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/hamburgers/1.1.3/hamburgers.min.css"
+    integrity="sha512-...your-integrity-hash..."
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <!-- Swiper CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
+  />
+
+  <body>
+    <!-- Back to Top Button -->
+    <a id="backToTop" href="#" class="back-to-top" aria-label="Back to Top">
+      <i class="bi bi-arrow-up-short" data-icon="arrow-up"></i>
+    </a>
+
+    <!-- Header  -->
+    <header id="header" class="site-header" data-section="header">
+      <nav id="mainNavbar" class="site-navbar transition-navbar">
+        <div class="container">
+          <div class="navbar-row">
+            <!-- Logo -->
+            <a class="navbar-brand" href="#" data-logo="navbar">
+              <img
+                src="assets/img/logo.svg"
+                alt="Logo"
+                width="50"
+                class="navbar-logo"
+              />
+            </a>
+
+            <!-- Toggle (same position & behavior) -->
+            <a
+              href="#navbarContent"
+              class="navbar-toggler hamburger hamburger--elastic only-mobile"
+              role="button"
+              aria-controls="navbarContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+              </span>
+            </a>
+
+            <!-- Menu -->
+            <div class="navbar-collapse" id="navbarContent">
+              <ul class="navbar-nav font-montserrat">
+                <li class="nav-item">
+                  <a class="nav-link" href="#about">About</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#experience">Experience</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#portfolio">Portfolio</a>
+                </li>
+              </ul>
+
+              <div class="navbar-cta only-desktop">
+                <a href="#ready-to-light" class="resume-link">Resume</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Header ends here -->
+
+    <!-- Hero -->
+    <section id="hero" class="hero-section" data-section="hero">
+      <div class="container">
+        <div class="row hero-row">
+          <!-- Left vertical section (desktop only) -->
+          <div class="col-auto hero-side">
+            <div class="hero-side-inner">
+              <p class="rotate-text-small">Designer</p>
+              <div class="hero-divider"></div>
+              <p class="rotate-text-small">2025</p>
+            </div>
+          </div>
+
+          <!-- Center content -->
+          <div class="col-md-7 hero-content">
+            <h1 class="hero-title">
+              Freelancer, <span class="hero-highlight">designer</span> and a
+              content creator
+            </h1>
+
+            <!-- Social icons -->
+            <div class="social">
+              <a href="#" class="social-link" aria-label="Twitter">
+                <i class="bi bi-twitter" data-icon="twitter"></i>
+              </a>
+              <a href="#" class="social-link" aria-label="LinkedIn">
+                <i class="bi bi-linkedin" data-icon="linkedin"></i>
+              </a>
+              <a href="#" class="social-link" aria-label="Behance">
+                <i class="bi bi-behance" data-icon="behance"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right image section -->
+          <div class="col-md-4 hero-image-col">
+            <div class="hero-image-wrap">
+              <div class="hero-image">
+                <img
+                  src="assets/img/portfolio template hero.webp"
+                  alt="Profile"
+                />
+              </div>
+
+              <!-- Scroll down icon -->
+              <a
+                id="scrollDown"
+                href="#about"
+                class="scroll-down"
+                aria-label="Scroll Down"
+              >
+                scroll down
+                <i class="bi bi-arrow-down" data-icon="arrow-down"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logos row -->
+        <div class="hero-logos">
+          <a href="#" class="logo-pill" aria-label="Logo 1">
+            <div class="logo-img">
+              <img src="assets/img/hero-logo-1.png" alt="Logo 1" />
+            </div>
+          </a>
+
+          <a href="#" class="logo-pill" aria-label="Logo 2">
+            <div class="logo-img">
+              <img src="assets/img/hero-logo-2.png" alt="Logo 2" />
+            </div>
+          </a>
+
+          <a href="#" class="logo-pill" aria-label="Logo 3">
+            <div class="logo-img">
+              <img src="assets/img/hero-logo-3.png" alt="Logo 3" />
+            </div>
+          </a>
+
+          <a href="#" class="logo-pill" aria-label="Logo 4">
+            <div class="logo-img">
+              <img src="assets/img/hero-logo-1.png" alt="Logo 4" />
+            </div>
+          </a>
+
+          <a href="#" class="logo-pill" aria-label="Logo 5">
+            <div class="logo-img">
+              <img src="assets/img/hero-logo-2.png" alt="Logo 5" />
+            </div>
+          </a>
+
+          <a href="#" class="logo-pill" aria-label="Logo 6">
+            <div class="logo-img">
+              <img src="assets/img/hero-logo-3.png" alt="Logo 6" />
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hero ends here -->
+
+    <!-- About -->
+    <section id="about" class="about-section" data-section="about">
+      <div class="container">
+        <!-- About Me Button -->
+        <a href="#about" class="about-pill-btn">About me</a>
+
+        <!-- Full-width Heading & Paragraph -->
+        <h2 class="about-title">
+          Design is not just a job for me, it’s a passion that drives me
+        </h2>
+
+        <p class="about-desc">
+          I’m Rohit, a self-taught product designer based in Boston. Four years
+          ago, during my final year of university, I co-founded a mobile
+          marketplace and created its entire front-end myself, teaching me how
+          products are built from scratch. I build websites, mobile-first UIs,
+          emails, and internal tools — all designed around everything I’d want.
+        </p>
+
+        <!-- Image + Stats Row -->
+        <div class="row about-row">
+          <!-- Left: Video Thumbnail -->
+          <div class="col-md-8">
+            <div class="about-media-card">
+              <div class="about-media-img">
+                <img src="assets/img/about.webp" alt="Video thumbnail" />
+              </div>
+
+              <a href="#" class="about-play-btn" aria-label="Play video">
+                <i class="fas fa-play-circle" data-icon="play-circle"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right: Stats -->
+          <div class="col-md-4">
+            <div class="about-stats">
+              <div class="stat-block">
+                <h5 class="stat-number">12 startups</h5>
+                <small class="stat-label">worked with</small>
+              </div>
+
+              <div class="stat-block">
+                <h5 class="stat-number">5+ years</h5>
+                <small class="stat-label">experience</small>
+              </div>
+
+              <div class="stat-block">
+                <h5 class="stat-number">20+ projects</h5>
+                <small class="stat-label">completed successfully</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About ends here -->
+
+    <!-- Experience -->
+    <section
+      id="experience"
+      class="experience-section"
+      data-section="experience"
+    >
+      <div class="container">
+        <!-- Section Heading -->
+        <div class="experience-head">
+          <a href="#experience" class="section-pill-btn">Experience</a>
+          <h2 class="experience-title">
+            A Yearly Snapshot of my creative growth
+          </h2>
+        </div>
+
+        <!-- Experience Items -->
+        <div class="row experience-list">
+          <!-- Item -->
+          <div class="col-12 experience-item">
+            <div class="experience-item-row">
+              <div class="experience-left">
+                <h5 class="experience-role">Content Strategist at HubSpot</h5>
+                <p class="experience-desc">
+                  Orchestrated complex content strategies that increased organic
+                  traffic by 140%. Collaborated with SEO specialists to optimize
+                  content and improve search rankings.
+                </p>
+              </div>
+
+              <div class="experience-right">2023 – 2025</div>
+            </div>
+          </div>
+
+          <div class="col-12 experience-item">
+            <div class="experience-item-row">
+              <div class="experience-left">
+                <h5 class="experience-role">Product Manager at Shopify</h5>
+                <p class="experience-desc">
+                  Led a cross-functional team to develop and launch a new
+                  payment feature that improved user retention by 20%.
+                  Collaborated closely with engineering and design teams to
+                  maximize performance.
+                </p>
+              </div>
+
+              <div class="experience-right">2021 – 2023</div>
+            </div>
+          </div>
+
+          <div class="col-12 experience-item">
+            <div class="experience-item-row">
+              <div class="experience-left">
+                <h5 class="experience-role">Graphic Designer at Zoho</h5>
+                <p class="experience-desc">
+                  Led foundations for interface mockups and created
+                  illustrations that support design thinking and grow knowledge
+                  of web development. Built modern, accessible, and fast
+                  workflows for editors, approval teams, and the UI team.
+                </p>
+              </div>
+
+              <div class="experience-right">2019 – 2021</div>
+            </div>
+          </div>
+
+          <div class="col-12 experience-item experience-item-last">
+            <div class="experience-item-row">
+              <div class="experience-left">
+                <h5 class="experience-role">Frontend Developer at Atlassian</h5>
+                <p class="experience-desc">
+                  Built dynamic user interfaces and applications using ReactJS,
+                  ensuring user engagement through intuitive UIs. Worked on
+                  Atlassian’s design system for faster feature rollout and
+                  easier reusability.
+                </p>
+              </div>
+
+              <div class="experience-right">2018 – 2020</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience ends here -->
+
+    <!-- Portfolio -->
+    <section id="portfolio" class="portfolio-section" data-section="portfolio">
+      <div class="container">
+        <!-- Badge + Heading -->
+        <div class="portfolio-head">
+          <a href="#portfolio" class="section-pill-btn">Portfolio</a>
+          <h2 class="portfolio-title">
+            Explore my portfolio of creative Solutions
+          </h2>
+        </div>
+
+        <!-- Portfolio Grid (grid only) -->
+        <div class="row portfolio-grid">
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="portfolio-item">
+              <div class="portfolio-img">
+                <img src="assets/img/portfolio-1.webp" alt="portfolio item" />
+              </div>
+              <div class="portfolio-overlay">
+                <a
+                  href="#"
+                  class="portfolio-link"
+                  aria-label="Open portfolio item"
+                >
+                  <div class="portfolio-arrow">
+                    <img
+                      src="assets/img/portfolio-arrow-icon.svg"
+                      alt="Arrow"
+                    />
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="portfolio-item">
+              <div class="portfolio-img">
+                <img src="assets/img/portfolio-2.webp" alt="portfolio item" />
+              </div>
+              <div class="portfolio-overlay">
+                <a
+                  href="#"
+                  class="portfolio-link"
+                  aria-label="Open portfolio item"
+                >
+                  <div class="portfolio-arrow">
+                    <img
+                      src="assets/img/portfolio-arrow-icon.svg"
+                      alt="Arrow"
+                    />
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="portfolio-item">
+              <div class="portfolio-img">
+                <img src="assets/img/portfolio-3.webp" alt="portfolio item" />
+              </div>
+              <div class="portfolio-overlay">
+                <a
+                  href="#"
+                  class="portfolio-link"
+                  aria-label="Open portfolio item"
+                >
+                  <div class="portfolio-arrow">
+                    <img
+                      src="assets/img/portfolio-arrow-icon.svg"
+                      alt="Arrow"
+                    />
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="portfolio-item">
+              <div class="portfolio-img">
+                <img src="assets/img/portfolio-4.webp" alt="portfolio item" />
+              </div>
+              <div class="portfolio-overlay">
+                <a
+                  href="#"
+                  class="portfolio-link"
+                  aria-label="Open portfolio item"
+                >
+                  <div class="portfolio-arrow">
+                    <img
+                      src="assets/img/portfolio-arrow-icon.svg"
+                      alt="Arrow"
+                    />
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="portfolio-item">
+              <div class="portfolio-img">
+                <img src="assets/img/portfolio-5.webp" alt="portfolio item" />
+              </div>
+              <div class="portfolio-overlay">
+                <a
+                  href="#"
+                  class="portfolio-link"
+                  aria-label="Open portfolio item"
+                >
+                  <div class="portfolio-arrow">
+                    <img
+                      src="assets/img/portfolio-arrow-icon.svg"
+                      alt="Arrow"
+                    />
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="portfolio-item">
+              <div class="portfolio-img">
+                <img src="assets/img/portfolio-6.webp" alt="portfolio item" />
+              </div>
+              <div class="portfolio-overlay">
+                <a
+                  href="#"
+                  class="portfolio-link"
+                  aria-label="Open portfolio item"
+                >
+                  <div class="portfolio-arrow">
+                    <img
+                      src="assets/img/portfolio-arrow-icon.svg"
+                      alt="Arrow"
+                    />
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Portfolio ends here -->
+
+    <!-- Testimonials -->
+    <section
+      id="testimonials"
+      class="testimonials-section"
+      data-section="testimonials"
+    >
+      <div class="container">
+        <div class="swiper mySwiper">
+          <div class="swiper-wrapper">
+            <!-- Slide 1 -->
+            <div class="swiper-slide">
+              <div class="testimonial-card">
+                <div class="quote-mark">
+                  <div class="quote-img">
+                    <img src="assets/img/inverted_comma.svg" alt="" />
+                  </div>
+                </div>
+
+                <p class="testimonial-text">
+                  “I was impressed by how reliable, friendly, and professional
+                  they were—the entire process felt personal and tailored to my
+                  needs, and I wouldn’t hesitate to recommend them to anyone..”
+                </p>
+
+                <div class="testimonial-user">
+                  <div class="user-img">
+                    <img src="assets/img/testimonial-1.webp" alt="User" />
+                  </div>
+                  <div class="user-meta">
+                    <h6 class="user-name">Ananya Sharma</h6>
+                    <small class="user-role">Founder, Denq</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="swiper-slide">
+              <div class="testimonial-card">
+                <div class="quote-mark">
+                  <div class="quote-img">
+                    <img src="assets/img/inverted_comma.svg" alt="" />
+                  </div>
+                </div>
+
+                <p class="testimonial-text">
+                  “I couldn’t be happier with the level of professionalism and
+                  care they provided—every detail was handled perfectly, and the
+                  entire experience was smooth, efficient, and stress-free from
+                  beginning to end.”
+                </p>
+
+                <div class="testimonial-user">
+                  <div class="user-img">
+                    <img src="assets/img/testimonial-2.webp" alt="User" />
+                  </div>
+                  <div class="user-meta">
+                    <h6 class="user-name">Taniq</h6>
+                    <small class="user-role">CEO, ABC Corp</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="swiper-slide">
+              <div class="testimonial-card testimonial-card-shadow">
+                <div class="quote-mark">
+                  <div class="quote-img">
+                    <img src="assets/img/inverted_comma.svg" alt="" />
+                  </div>
+                </div>
+
+                <p class="testimonial-text">
+                  “The team exceeded my expectations with their timely
+                  communication, expert knowledge, and genuine dedication to
+                  helping me succeed—I felt supported, valued, and completely
+                  confident in their services throughout the process.”
+                </p>
+
+                <div class="testimonial-user">
+                  <div class="user-img">
+                    <img src="assets/img/testimonial-3.webp" alt="User" />
+                  </div>
+                  <div class="user-meta">
+                    <h6 class="user-name">Abhijeet Kumar</h6>
+                    <small class="user-role">CTO, XYZ Inc</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation buttons (keep Swiper default classes) -->
+          <div class="swiper-button-next custom-nav">
+            <div class="nav-img">
+              <i class="bi bi-arrow-right" data-icon="arrow-right"></i>
+            </div>
+          </div>
+          <div class="swiper-button-prev custom-nav">
+            <div class="nav-img">
+              <i class="bi bi-arrow-left" data-icon="arrow-left"></i>
+            </div>
+          </div>
+
+          <!-- Pagination dots -->
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials ends here -->
+
+    <!-- footer -->
+    <footer id="footer" class="footer-section" data-section="footer">
+      <div class="container footer-top">
+        <div class="row footer-top-row">
+          <!-- Text content -->
+          <div class="col-md-8 footer-top-left">
+            <h2 class="footer-title">Let's build something today!</h2>
+            <p class="footer-desc">
+              If you would like to work with me or have an opportunity in mind,
+              let's get in touch.
+            </p>
+          </div>
+
+          <!-- CTA Button -->
+          <div class="col-md-4 footer-top-right">
+            <a href="#contact" class="footer-cta">Get in touch</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer bottom -->
+      <div class="container footer-bottom">
+        <div class="row footer-bottom-row">
+          <div class="col-md-4 footer-brand">
+            <span>Zigrow</span>
+          </div>
+
+          <div class="col-md-4 footer-links">
+            <a href="#" class="footer-link">Behance</a>
+            <a href="#" class="footer-link">Medium</a>
+            <a href="#" class="footer-link">Twitter</a>
+            <a href="#" class="footer-link">LinkedIn</a>
+          </div>
+
+          <div class="col-md-4 footer-copy">
+            <span>© 2024-25 Zigrow</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- footer ends here -->
+  </body>
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+  <!-- Gsap animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script src="js/script.js"></script>
+  <!-- Bootstrap -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+    crossorigin="anonymous"
+  ></script>
+</html>

@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bbq-food-truck</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <button id="backToTopBtn" class="btn">
+      <i class="bi bi-arrow-up" data-icon="arrow"></i>
+    </button>
+    <!-- Navbar -->
+    <nav id="navbar" data-section="navbar" class="navbar">
+      <div class="container nav-wrapper">
+        <!-- Logo -->
+        <div class="logo" data-logo="navbar">
+          <img src="assets/images/logo.png" alt="Food Truck Logo" />
+        </div>
+
+        <!-- Mobile Hamburger -->
+        <div class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <!-- Nav Links -->
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/#hero">Home</a></li>
+          <li><a href="/#menu">Menu</a></li>
+          <li><a href="/#location-schedule">Location & Schedule</a></li>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" data-section="hero" class="hero">
+      <div class="container hero-inner">
+        <div class="row gy-4 py-5 hero-row">
+          <!-- Right: Truck Image on mobile (on top), right side on desktop -->
+          <div class="col-12 col-md-6 order-1 order-md-2 text-center">
+            <div class="hero-image mx-auto">
+              <img src="assets/images/bbq-truck.webp" alt="Food Truck" />
+            </div>
+          </div>
+
+          <!-- Left: Text (below image on mobile, left on desktop) -->
+          <div class="col-12 col-md-6 order-2 order-md-1">
+            <div class="hero-text">
+              <h1>JUST<br />GRILL IT</h1>
+
+              <div class="hero-description">
+                <span class="underline"></span>
+                <p>
+                  Etiam pharetra, erat sed fermentum feugiat, velit mauris
+                  egestas qua aliquam.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- daily speacials -->
+    <section
+      id="daily-specials"
+      data-section="daily-specials"
+      class="daily-specials"
+    >
+      <div class="container">
+        <div class="specials-wrapper row g-0">
+          <!-- Left Column (Text Block) -->
+          <div class="specials-text col-12 col-sm-6 col-lg-3">
+            <h2>OUR<br />DAILY<br />SPECIAL <br />S</h2>
+            <span class="underline"></span>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
+              tellus, luctus nec ullamcorper mattis.
+            </p>
+          </div>
+
+          <!-- Card 1 -->
+          <div class="special-item col-12 col-sm-6 col-lg-3">
+            <div class="item-img mx-auto">
+              <img
+                src="assets/images/bbq-daily-special-2.webp"
+                alt="Grilled Pork Ribs"
+              />
+            </div>
+            <span class="overline"></span>
+            <h3>GRILLED PORK RIBS</h3>
+            <span class="price">₹ 2,946.50</span>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="special-item col-12 col-sm-6 col-lg-3">
+            <div class="item-img mx-auto">
+              <img
+                src="assets/images/bbq-daily-special-3.webp"
+                alt="Toast Burger & Fries"
+              />
+            </div>
+            <span class="overline"></span>
+            <h3>TOAST BURGER & FRIES</h3>
+            <span class="price">₹ 3,942.50</span>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="special-item col-12 col-sm-6 col-lg-3">
+            <div class="item-img mx-auto">
+              <img
+                src="assets/images/bbq-daily-special-1.webp"
+                alt="Porterhouse Steak"
+              />
+            </div>
+            <span class="overline"></span>
+            <h3>PORTERHOUSE STEAK</h3>
+            <span class="price">₹ 4,606.50</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- menu sectuin -->
+    <section id="menu" data-section="menu" class="menu py-6">
+      <div class="container">
+        <div class="menu-header">
+          <div class="underline"></div>
+          <h2>MENU</h2>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
+            tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+          </p>
+        </div>
+
+        <div class="logo-img-box">
+          <img src="assets/images/logo.png" alt="logo image" class="logo-img" />
+        </div>
+
+        <div class="menu-list">
+          <!-- Item 1 -->
+          <div class="menu-item">
+            <div class="row menu-wrapper">
+              <div class="col-12 col-md-5">
+                <div class="menu-img">
+                  <div class="menu-img-box">
+                    <img
+                      src="assets/images/bbq-menu-6.webp"
+                      alt="Grilled Toast Burger"
+                    />
+                  </div>
+                  <h3>Grilled Toast Burger</h3>
+                </div>
+              </div>
+              <div class="col-12 col-md-7">
+                <div class="menu-info">
+                  <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Possimus, est, placeat libero nisi veniam suscipit rerum
+                    voluptatem beatae aliquam
+                  </p>
+                  <div class="menu-price"><p>₹ 2,940.00</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="menu-item">
+            <div class="row menu-wrapper">
+              <div class="col-12 col-md-5">
+                <div class="menu-img">
+                  <div class="menu-img-box">
+                    <img
+                      src="assets/images/bbq-menu-2.webp"
+                      alt="Porterhouse Steak"
+                    />
+                  </div>
+                  <h3>Porterhouse Steak</h3>
+                </div>
+              </div>
+              <div class="col-12 col-md-7">
+                <div class="menu-info">
+                  <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Possimus, est, placeat libero nisi veniam suscipit rerum
+                    voluptatem beatae aliquam
+                  </p>
+                  <div class="menu-price"><p>₹ 2,142.50</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="menu-item">
+            <div class="row menu-wrapper">
+              <div class="col-12 col-md-5">
+                <div class="menu-img">
+                  <div class="menu-img-box">
+                    <img
+                      src="assets/images/bbq-menu-1.webp"
+                      alt="Baby Back Ribs"
+                    />
+                  </div>
+                  <h3>Baby Back Ribs</h3>
+                </div>
+              </div>
+              <div class="col-12 col-md-7">
+                <div class="menu-info">
+                  <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Possimus, est, placeat libero nisi veniam suscipit rerum
+                    voluptatem beatae aliquam
+                  </p>
+                  <div class="menu-price"><p>₹ 2,607.00</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="menu-item">
+            <div class="row menu-wrapper">
+              <div class="col-12 col-md-5">
+                <div class="menu-img">
+                  <div class="menu-img-box">
+                    <img
+                      src="assets/images/bbq-menu-5.webp"
+                      alt="Grilled Spicy Chicken"
+                    />
+                  </div>
+                  <h3>Grilled Spicy Chicken</h3>
+                </div>
+              </div>
+              <div class="col-12 col-md-7">
+                <div class="menu-info">
+                  <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Possimus, est, placeat libero nisi veniam suscipit rerum
+                    voluptatem beatae aliquam
+                  </p>
+                  <div class="menu-price"><p>₹ 1,848.00</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 5 -->
+          <div class="menu-item">
+            <div class="row menu-wrapper">
+              <div class="col-12 col-md-5">
+                <div class="menu-img">
+                  <div class="menu-img-box">
+                    <img
+                      src="assets/images/bbq-menu-3.webp"
+                      alt="New York Strip Steak"
+                    />
+                  </div>
+                  <h3>New York Strip Steak</h3>
+                </div>
+              </div>
+              <div class="col-12 col-md-7">
+                <div class="menu-info">
+                  <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Possimus, est, placeat libero nisi veniam suscipit rerum
+                    voluptatem beatae aliquam
+                  </p>
+                  <div class="menu-price"><p>₹ 3,108.00</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 6 -->
+          <div class="menu-item">
+            <div class="row menu-wrapper">
+              <div class="col-12 col-md-5">
+                <div class="menu-img">
+                  <div class="menu-img-box">
+                    <img
+                      src="assets/images/bbq-menu-4.webp"
+                      alt="Refreshing Beverages"
+                    />
+                  </div>
+                  <h3>Refreshing Beverages</h3>
+                </div>
+              </div>
+              <div class="col-12 col-md-7">
+                <div class="menu-info">
+                  <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Possimus, est, placeat libero nisi veniam suscipit rerum
+                    voluptatem beatae aliquam
+                  </p>
+                  <div class="menu-price"><p>₹ 291.00</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.menu-list -->
+      </div>
+    </section>
+
+    <!-- location shedule -->
+    <section
+  id="location-schedule"
+  data-section="location-schedule"
+  class="location-schedule py-6"
+>
+  <div class="container">
+    <div class="location-wrapper row g-4">
+      <!-- Left Content -->
+      <div class="location-text col-12 col-md-6">
+        <h2>LOCATION <br />& SCHEDULE</h2>
+        <span class="divider"></span>
+        <p>
+          Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin,
+          lorem quis bibendum auctor.
+        </p>
+      </div>
+
+      <!-- Right Map -->
+      <div class="map-container location-map col-12 col-md-6">
+        <a
+          href="https://www.google.com/maps/search/?api=1&query=12.894370090902344%2C77.6343217148211"
+          target="_blank"
+          class="btn btn-directions mb-3"
+        >
+          GET DIRECTIONS
+          <i class="bi bi-arrow-right-short" data-icon="arrow"></i>
+        </a>
+
+        <div data-component-maps style="width: 100%; height: 350px" class="map-container">
+          <iframe
+            frameborder="0"
+            src="https://maps.google.com/maps?q=12.894370090902344%2C77.6343217148211&z=14&t=q&output=embed"
+            width="100%
+            height="100%"
+            style="width: 100%; height: 100%; left: 0"
+            loading="lazy"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- shedule -->
+    <section id="schedule" data-section="schedule" class="schedule py-6">
+  <div class="container">
+    <div class="schedule-grid row g-4 g-sm-0">
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="schedule-card">
+          <span class="date">20 – 27 October</span>
+          <h3>BROOKLYN</h3>
+          <span class="divider"></span>
+          <p>
+            <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+            E-123, ABC Plaza, New Delhi - 110077
+          </p>
+          <p>
+            <i class="bi bi-stopwatch-fill" data-icon="watch"></i>
+            09:00 – 18:00
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="schedule-card">
+          <span class="date">28 – 31 October</span>
+          <h3>THE BRONX</h3>
+          <span class="divider"></span>
+          <p>
+            <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+            E-123, ABC Plaza, New Delhi - 110077
+          </p>
+          <p>
+            <i class="bi bi-stopwatch-fill" data-icon="watch"></i>
+            09:00 – 18:00
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="schedule-card">
+          <span class="date">01 – 05 November</span>
+          <h3>MANHATTAN</h3>
+          <span class="divider"></span>
+          <p>
+            <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+            E-123, ABC Plaza, New Delhi - 110077
+          </p>
+          <p>
+            <i class="bi bi-stopwatch-fill" data-icon="watch"></i>
+            09:00 – 18:00
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="schedule-card">
+          <span class="date">02 – 08 November</span>
+          <h3>STATEN ISLAND</h3>
+          <span class="divider"></span>
+          <p>
+            <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+            E-123, ABC Plaza, New Delhi - 110077
+          </p>
+          <p>
+            <i class="bi bi-stopwatch-fill" data-icon="watch"></i>
+            09:00 – 18:00
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="schedule-card">
+          <span class="date">09 – 17 November</span>
+          <h3>BROOKLYN</h3>
+          <span class="divider"></span>
+          <p>
+            <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+            E-123, ABC Plaza, New Delhi - 110077
+          </p>
+          <p>
+            <i class="bi bi-stopwatch-fill" data-icon="watch"></i>
+            09:00 – 18:00
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="schedule-card">
+          <span class="date">18 – 20 November</span>
+          <h3>QUEENS</h3>
+          <span class="divider"></span>
+          <p>
+            <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+            E-123, ABC Plaza, New Delhi - 110077
+          </p>
+          <p>
+            <i class="bi bi-stopwatch-fill" data-icon="watch"></i>
+            09:00 – 18:00
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="schedule-card">
+          <span class="date">21 – 25 November</span>
+          <h3>THE BRONX</h3>
+          <span class="divider"></span>
+          <p>
+            <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+            E-123, ABC Plaza, New Delhi - 110077
+          </p>
+          <p>
+            <i class="bi bi-stopwatch-fill" data-icon="watch"></i>
+            09:00 – 18:00
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="schedule-card">
+          <span class="date">26 November – 03 December</span>
+          <h3>BROOKLYN</h3>
+          <span class="divider"></span>
+          <p>
+            <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+            E-123, ABC Plaza, New Delhi - 110077
+          </p>
+          <p>
+            <i class="bi bi-stopwatch-fill" data-icon="watch"></i>
+            09:00 – 18:00
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="schedule-card">
+          <span class="date">04 – 07 December</span>
+          <h3>STATEN ISLAND</h3>
+          <span class="divider"></span>
+          <p>
+            <i class="bi bi-geo-alt-fill" data-icon="location"></i>
+            E-123, ABC Plaza, New Delhi - 110077
+          </p>
+          <p>
+            <i class="bi bi-stopwatch-fill" data-icon="watch"></i>
+            09:00 – 18:00
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- about section -->
+    <section id="about" data-section="about" class="about py-6">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="about-header">
+      <div class="line"></div>
+      <h2>ABOUT</h2>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
+        tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+      </p>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div class="about-content row g-0">
+      <!-- Left Text Box -->
+      <div class="about-text col-12 col-md-5">
+        <span class="intro">Hello, I'm Pooja</span>
+        <h3>
+          AENEAN SOLLICITUDIN, <br />
+          LOREM QUIS BIBENDUM <br />
+          AUCTOR, NISI ELIT
+        </h3>
+        <span class="divider"></span>
+        <p>
+          Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin,
+          lorem quis bibendum auctor, nisi elit consequat ipsum, nec
+          sagittis sem nibh id elit.
+        </p>
+        <p>
+          Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin,
+          lorem quis bibendum auctor, nisi elit.
+        </p>
+      </div>
+
+      <!-- Right Image -->
+      <div class="about-image col-12 col-md-7">
+        <img src="assets/images/bbq-about.webp" alt="Chef Pooja" />
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- contact section -->
+    <section id="contact" data-section="contact" class="contact py-6">
+  <div class="container">
+    <div class="contact-wrapper row">
+      <!-- Left Info -->
+      <div class="contact-info col-12 col-md-5">
+        <h2>CONTACT</h2>
+        <div class="line"></div>
+        <p>
+          Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin,
+          lorem quis.
+        </p>
+
+        <div class="info-item">
+          <div class="icon">
+            <i class="bi bi-telephone-fill" data-icon="phone"></i>
+          </div>
+          <div class="text">
+            <strong>Phone</strong>
+            <p>+91-9123456789</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="icon">
+            <i class="bi bi-envelope-fill" data-icon="file"></i>
+          </div>
+          <div class="text">
+            <strong>Email</strong>
+            <p>yourname@domainname.com</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Form -->
+      <div class="contact-form col-12 col-md-7">
+        <form
+          action="http://127.0.0.1:8000/api/forms/submit"
+          method="post"
+          data-zigrow-form
+        >
+          <input
+            type="text"
+            placeholder="Full Name"
+            name="full name"
+            id="full name"
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email address"
+            name="email"
+            id="email"
+            required
+          />
+          <textarea
+            placeholder="Your Message"
+            name="text"
+            id="text"
+            rows="5"
+            required
+          ></textarea>
+          <button type="submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- footer -->
+    <section id="footer" data-section="footer" class="footer">
+  <div class="container">
+    <div class="footer-wrapper row">
+      <!-- Truck Image (absolute, decorative) -->
+      <div class="footer-truck" data-logo="footer">
+        <img src="assets/images/logo.png" alt="Food Truck" />
+      </div>
+
+      <!-- Text -->
+      <div class="footer-text col-12">
+        <h2>IT'S TRUCKING GOOD!</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
+          tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+        </p>
+      </div>
+
+      <!-- Social Icons -->
+      <div class="footer-socials col-12">
+        <a href="#"><i class="bi bi-facebook" data-icon="facebook"></i></a>
+        <a href="#"><i class="bi bi-twitter" data-icon="twitter"></i></a>
+        <a href="#"><i class="bi bi-youtube" data-icon="youtube"></i></a>
+      </div>
+
+      <!-- Copyright -->
+      <div class="footer-bottom col-12">
+        <p>Copyright © 2025 BBQ Food Truck | Powered by BBQ Food Truck</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/app.js"></script>
+    <script>
+      (function () {
+        // Find ALL Zigrow forms
+        const forms = Array.from(
+          document.querySelectorAll("[data-zigrow-form]")
+        );
+        if (!forms.length) return;
+
+        // Helper: turn FormData into a plain object
+        function serializeForm(form) {
+          const fd = new FormData(form);
+          const raw = {};
+          for (const [name, value] of fd.entries()) {
+            const el = form.elements[name];
+            const isGroup =
+              el && el.length && el[0] && el[0].type === "checkbox";
+            if (isGroup) {
+              if (!raw[name]) raw[name] = [];
+              raw[name].push(value === "" ? true : value);
+            } else {
+              raw[name] = value;
+            }
+          }
+          return raw;
+        }
+
+        // Helper: pick primary value for quick list view
+        function pickPrimaryValue(raw) {
+          if (raw.email && String(raw.email).trim())
+            return String(raw.email).trim();
+          if (raw.phone && String(raw.phone).trim())
+            return String(raw.phone).trim();
+          const nameCombo = [raw.firstName, raw.lastName]
+            .filter(Boolean)
+            .join(" ")
+            .trim();
+          if (raw.name && String(raw.name).trim())
+            return String(raw.name).trim();
+          if (nameCombo) return nameCombo;
+          if (raw.message && String(raw.message).trim())
+            return String(raw.message).trim();
+          return "";
+        }
+
+        forms.forEach((form) => {
+          // Ensure hidden fields are filled
+          const domainInput = form.querySelector('input[name="domain"]');
+          const pageUrlInput = form.querySelector('input[name="page_url"]');
+          if (domainInput) domainInput.value = location.host;
+          if (pageUrlInput) pageUrlInput.value = location.href;
+
+          // Create a container for messages if not already exists
+          let msgContainer = form.querySelector(".form-submit-message");
+          if (!msgContainer) {
+            msgContainer = document.createElement("div");
+            msgContainer.className = "form-submit-message mt-2 text-sm";
+            form.appendChild(msgContainer);
+          }
+
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('[type="submit"]');
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.dataset._oldText = submitBtn.innerText;
+              submitBtn.innerText = "Submitting...";
+            }
+
+            // Clear previous message
+            msgContainer.innerText = "";
+            msgContainer.style.color = "";
+
+            try {
+              const raw = serializeForm(form);
+              const body = new URLSearchParams();
+              body.set(
+                "domain",
+                form.querySelector('input[name="domain"]')?.value ||
+                  location.host
+              );
+              body.set(
+                "form_key",
+                form.querySelector('input[name="form_key"]')?.value || "contact"
+              );
+              body.set(
+                "page_url",
+                form.querySelector('input[name="page_url"]')?.value ||
+                  location.href
+              );
+              body.set("payload", JSON.stringify(raw));
+
+              const primary = pickPrimaryValue(raw);
+              if (primary) body.set("value", primary);
+
+              if (raw._company) body.set("_company", raw._company);
+
+              const res = await fetch(form.action, {
+                method: "POST",
+                headers: { Accept: "application/json" },
+                body,
+              });
+
+              const data = await res.json().catch(() => ({}));
+              if (res.ok && (data.ok ?? true)) {
+                form.reset();
+                msgContainer.innerText =
+                  "✅ Thanks! Your request has been submitted.";
+                msgContainer.style.color = "#28a745"; // green success
+              } else {
+                msgContainer.innerText = `❌ ${
+                  data.message || `Failed (HTTP ${res.status})`
+                }`;
+                msgContainer.style.color = "#dc3545"; // red error
+              }
+            } catch (err) {
+              console.error(err);
+              msgContainer.innerText =
+                "❌ Something went wrong. Please try again.";
+              msgContainer.style.color = "#dc3545";
+            } finally {
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = submitBtn.dataset._oldText || "Send";
+              }
+            }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

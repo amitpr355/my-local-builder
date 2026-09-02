@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Cleaning Template</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hamburgers@1.2.1/dist/hamburgers.min.css" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://static.zigrow.com/animations/z.animation.style.css">
+</head>
+
+<body>
+  <a href="#home" class="btn rounded-circle floating-btn">
+    <i class="bi bi-arrow-up" data-icon="arrow-up"></i>
+  </a>
+  <nav class="navbar navbar-expand-lg sticky-top top-0 navbar-color py-3-style navbar-animate" data-section="navbarSection" id="navbarSection">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-sm-center fw-semibold-style fs-4-style" href="#">
+        <div data-logo="navbar" class="d-flex align-items-center-style">
+          Cleany
+        </div>
+      </a>
+
+      <div class="d-lg-none d-flex align-items-center-style justify-content-lg-end-style">
+        <div class="hamburger hamburger--spring js-hamburger" id="hamburger-toggle">
+          <div class="hamburger-box">
+            <div class="hamburger-inner"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="collapse navbar-collapse justify-content-center-style navbar-menu-div" id="navbarMenu">
+        <ul class="navbar-nav gap-3">
+          <li><a class="nav-link fw-semibold-style" href="#home">Home</a></li>
+          <li><a class="nav-link fw-semibold-style" href="#aboutus">About Us</a></li>
+          <li><a class="nav-link fw-semibold-style" href="#services">Services</a></li>
+          <li><a class="nav-link fw-semibold-style" href="#ourteam">Our Team</a></li>
+          <li><a class="nav-link fw-semibold-style" href="#pricing">Pricing</a></li>
+          <li><a class="nav-link fw-semibold-style" href="#contactus">Contact Us</a></li>
+        </ul>
+
+        <div class="nav-item d-lg-none">
+          <a href="#contactus" data-btn="book" class="btn btn-darkgreen">Book Appointment</a>
+        </div>
+      </div>
+
+      <div class="d-none d-lg-block">
+        <a href="#contactus" data-btn="book" class="btn btn-darkgreen">Book Appointment</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero-section py-5-style hero-animate" id="home" data-section="home">
+      <div class="container d-lg-flex justify-content-between">
+        <div class="row align-items-center-style justify-content-between g-sm-5">
+          <div class="col-lg-6">
+            <p class="text-uppercase mb-2-style each-section-name">
+              Cleany - Cleaning Services
+            </p>
+            <h1 class="hero-section-heading fw-semibold-style">
+              Home Cleaning Services at Your Doorstep
+            </h1>
+            <p class="text-secondary-theme my-4-style each-section-para">
+              Faucibus commodo a aenean et sit quisque ipsum. Consequat eu id ut
+              dolor felis quis. Sagittis a sapien pulvinar etiam senectus
+              adipiscing tempor diam tellus.
+            </p>
+            <a href="tel:9123456789" class="btn btn-darkgreen nav-item">Book Appointment</a>
+          </div>
+
+          <div class="col-lg-6 right-image-hero-section">
+            <div class="img-container img-wrapper-style col-lg-8 position-relative mx-auto-style">
+              <img src="assets/images/cleaning-services-header.webp" alt="Cleaner Image" class="img-fluid rounded-start" style="object-fit: cover;" />
+
+              <div class="bi-stars-of-hero-section">
+                <span data-icon="stars"></span>
+              </div>
+              <div class="bg-shape"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-section py-5-style" id="stats" data-section="stats">
+      <div class="container">
+        <div class="row text-center-style g-4">
+          <div class="col-6 col-md-3">
+            <h2 class="display-6-style fw-bold-style text-navy">10K+</h2>
+            <p class="mb-0-style text-navy">Homes Cleaned</p>
+          </div>
+          <div class="col-6 col-md-3">
+            <h2 class="display-6-style fw-bold-style text-navy">150+</h2>
+            <p class="mb-0-style text-navy">Team Members</p>
+          </div>
+          <div class="col-6 col-md-3">
+            <h2 class="display-6-style fw-bold-style text-navy">500+</h2>
+            <p class="mb-0-style text-navy">Services Offered</p>
+          </div>
+          <div class="col-6 col-md-3">
+            <h2 class="display-6-style fw-bold-style text-navy">99%</h2>
+            <p class="mb-0-style text-navy">Satisfied Clients</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-section py-5-style about-animate" id="aboutus" data-section="aboutus">
+      <div class="container">
+        <div class="row align-items-center-style g-5 d-lg-flex flex-lg-row">
+          <div class="col-lg-6 why-choose-us-image-div text-center-style">
+            <div class="img-wrapper-style">
+              <img src="assets/images/cleaning-2.webp" alt="Cleaning Image" class="img-fluid rounded shadow-sm" loading="lazy" style="object-fit: cover;" />
+            </div>
+          </div>
+
+          <div class="col-lg-6 ps-lg-5 px-1">
+            <p class="text-uppercase each-section-name mb-3-style">
+              About Us
+            </p>
+            <h2 class="each-section-heading fs-1-style mb-3-style">
+              We Create the Perfect
+              <span class="text-primary-theme">Shine</span> Everytime
+            </h2>
+
+            <p class="text-secondary-theme each-section-para aboutus-para">
+              Faucibus commodo a aenean et sit quisque ipsum. Consequat eu id ut
+              dolor felis quis. Sagittis a sapien pulvinar etiam.
+            </p>
+
+            <div class="row text-center-style text-md-start mt-4-style px-auto-style about-section-stats-section">
+              <div class="col-6 div-150 position-relative">
+                <h3 class="fw-semibold-style fs-1-style">
+                  150 <span class="four-point-star fs-5-style"><i class="bi bi-stars" data-icon="star"></i></span>
+                </h3>
+                <p class="small-style mb-0-style fw-semibold-style text-primary-theme">
+                  Expert Cleaners
+                </p>
+              </div>
+              <div class="col-6 div-300 position-relative">
+                <h3 class="fw-semibold-style fs-1-style">
+                  300+ <span class="four-point-star fs-5-style"><i class="bi bi-stars" data-icon="star"></i></span>
+                </h3>
+                <p class="small-style mb-0-style fw-semibold-style text-primary-theme">
+                  Working Hours
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-4-style">
+              <a href="#services" class="btn btn-darkgreen">Explore More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="process-section py-5-style" id="process" data-section="process">
+      <div class="container text-center-style">
+        <p class="text-uppercase each-section-name mb-3-style d-flex justify-content-center-style align-items-center-style">
+          Our Process
+        </p>
+        <h2 class="each-section-heading fs-1-style mb-5-style">
+          This is How We <span class="text-territory-theme">Work</span>
+        </h2>
+
+        <div class="d-flex steps-wrapper justify-content-center-style align-items-start-style flex-wrap pt-sm-5-style pt-1-style mt-5-style">
+          <div class="step py-sm-4-style">
+            <div class="step-icon">
+              <i class="bi bi-calendar-event-fill" data-icon="calendar-event-fill"></i>
+            </div>
+            <h5 class="step-title fw-bold-style my-4-style">Appointment</h5>
+            <p class="step-text">
+              Lorem Ipsum dolor sit AMet<br />Apdvfv fsfdf
+            </p>
+          </div>
+
+          <hr class="divider-line divider1" />
+
+          <div class="step py-4-style">
+            <div class="step-icon">
+              <i class="bi bi-calculator-fill" data-icon="calendar2-week-fill"></i>
+            </div>
+            <h5 class="step-title fw-bold-style my-4-style">Choose Date</h5>
+            <p class="step-text">
+              Lorem Ipsum dolor sit AMet<br />Apdvfv fsfdf
+            </p>
+          </div>
+
+          <hr class="divider-line divider2" />
+
+          <div class="step py-4-style">
+            <div class="step-icon">
+              <i class="bi bi-bucket-fill" data-icon="bucket-fill"></i>
+            </div>
+            <h5 class="step-title fw-bold-style my-4-style">Cleaning Process</h5>
+            <p class="step-text">
+              Lorem Ipsum dolor sit AMet<br />Apdvfv fsfdf
+            </p>
+          </div>
+
+          <hr class="divider-line divider3" />
+
+          <div class="step py-4-style">
+            <div class="step-icon">
+              <i class="bi bi-emoji-smile-fill" data-icon="emoji-smile-fill"></i>
+            </div>
+            <h5 class="step-title fw-bold-style my-4-style">Final Result</h5>
+            <p class="step-text">
+              Lorem Ipsum dolor sit AMet<br />Apdvfv fsfdf
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="our-services-section py-sm-5-style py-3-style my-5-style services-animate" id="services" data-section="services">
+      <div class="container">
+        <div class="row align-items-center-style mb-5-style">
+          <div class="col-lg-6">
+            <p class="text-uppercase mb-3-style each-section-name d-flex justify-content-lg-start-style align-items-center-style">
+              Our Services
+            </p>
+            <h2 class="each-section-heading d-flex mb-3-style">
+              Services We Provide</h2>
+            <p class="text-secondary-theme each-section-para">
+              Faucibus commodo a aenean et sit quisque ipsum. Consequat eu id ut
+              dolor felis quis.
+            </p>
+          </div>
+          <div class="col-lg-6 text-lg-end-style text-center-style mt-4-style mt-md-0-style all-services-btn">
+            <a href="#" class="btn btn-darkgreen all-services-btn">All Services</a>
+          </div>
+        </div>
+
+        <div class="row text-center-style g-4">
+          <div class="col-sm-6 col-lg-3 clonable-card">
+            <div class="service-item px-3-style">
+              <div class="icon-circle d-lg-flex mb-3-style position-relative ms-lg-0-style mx-auto-style">
+                <div class="fs-4-style text-dark-style">
+                  <i class="bi bi-buildings-fill" data-icon="buildings-fill"></i>
+                </div>
+                <div class="star-overlay">
+                  <i class="bi bi-stars" data-icon="stars"></i>
+                </div>
+              </div>
+              <h5 class="fw-bold-style d-lg-flex justify-content-start-style">Office Cleaning</h5>
+              <p class="text-secondary-theme small-style text-lg-start-style d-lg-flex justify-content-start-style">
+                Ut quis euismod at vivamus nunc duis. Tempus leo id phasellus at
+                tellus non orci consectetur.
+              </p>
+              <a href="#" class="fw-semibold-style d-lg-flex justify-content-start-style our-services-learnmore-btn">Learn
+                More</a>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-lg-3 clonable-card">
+            <div class="service-item px-3-style">
+              <div class="icon-circle mb-3-style position-relative ms-lg-0-style mx-auto-style">
+                <div class="fs-4-style text-dark-style">
+                  <i class="bi bi-house-fill" data-icon="house-fill"></i>
+                </div>
+                <div class="star-overlay">
+                  <i class="bi bi-stars" data-icon="stars"></i>
+                </div>
+              </div>
+              <h5 class="fw-bold-style d-lg-flex justify-content-start-style">House Cleaning</h5>
+              <p class="text-secondary-theme small-style text-lg-start-style d-lg-flex justify-content-start-style">
+                Ut quis euismod at vivamus nunc duis. Tempus leo id phasellus at
+                tellus non orci consectetur.
+              </p>
+              <a href="#" class="fw-semibold-style d-lg-flex justify-content-start-style our-services-learnmore-btn">Learn
+                More</a>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-lg-3 clonable-card">
+            <div class="service-item px-3-style">
+              <div class="icon-circle mb-3-style position-relative ms-lg-0-style mx-auto-style">
+                <div class="fs-4-style text-dark-style">
+                  <i class="bi bi-bucket-fill" data-icon="bucket-fill"></i>
+                </div>
+                <div class="star-overlay">
+                  <i class="bi bi-stars" data-icon="stars"></i>
+                </div>
+              </div>
+              <h5 class="fw-bold-style d-lg-flex justify-content-start-style">Carpet Cleaning</h5>
+              <p class="text-secondary-theme small-style text-lg-start-style d-lg-flex justify-content-start-style">
+                Ut quis euismod at vivamus nunc duis. Tempus leo id phasellus at
+                tellus non orci consectetur.
+              </p>
+              <a href="#" class="fw-semibold-style d-lg-flex justify-content-start-style our-services-learnmore-btn">Learn
+                More</a>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-lg-3 clonable-card">
+            <div class="service-item px-3-style">
+              <div class="icon-circle mb-3-style position-relative ms-lg-0-style mx-auto-style">
+                <div class="fs-4-style text-dark-style">
+                  <i class="bi bi-door-closed-fill" data-icon="door-closed-fill"></i>
+                </div>
+                <div class="star-overlay">
+                  <i class="bi bi-stars" data-icon="stars"></i>
+                </div>
+              </div>
+              <h5 class="fw-bold-style d-lg-flex justify-content-start-style">Kitchen Cleaning</h5>
+              <p class="text-secondary-theme small-style text-lg-start-style d-lg-flex justify-content-start-style">
+                Ut quis euismod at vivamus nunc duis. Tempus leo id phasellus at
+                tellus non orci consectetur.
+              </p>
+              <a href="#" class="fw-semibold-style d-lg-flex justify-content-start-style our-services-learnmore-btn">Learn
+                More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="why-choose-us-section pb-5-style pt-0-style why-choose-animate" id="ourteam" data-section="ourteam">
+      <div class="container">
+        <div class="row align-items-center-style g-sm-5 d-lg-flex">
+          <div class="col-lg-6 why-choose-us-image-div text-center-style">
+            <div class="img-wrapper-style">
+              <img src="assets/images/cleaning-3.webp" alt="Cleaning Image" class="img-fluid rounded shadow-sm" loading="lazy" style="object-fit: cover;" />
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <p class="text-uppercase each-section-name mb-3-style d-flex align-items-center-style">
+              <span class="me-1-style" data-icon="star"></span> Why Choose Us
+            </p>
+            <h2 class="each-section-heading mb-xl-4-style">
+              We Are Your All Purpose Cleaner
+            </h2>
+            <p class="text-secondary-theme each-section-para mb-xl-5-style mb-md-3-style mb-3-style">
+              Faucibus commodo a aenean et sit quisque ipsum. Consequat eu id ut
+              dolor felis quis. Sagittis a sapien pulvinar etiam.
+            </p>
+
+            <div class="d-flex align-items-start-style mb-xl-5-style mb-md-4-style mb-3-style p-1-style feature-card col-12 clonable-card">
+              <div class="icon-container me-sm-3-style">
+                <div class="feature-icon mb-3-style">
+                  <div class="fs-4-style text-dark-style">
+                    <i class="bi bi-tools" data-icon="toolsbi-tools"></i>
+                  </div>
+                  <div class="star-overlay">
+                    <i class="bi bi-stars" data-icon="stars"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="feature-card-sub-div">
+                <h6 class="fw-bold-style mb-3-style why-section-sub-heading">Best Equipments</h6>
+                <p class="text-secondary-theme mb-0-style fw-semibold-style">
+                  Faucibus commodo a aenean et sit quisque ipsum.
+                </p>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-start-style mb-xl-5-style mb-md-4-style mb-3-style p-1-style feature-card col-12 clonable-card">
+              <div class="icon-container me-sm-3-style">
+                <div class="feature-icon mb-3-style">
+                  <div class="fs-4-style text-dark-style">
+                    <i class="bi bi-ui-checks-grid" data-icon="uibi-ui-checks-grid"></i>
+                  </div>
+                  <div class="star-overlay">
+                    <i class="bi bi-stars" data-icon="stars"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="feature-card-sub-div">
+                <h6 class="fw-bold-style mb-3-style why-section-sub-heading">Top Gadgets</h6>
+                <p class="text-secondary-theme mb-0-style fw-semibold-style">
+                  Sed dapibus nunc et libero tincidunt, pharetra mollis mi.
+                </p>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-start-style mb-xl-5-style mb-md-4-style mb-3-style p-1-style feature-card col-12 clonable-card">
+              <div class="icon-container me-sm-3-style">
+                <div class="feature-icon mb-3-style">
+                  <div class="fs-4-style text-dark-style">
+                    <i class="bi bi-gear-fill" data-icon="gear-fill"></i>
+                  </div>
+                  <div class="star-overlay">
+                    <i class="bi bi-stars" data-icon="stars"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="feature-card-sub-div">
+                <h6 class="fw-bold-style mb-3-style why-section-sub-heading">Essential Gear</h6>
+                <p class="text-secondary-theme mb-0-style fw-semibold-style">
+                  Quisque auctor velit in erat malesuada.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section7 py-5-style text-dark-style" id="pricing" data-section="pricing">
+      <div class="container">
+        <p class="text-uppercase each-section-name mb-3-style d-flex justify-content-center-style align-items-center-style">
+          <span class="me-1-style" data-icon="star"></span>
+          Pricing Table
+        </p>
+        <h2 class="each-section-heading mb-xl-4-style d-flex justify-content-center-style">
+          Pricing Plans for Every Budget
+        </h2>
+        <p class="text-secondary-theme col-lg-5 text-center-style mb-5-style mx-auto-style d-flex justify-content-center-style">
+          Faucibus commodo a aenean et sit quisque ipsum. Consequat eu id ut
+          dolor felis quis.
+        </p>
+
+        <div class="row g-3 d-md-flex justify-content-around">
+          <div class="plans-card clonable-card basic-plan-card rounded-4 card rounded-4 my-3-style basic-plan-card-indiv border-0">
+            <div class="card-body p-4-style">
+              <p class="text-uppercase each-section-name card-name d-flex align-items-center-style basic-card-name fw-semibold-style mb-4-style">
+              <div class="d-inline-flex">
+                <i class="bi bi-patch-check-fill" data-icon="patch-check-fill"></i>
+              </div>
+              Basic Cleaning
+              </p>
+              <h3 class="fw-semibold-style d-flex fs-1-style align-items-center-style mb-4-style pb-2">
+                ₹350 <small class="text-secondary-theme fs-6-style my-auto-style ms-2-style">/service</small>
+              </h3>
+              <p class="each-card-para mt-3-style text-secondary-theme">
+                Faucibus commodo a aenean et sit quisque ipsum.
+              </p>
+              <hr class="card-content-divider" />
+              <ul class="list-unstyled text-start-style">
+                <li class="mb-2-style li-arrow-text d-flex">
+                  <div class="me-2-style d-flex">
+                    <i class="bi bi-arrow-right-circle" data-icon="arrow-right-circle"></i>
+                  </div>
+                  60 Minutes Consultation
+                </li>
+                <li class="mb-2-style li-arrow-text d-flex">
+                  <div class="me-2-style d-flex">
+                    <i class="bi bi-arrow-right-circle" data-icon="arrow-right-circle"></i>
+                  </div>
+                  2 Bedroom Cleaning
+                </li>
+              </ul>
+              <div class="mt-4-style">
+                <a href="#contactus" class="btn btn-darkgreen pro-plan-card-button w-100">Book Now</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="plans-card clonable-card pro-plan-card rounded-4 card rounded-4 my-3-style border-0 pro-plan-card-indiv">
+            <div class="card-body p-4-style">
+              <p class="text-uppercase each-section-name d-flex align-items-center-style card-name fw-semibold-style mb-4-style">
+              <div class="d-inline-flex">
+                <i class="bi bi-patch-check-fill"></i>
+              </div>
+              Pro Cleaning
+              </p>
+              <h3 class="fw-semibold-style d-flex fs-1-style align-items-center-style mb-4-style pb-2">
+                ₹650
+                <small class="text-territory-theme fs-6-style my-auto-style ms-2-style">/service</small>
+              </h3>
+              <p class="each-card-para mt-3-style">
+                Faucibus commodo a aenean et sit quisque ipsum.
+              </p>
+              <hr class="card-content-divider" />
+              <ul class="list-unstyled text-start-style">
+                <li class="mb-2-style li-arrow-text d-flex">
+                  <div class="me-2-style d-flex border-black">
+                    <i class="bi bi-arrow-right-circle" data-icon="arrow-right-circle"></i>
+                  </div>
+                  120 Minutes Consultation
+                </li>
+                <li class="mb-2-style li-arrow-text d-flex">
+                  <div class="me-2-style d-flex border-black">
+                    <i class="bi bi-arrow-right-circle" data-icon="arrow-right-circle"></i>
+                  </div>
+                  4 Bedroom Cleaning
+                </li>
+              </ul>
+              <div class="mt-4-style">
+                <a href="#contactus" class="btn btn-darkgreen pro-plan-card-button w-100">Book Now</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="plans-card clonable-card deluxe-plan-card basic-plan-card rounded-4 card rounded-4 my-3-style basic-plan-card-indiv border-0">
+            <div class="card-body p-4-style">
+              <p class="text-uppercase each-section-name d-flex align-items-center-style card-name basic-card-name fw-semibold-style mb-4-style">
+              <div class="d-inline-flex">
+                <i class="bi bi-patch-check-fill"></i>
+              </div>
+              Deluxe Cleaning
+              </p>
+              <h3 class="fw-semibold-style d-flex fs-1-style align-items-center-style mb-4-style pb-2">
+                ₹950
+                <small class="text-secondary-theme fs-6-style my-auto-style ms-2-style">/service</small>
+              </h3>
+              <p class="each-card-para mt-3-style text-secondary-theme">
+                Faucibus commodo a aenean et sit quisque ipsum.
+              </p>
+              <hr class="card-content-divider" />
+              <ul class="list-unstyled text-start-style">
+                <li class="mb-2-style li-arrow-text d-flex">
+                  <div class="me-2-style d-flex border-black">
+                    <i class="bi bi-arrow-right-circle" data-icon="arrow-right-circle"></i>
+                  </div>
+                  120 Minutes Consultation
+                </li>
+                <li class="mb-2-style li-arrow-text d-flex">
+                  <div class="me-2-style d-flex border-black">
+                    <i class="bi bi-arrow-right-circle" data-icon="arrow-right-circle"></i>
+                  </div>
+                  All Bedrooms Cleaning
+                </li>
+              </ul>
+              <div class="mt-4-style">
+                <a href="#contactus" class="btn btn-darkgreen pro-plan-card-button w-100">Book Now</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section8 py-5-style" id="faq" data-section="faq">
+      <div class="container">
+        <div class="text-center-style mb-sm-5 mb-3-style">
+          <p class="text-uppercase each-section-name mb-3-style d-flex justify-content-center-style align-items-center-style">
+            <span class="me-1-style" data-icon="star"></span>
+            FAQs
+          </p>
+          <h2 class="each-section-heading mb-xl-4-style d-flex justify-content-center-style">
+            Frequently Asked Questions
+          </h2>
+        </div>
+
+        <div class="accordion p-3-style" id="faqAccordion">
+          <div class="accordion-item mb-4-style border-0">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button fw-semibold-style px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                What types of cleaning services do you offer?
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-secondary-theme ps-0">
+                We offer regular home cleaning, deep cleaning, kitchen cleaning, and more.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item mb-4-style border-0">
+            <h2 class="accordion-header" id="headingTwo">
+              <button class="accordion-button collapsed fw-semibold-style px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Do I need to provide cleaning supplies?
+              </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-secondary-theme ps-0">
+                No, our cleaners come fully equipped.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white-style pb-5-style pt-0-style testimonial-section" id="testimonials" data-section="testimonials">
+      <div class="container text-center-style">
+        <p class="text-uppercase each-section-name mb-3-style d-flex justify-content-center-style align-items-center-style">
+          <span class="me-1-style" data-icon="star"></span>
+          Testimonial
+        </p>
+        <h2 class="each-section-heading mb-xl-4-style d-flex justify-content-center-style">
+          Hear What Our Clients Say
+        </h2>
+
+        <div class="swiper testimonial-swiper">
+          <div class="swiper-wrapper">
+
+            <div class="swiper-slide">
+              <div class="border rounded-3 h-100 mx-4 p-3-style">
+                <div class="p-4-style border-bottom">
+                  <div class="mb-2-style star-div">
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-half" data-icon="star-half"></i>
+                  </div>
+                  <p class="slide-para mb-0-style text-secondary-theme">
+                    Purus ipsum facilisis cursus nunc egestas vel praesent
+                    auctor dolor. Et proin dolor rhoncus sit.
+                  </p>
+                </div>
+                <div class="d-flex align-items-center-style gap-3 p-4-style">
+                  <div class="img-wrapper-style">
+                    <img src="assets/images/testimonials-1.webp" alt="Amisha Patel" class="rounded-circle img-fluid" width="48" height="48" loading="lazy" style="object-fit: cover;" />
+                  </div>
+                  <div class="text-start-style">
+                    <p class="fw-bold-style mb-0-style text-dark-style">Amisha Patel</p>
+                    <p class="text-secondary-theme mb-0-style small-style">Office Manager</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide">
+              <div class="border rounded-3 h-100 mx-4 p-3-style">
+                <div class="p-4-style border-bottom">
+                  <div class="mb-2-style star-div">
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                  </div>
+                  <p class="slide-para mb-0-style text-secondary-theme">
+                    Purus ipsum facilisis cursus nunc egestas vel praesent
+                    auctor dolor. Et proin dolor rhoncus sit.
+                  </p>
+                </div>
+                <div class="d-flex align-items-center-style gap-3 p-4-style">
+                  <div class="img-wrapper-style">
+                    <img src="assets/images/testimonials-2.webp" alt="Priya Singh" class="rounded-circle img-fluid" width="48" height="48" loading="lazy" style="object-fit: cover;" />
+                  </div>
+                  <div class="text-start-style">
+                    <p class="fw-bold-style mb-0-style text-dark-style">Priya Singh</p>
+                    <p class="text-secondary-theme mb-0-style small-style">Office Manager</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide">
+              <div class="border rounded-3 h-100 mx-4 p-3-style">
+                <div class="p-4-style border-bottom">
+                  <div class="mb-2-style star-div">
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star-fill" data-icon="star-fill"></i>
+                    <i class="bi bi-star" data-icon="star"></i>
+                  </div>
+                  <p class="slide-para mb-0-style text-secondary-theme">
+                    Purus ipsum facilisis cursus nunc egestas vel praesent
+                    auctor dolor. Et proin dolor rhoncus sit.
+                  </p>
+                </div>
+                <div class="d-flex align-items-center-style gap-3 p-4-style">
+                  <div class="img-wrapper-style">
+                    <img src="assets/images/testimonials-3.webp" alt="Priya Singh" class="rounded-circle img-fluid" width="48" height="48" loading="lazy" style="object-fit: cover;" />
+                  </div>
+                  <div class="text-start-style">
+                    <p class="fw-bold-style mb-0-style text-dark-style">Priya Singh</p>
+                    <p class="text-secondary-theme mb-0-style small-style">Office Manager</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-pagination mt-4-style"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-section contactus-outer py-5-style" id="contactus" data-section="contactus">
+      <div class="container">
+        <div class="row align-items-start-style">
+          <div class="col-lg-6 contact-left">
+            <p class="text-uppercase each-section-name mb-3-style d-flex justify-content-lg-start-style align-items-center-style">
+              Contact Us
+            </p>
+            <h2 class="contactus-section-heading d-flex justify-content-center mb-xl-4-style">
+              Let's discuss your cleaning needs
+            </h2>
+            <p class="text-secondary-theme each-section-para mb-xl-5-style mb-md-3-style mb-3-style">
+              Faucibus commodo a aenean et sit quisque ipsum. Consequat eu id ut
+              dolor felis quis.
+            </p>
+
+            <ul class="contact-info ps-0">
+              <li><i class="bi bi-telephone-fill" data-icon="telephone-fill"></i>+91-9123456789</li>
+              <li><i class="bi bi-envelope-fill" data-icon="envelope-fill"></i> yourname@domainname.com</li>
+              <li><i class="bi bi-geo-alt-fill" data-icon="geo-alt-fill"></i>E-123, ABC Plaza, XYZ Street, New Delhi
+                110077</li>
+            </ul>
+          </div>
+
+          <div class="col-lg-6 ps-lg-5">
+            <form action="http://127.0.0.1:8000/api/forms/submit" method="post" data-zigrow-form class="contact-form">
+              <div form-question-zigrow>
+                <label>Name</label>
+                <input type="text" name="name" placeholder="Your name" required />
+              </div>
+
+              <div form-question-zigrow>
+                <label>Email</label>
+                <input type="email" name="email" placeholder="you@company.com" required />
+              </div>
+
+              <div form-question-zigrow>
+                <label>Phone number</label>
+                <input type="tel" inputmode="tel" pattern="^\+?[0-9\s\-]{7,15}$" placeholder="Enter your phone number here" name="phone-number">
+              </div>
+
+              <div form-question-zigrow>
+                <label>How can we help?</label>
+                <textarea name="how-can-we-help?" placeholder="Tell us a little about the project..."></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-darkgreen w-100 mt-lg-4">Get In Touch</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer footer-outer p-4-style" id="footer" data-section="footer">
+    <div class="container">
+      <div class="row gy-5 mb-lg-5 py-lg-2">
+        <div class="col-md-3 col-sm-6 col-12 footer-logo-and-intro-section">
+          <div class="logo d-flex align-items-center-style footer-logo-div fs-4-style" data-logo="footer">
+            Cleany
+          </div>
+          <p class="mt-3-style pe-4-style footer-section-para">
+            Leo elementum iaculis quam massa vitae odio sed. Morbi tincidunt
+            senectus.
+          </p>
+          <div class="social-icons d-flex mt-3-style">
+            <a href="#"><i class="bi bi-twitter" data-icon="twitter"></i></a>
+            <a href="#"><i class="bi bi-instagram" data-icon="instagram"></i></a>
+            <a href="#"><i class="bi bi-youtube" data-icon="youtube"></i></a>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-6">
+          <h5>Navigation</h5>
+          <ul class="list-unstyled">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#aboutus">About Us</a></li>
+            <li><a href="#services">Our Services</a></li>
+            <li><a href="#ourteam">Our Team</a></li>
+          </ul>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-6">
+          <h5>Services</h5>
+          <ul class="list-unstyled">
+            <li><a href="#">Kitchen Cleaning</a></li>
+            <li><a href="#">Office Cleaning</a></li>
+            <li><a href="#">Carpet Cleaning</a></li>
+            <li><a href="#">House Cleaning</a></li>
+          </ul>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-6">
+          <h5>Contact Us</h5>
+          <ul class="list-unstyled">
+            <li class="navigation-menus">
+              <span class="me-2-style">
+                <i class="bi bi-geo-alt-fill" data-icon="geo-alt"></i>
+              </span> E-123, ABC Plaza, XYZ Street, New Delhi 110077
+            </li>
+            <li class="navigation-menus">
+              <span class="me-2-style">
+                <i class="bi bi-telephone" data-icon="telephone"></i>
+              </span> +91-9123456789
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row bottom-bar mt-5-style py-lg-2-style">
+        <div class="col-md-6 text-center-style text-md-start">
+          <span>COPYRIGHT © Cleany</span>
+        </div>
+        <div class="col-md-6 text-center-style text-md-end-style">
+          <a href="#" class="me-2-style">TERM OF USE</a> |
+          <a href="#" class="ms-2-style">PRIVACY POLICY</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script> -->
+  <script src="js/script.js"></script>
+
+  <script>
+    (function() {
+      const forms = Array.from(document.querySelectorAll('[data-zigrow-form]'));
+      if (!forms.length) return;
+
+      function serializeForm(form) {
+        const fd = new FormData(form);
+        const raw = {};
+        for (const [name, value] of fd.entries()) {
+          const el = form.elements[name];
+          const isGroup = el && (el.length && el[0] && el[0].type === 'checkbox');
+          if (isGroup) {
+            if (!raw[name]) raw[name] = [];
+            raw[name].push(value);
+          } else {
+            raw[name] = value;
+          }
+        }
+        return raw;
+      }
+
+      function pickPrimaryValue(raw) {
+        if (raw.email && String(raw.email).trim()) return String(raw.email).trim();
+        if (raw.phone && String(raw.phone).trim()) return String(raw.phone).trim();
+        const nameCombo = [raw.firstName, raw.lastName].filter(Boolean).join(' ').trim();
+        if (raw.name && String(raw.name).trim()) return String(raw.name).trim();
+        if (nameCombo) return nameCombo;
+        if (raw.message && String(raw.message).trim()) return String(raw.message).trim();
+        return '';
+      }
+
+      forms.forEach((form) => {
+        const domainInput = form.querySelector('input[name="domain"]');
+        const pageUrlInput = form.querySelector('input[name="page_url"]');
+        if (domainInput) domainInput.value = location.host;
+        if (pageUrlInput) pageUrlInput.value = location.href;
+
+        let msgContainer = form.querySelector('.form-submit-message');
+        if (!msgContainer) {
+          msgContainer = document.createElement('div');
+          msgContainer.className = 'form-submit-message mt-2-style text-sm';
+          form.appendChild(msgContainer);
+        }
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const submitBtn = form.querySelector('[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.dataset._oldText = submitBtn.innerText;
+            submitBtn.innerText = 'Submitting...';
+          }
+          msgContainer.innerText = '';
+          msgContainer.style.color = '';
+
+          try {
+            const raw = serializeForm(form);
+            const body = new URLSearchParams();
+            body.set('domain', (form.querySelector('input[name="domain"]')?.value || location.host));
+            body.set('form_key', (form.querySelector('input[name="form_key"]')?.value || 'contact'));
+            body.set('page_url', (form.querySelector('input[name="page_url"]')?.value || location.href));
+            body.set('payload', JSON.stringify(raw));
+
+            const primary = pickPrimaryValue(raw);
+            if (primary) body.set('value', primary);
+            if (raw._company) body.set('_company', raw._company);
+
+            const res = await fetch(form.action, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json'
+              },
+              body
+            });
+            const data = await res.json().catch(() => ({}));
+
+            if (res.ok && (data.ok ?? true)) {
+              form.reset();
+              msgContainer.innerText = 'Thanks! Your request has been submitted.';
+              msgContainer.style.color = '#28a745';
+            } else {
+              msgContainer.innerText = `x ${data.message || 'Failed (HTTP ' + res.status + ')'}`;
+              msgContainer.style.color = '#dc3545';
+            }
+          } catch (err) {
+            console.error(err);
+            msgContainer.innerText = 'x Something went wrong. Please try again.';
+            msgContainer.style.color = '#dc3545';
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerText = submitBtn.dataset._oldText || 'Send';
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>

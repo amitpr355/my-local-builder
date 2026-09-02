@@ -1,0 +1,1041 @@
+// :root {
+//   --primary-colors: red;
+//   --secondary-colors: rgb(171, 168, 168);
+//   --territory-colors: rgb(26, 12, 229);
+// }
+
+// Variables
+$buttonColor: #d66a3c;
+$textColor: #fefefe;
+$blackTextColor: #414141;
+$darkBackgroundColor: #1d1b1f;
+$lightBackgroundColor: #fefefe;
+$forReviewSection: #333135;
+$reviewTextColor: #d0d0d1;
+$beautyPackageSection: #fbf4f4;
+
+// Code for the navbar
+body {
+  font-family: "Inter", sans-serif;
+  color: var(--secondary-colors, var(--territory-colors, $darkBackgroundColor));
+}
+
+@mixin oswald-font {
+  font-family: "Oswald", sans-serif;
+}
+
+// ==========================
+// HAMBURGER Z-INDEX
+// ==========================
+/* Reduce the outer container size */
+.hamburger {
+  z-index: 1051;
+  width: 24px; /* default is 40px, reduce as needed */
+  height: 24px; /* adjust height as per look */
+  display: flex;
+  padding: 0;
+  margin-right: 10px;
+}
+
+/* Reduce the box that contains the lines */
+.hamburger-box {
+  width: 24px;
+  height: 24px;
+}
+
+/* Reduce the inner lines */
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+  width: 24px;
+  height: 3px; /* thinner lines */
+  background-color: var(--secondary-colors, $textColor); /* your desired color */
+}
+
+/* Change color on active or hover */
+.hamburger.is-active .hamburger-inner,
+.hamburger.is-active .hamburger-inner::before,
+.hamburger.is-active .hamburger-inner::after {
+  background-color: var(--primary-colors, $buttonColor);
+}
+
+// Styling for the navbar section
+.navbar-section {
+  background-color: transparent; // or use transparent
+  // backdrop-filter: blur(8px); // optional: adds a blur effect
+  z-index: 1000; // ensure it stays above the hero section
+
+  .navbar-contact {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: var(--secondary-colors, $textColor);
+    @media (max-width: 599.98px) {
+      display: flex;
+      flex-direction: column;
+      text-align: start;
+    }
+  }
+
+  .envelope-icon i,
+  .telephone-icon i {
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary-colors, $buttonColor);
+    color: var(--secondary-colors, $textColor);
+  }
+
+  .mail-details,
+  .phone-details {
+    display: flex;
+    justify-content: space-between;
+    @media (max-width: 599.98px) {
+      justify-content: start;
+    }
+    p {
+      margin-top: auto;
+      margin-bottom: auto;
+      padding-left: 8px;
+      padding-right: 8px;
+      @media (max-width: 366.98px) {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .phone-details {
+    @media (max-width: 599.98px) {
+      margin-top: 1px;
+    }
+  }
+
+  .navbar-menu-div {
+    a {
+      @media (max-width: 991.98px) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+
+  .nav-link {
+    position: relative;
+    color: var(--secondary-colors, $textColor);
+    font-weight: 600;
+    text-decoration: none;
+    padding-bottom: 5px;
+    font-size: 20px;
+    @include oswald-font();
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      width: 0;
+      background-color: currentColor;
+      transition: width 0.4s ease;
+      color: var(--primary-colors, $buttonColor);
+    }
+
+    &:hover::after {
+      width: 100%; // Animate underline on hover
+      color: var(--primary-colors, $buttonColor);
+    }
+
+    &.active {
+      color: var(--secondary-colors, $textColor);
+    }
+
+    // Optional: text color change on hover
+    &:hover {
+      color: var(--primary-colors, $buttonColor);
+    }
+  }
+
+  @media (min-width: 991.98px) {
+    .nav-link.active {
+      color: var(--primary-colors, $buttonColor);
+      font-weight: 800;
+
+      &::after {
+        width: 100%; // Active link shows full underline
+        background-color: currentColor;
+      }
+    }
+  }
+
+  .social-icons {
+    a {
+      color: var(--secondary-colors, $textColor);
+      &:hover {
+        color: var(--primary-colors, $buttonColor);
+      }
+    }
+    @media (max-width: 1199.98px) {
+      display: none;
+    }
+  }
+
+  .social-icon-link {
+    height: 40px;
+    width: 40px;
+    text-decoration: none;
+    .social-icon i {
+      height: 40px;
+      width: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+
+.nav-dark {
+  background: $blackTextColor;
+}
+
+.btn-custom {
+  position: relative;
+  display: inline-block;
+  background-color: var(--primary-colors, $buttonColor);
+  color: var(--secondary-colors, $textColor);
+  font-size: 18px;
+  padding: 18px 80px;
+  height: 100%;
+  border: 2px solid transparent;
+  border-radius: 0px;
+  overflow: hidden;
+  transition: color 0.4s ease, border 0.4s ease, transform 0.3s ease;
+
+  @media (max-width: 500px) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  // The animated sliding layer
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: var(--secondary-colors, $textColor); // or use rgba/any color for contrast
+    z-index: 1;
+    transition: left 0.4s ease;
+  }
+
+  // Bring the actual text above the sliding background
+  span {
+    position: relative;
+    z-index: 2;
+  }
+
+  &:hover::before {
+    left: 0;
+  }
+
+  &:hover {
+    color: var(--primary-colors, $buttonColor);
+    border: 2px solid var(--primary-colors, $buttonColor);
+    transform: scale(1.03);
+  }
+}
+
+.navbar-section {
+  .btn-custom {
+    &:hover {
+      color: var(--primary-colors, $buttonColor);
+    }
+    @media (max-width: 1244.98px) {
+      padding: 18px 50px;
+    }
+  }
+}
+
+/// Section 1(Hero Section)
+/* Hero Section */
+.hero-section {
+  position: relative;
+  background: url("../assets/images/makeupartistwebsitetemplatehero.webp")
+    no-repeat center center/cover;
+  height: 100vh;
+  margin-top: -100px;
+  padding-top: 100px;
+  z-index: 1;
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .content {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--secondary-colors, $textColor);
+    .small-text-of-content {
+      font-size: 18px;
+      letter-spacing: 3px;
+    }
+    .hero-section-main-heading {
+      // font-size: 100px;
+      font-size: clamp(2rem, 5vw + 1rem, 100px);
+      font-weight: 500;
+      @include oswald-font();
+      letter-spacing: 3px;
+    }
+    .btn-custom {
+      letter-spacing: 3px;
+      margin-top: 60px;
+
+      @media (max-width: 566.98px) {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .small-text {
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: var(--secondary-colors, #fff);
+  }
+
+  .whatsapp-icon {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    color: var(--secondary-colors, $textColor);
+    background: #25d366;
+    border-radius: 50%;
+    z-index: 3;
+    transition: 0.3s;
+    height: 60px;
+    width: 60px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.4s ease;
+    i {
+      height: 50px;
+      width: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+    }
+  }
+  .whatsapp-icon:hover {
+    background: var(--secondary-colors, $textColor);
+    color: #25d366;
+  }
+}
+
+// For the floating button
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 800;
+  background-color: var(--primary-colors, $buttonColor);
+  color: var(--secondary-colors, $textColor); /* Replace $yellowcolor with actual color */
+  border: 2px solid var(--primary-colors, $buttonColor);
+  transition: all 0.3s ease;
+  opacity: 0; /* Start hidden for GSAP animation */
+  transform: translateY(50px); /* Initial offset for slide-in */
+  &:hover {
+    background-color: rgb(73, 73, 73);
+    color: var(--primary-colors, $buttonColor);
+    border-color: rgb(73, 73, 73);
+  }
+  .bi-arrow-up {
+    font-size: 25px;
+  }
+}
+
+// Section 2(Meet Kanika Section)
+.meet-kanika-section {
+  background-color: var(--secondary-colors, #fff);
+  color: var(--territory-colors, $darkBackgroundColor);
+
+  .stats-div {
+    h5 {
+      @media (max-width: 767.98px) {
+        font-size: 16px;
+      }
+    }
+    .stats-text {
+      font-size: 20px;
+      @media (max-width: 412.98px) {
+        font-size: 16px;
+      }
+    }
+  }
+
+  .service-pill {
+    color: var(--territory-colors, $darkBackgroundColor);
+    font-weight: 500;
+    font-size: 20px;
+    border-radius: 0;
+    @media (max-width: 767.98px) {
+      font-size: 16px;
+    }
+  }
+
+  .service-pill i {
+    color: var(--primary-colors, $buttonColor);
+    font-size: 20px;
+    @media (max-width: 767.98px) {
+      font-size: 16px;
+    }
+  }
+
+  .certification-text {
+    font-size: 22px;
+    @include oswald-font();
+    @media (max-width: 767.98px) {
+      font-size: 18px;
+    }
+  }
+}
+
+.text-stack {
+  width: 100%;
+  position: relative;
+  display: inline-block;
+  .each-section-name {
+    @include oswald-font();
+    // font-size: 48px;
+    font-size: clamp(28px, 4vw, 48px); // Responsive font size
+    margin: 0;
+    position: relative;
+    color: $blackTextColor;
+    z-index: 2;
+  }
+  .each-section-name-outline {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    letter-spacing: 0px;
+    // font-size: 80px;
+    font-size: clamp(40px, 8vw, 80px); // Responsive outline size
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 0.3px var(--primary-colors, #e0e0e0);; /* light outline */
+    z-index: 1;
+  }
+}
+
+.meet-section-para {
+  font-size: 22px;
+  @media (max-width: 767.98px) {
+    font-size: 16px;
+  }
+}
+
+// Section 3(Services Section)
+.services-section {
+  background-color: var(--territory-colors, $darkBackgroundColor);
+
+  .each-section-name {
+    color: var(--secondary-colors, $textColor);
+  }
+
+  .each-section-name-outline {
+    -webkit-text-stroke: 0.1px var(--primary-colors, #e0e0e0);; /* light outline */
+  }
+
+  .service-card {
+    background-color: var(--territory-colors, $darkBackgroundColor);
+    border: none;
+    color: var(--secondary-colors, $textColor);
+    transition: transform 0.3s ease;
+    &:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-title {
+      font-size: 26px;
+      font-weight: 400;
+      @media (max-width: 767.98px) {
+        font-size: 20px;
+      }
+    }
+    .card-text {
+      font-size: 18px;
+      @media (max-width: 767.98px) {
+        font-size: 13px;
+      }
+    }
+
+    .custom-btn {
+      border: 1px solid var(--primary-colors, $buttonColor);
+      color: var(--primary-colors, $buttonColor);
+      font-weight: 500;
+      padding: 18px 28px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 0;
+      letter-spacing: 2px;
+      margin-top: 20px;
+      @media (max-width: 767.98px) {
+        font-size: 12px;
+        width: 100%;
+      }
+    }
+  }
+
+  .service-card .custom-btn:hover {
+    background-color: #eb6e34;
+    color: #fff;
+  }
+}
+
+// Section 4(Instagram Gallery Section)
+.instagram-gallery-section {
+  background-color: var(--secondary-colors, #fff);
+  color: var(--territory-colors, #212529);;
+
+  .gallery-section-subheading {
+    @include oswald-font();
+    // font-size: 32px;
+    font-size: clamp(20px, 2vw + 1rem, 32px);
+  }
+
+  .gallery-img {
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+    aspect-ratio: 4/3;
+  }
+
+  .gallery-img:hover {
+    transform: scale(1.03);
+  }
+
+  .swiper {
+    width: 100%;
+    height: 100%;
+  }
+
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #444;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .swiper-pagination {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    width: auto;
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+  }
+
+  .swiper-pagination-bullet {
+    width: 12px;
+    height: 12px;
+    background: $blackTextColor;
+    border: 2px solid #aaa;
+    border-radius: 0px;
+  }
+
+  .swiper-pagination-bullet-active {
+    background-color: var(--primary-colors, $buttonColor);
+    border-color: var(--primary-colors, $buttonColor);
+  }
+
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-icon i {
+    position: absolute;
+    top: 50%;
+    height: 60px;
+    width: 60px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 45px;
+    color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .btn-custom {
+    letter-spacing: 2px;
+    background-color: var(--secondary-colors, $lightBackgroundColor);
+    color: var(--primary-colors, $buttonColor);
+    border-color: var(--primary-colors, $buttonColor);
+    border-width: 2px;
+    padding-left: 50px;
+    padding-right: 50px;
+    &::before {
+      background-color: var(--primary-colors, $buttonColor);
+    }
+    &:hover {
+      color: var(--secondary-colors, $textColor);
+    }
+    @media (max-width: 767.98px) {
+      width: 100%;
+      font-size: 12px;
+    }
+  }
+}
+
+// Section 5(Customer Reviews Section)
+.customer-reviews-section {
+  background-color: var(--territory-colors, $darkBackgroundColor);
+  color: var(--secondary-colors, $textColor);
+
+  .each-section-name {
+    color: var(--secondary-colors, $textColor);
+  }
+
+  .each-section-name-outline {
+    -webkit-text-stroke: 0.1px var(--secondary-colors, $textColor); /* light outline */
+  }
+
+  .left-quote-div {
+    i {
+      font-size: 100px;
+      color: $blackTextColor;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+    }
+  }
+
+  .right-quote-div {
+    i {
+      transform: scaleX(-1);
+    }
+  }
+
+  .swiper {
+    width: 100%;
+    height: 100%;
+  }
+
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: var(--territory-colors, $darkBackgroundColor);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .reviewer-img {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+  }
+
+  .review-text {
+    font-size: clamp(16px, 2vw, 24px);
+    line-height: 1.6;
+    color: var(--primary-colors, $reviewTextColor);
+    padding-top: auto;
+    padding-bottom: auto;
+    text-align: start;
+  }
+
+  .author-designation {
+    color: #8b8b8b;
+  }
+
+  .swiper-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 20px;
+  }
+
+  .swiper-pagination-bullet {
+    width: 6px;
+    height: 6px;
+    background: $blackTextColor;
+    border-radius: 0px;
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    position: absolute;
+    bottom: 10px;
+    top: auto;
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+    color: var(--primary-colors, $buttonColor);
+    z-index: 60;
+    border: 2px solid var(--primary-colors, $buttonColor);
+    background-color: $blackTextColor;
+  }
+
+  .swiper-pagination-bullet {
+    background: var(--primary-colors, $reviewTextColor);
+  }
+  .swiper-pagination-bullet-active {
+    background: var(--primary-colors, $buttonColor);
+  }
+
+  .swiper-button-prev::after,
+  .swiper-button-next::after {
+    font-size: 10px;
+    font-weight: bold;
+  }
+
+  /* Position left/right of pagination */
+  .swiper-button-prev {
+    left: calc(50% - 100px);
+  }
+
+  .swiper-button-next {
+    right: calc(50% - 100px);
+  }
+}
+
+// Section 6(Beauty Packages Section)
+.beauty-packages-section {
+  background-color: $beautyPackageSection;
+
+  .package-card {
+    background: var(--secondary-colors, #fff);
+    color: var(--territory-colors, #212529);
+    border: 1px solid #f1f1f1;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s ease;
+    height: 100%;
+
+    .text-muted-color-style{
+      color: var(--primary-colors, #8b8b8b)
+    }
+
+    &:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .price {
+      font-weight: 700;
+      color: var(--territory-colors, $darkBackgroundColor);
+      @include oswald-font();
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      margin-top: 25px;
+      font-size: 24px;
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 15%;
+        border-bottom: 3px solid var(--primary-colors, $buttonColor);
+      }
+    }
+
+    h5 {
+      font-size: 1.5rem;
+    }
+
+    .book-btn {
+      border: 1px solid var(--primary-colors, $buttonColor);
+      color: var(--primary-colors, $buttonColor);
+      font-size: 15px;
+      padding: 8px 24px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 0;
+      transition: 0.3s;
+
+      &:hover {
+        background-color: #eb6e34;
+        color: #fff;
+      }
+    }
+
+    ul {
+      margin-bottom: 55px;
+
+      li {
+        margin-bottom: 18px;
+        font-size: 16px;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+
+        .bi-check-circle-fill {
+          color: var(--primary-colors, $buttonColor);
+          flex-shrink: 0;
+        }
+      }
+    }
+  }
+
+  // Responsive tweaks
+  @media (max-width: 768px) {
+    .package-card {
+      padding: 36px;
+
+      .price {
+        font-size: 20px;
+      }
+
+      h5 {
+        font-size: 1.3rem;
+      }
+
+      .book-btn {
+        font-size: 14px;
+        padding: 6px 20px;
+      }
+
+      ul li {
+        font-size: 15px;
+        margin-bottom: 14px;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .package-card {
+      padding: 20px;
+
+      .price {
+        font-size: 18px;
+      }
+
+      h5 {
+        font-size: 1.1rem;
+      }
+
+      .book-btn {
+        font-size: 13px;
+        padding: 5px 16px;
+      }
+
+      ul li {
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+    }
+  }
+}
+
+// Section 7(Contact Section)
+.contact-section {
+  background-color: var(--secondary-colors, $lightBackgroundColor);
+  .contactus-cards {
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+
+  @media (min-width: 991.98px) {
+    .contactus-cards:nth-child(1),
+    .contactus-cards:nth-child(2),
+    .contactus-cards:nth-child(3) {
+      border-right: 2px solid var(--primary-colors, $buttonColor);
+    }
+  }
+  @media (max-width: 991.98px) {
+    .contactus-cards:nth-child(1),
+    .contactus-cards:nth-child(3) {
+      border-right: 2px solid var(--primary-colors, $buttonColor);
+    }
+  }
+  @media (max-width: 575.98px) {
+    .contactus-cards:nth-child(1),
+    .contactus-cards:nth-child(3) {
+      border-right: none;
+    }
+  }
+
+  .contact-item {
+    .icon {
+      font-size: 18px;
+      height: 40px;
+      width: 40px;
+      color: var(--secondary-colors, $textColor);
+      background-color: var(--primary-colors, $buttonColor);
+      padding: 8px;
+      border-radius: 50%;
+    }
+
+    .title {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--primary-colors, $buttonColor);
+      letter-spacing: 2px;
+      margin-top: 20px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--territory-colors, $darkBackgroundColor);
+    }
+  }
+
+  .map-container {
+    position: relative;
+  }
+
+  .btn-directions {
+    background-color: var(--primary-colors, $buttonColor);
+    color: var(--secondary-colors, $textColor);
+    padding: 10px 24px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 4px;
+    transition: 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    position: absolute;
+    top: 40px;
+    left: 40px;
+  }
+
+  .btn-directions:hover {
+    background-color: #d05a20;
+    text-decoration: none;
+    color: #fff;
+  }
+}
+
+// Footer Section
+.footer-section {
+  background-color: var(--territory-colors, $darkBackgroundColor);
+
+  .contact-info {
+    @include oswald-font();
+    font-size: 20px;
+  }
+
+  .footer-heading {
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--secondary-colors, $textColor);
+    @include oswald-font();
+    font-size: 22px;
+  }
+
+  a {
+    color: var(--primary-colors, $reviewTextColor);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 6px;
+    font-size: 16px;
+
+    &:hover {
+      color: #eb6e34;
+    }
+  }
+
+  .footer-timing {
+    color: var(--primary-colors, $reviewTextColor);
+  }
+
+  .footer-email,
+  .footer-phone {
+    color: #eb6e34;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .footer-social {
+    display: flex;
+    justify-content: end;
+    a {
+      color: var(--primary-colors, $reviewTextColor);
+      font-size: 22px;
+      margin-right: auto;
+      margin-left: auto;
+      transition: color 0.3s ease;
+    }
+  }
+
+  .address-of-footer {
+    display: flex;
+    justify-content: end;
+    font-size: 16px;
+    color: var(--primary-colors, $reviewTextColor);
+    text-align: end;
+    @media (max-width: 767.98px) {
+      justify-content: center;
+      text-align: center;
+    }
+  }
+
+  .footer-social a:hover {
+    color: #eb6e34;
+  }
+
+  .copyright-div {
+    border-top: 1px solid var(--primary-colors, $reviewTextColor);
+    border-color: var(--primary-colors, $reviewTextColor);
+    color: var(--primary-colors, $reviewTextColor);
+  }
+}
+
+// Add CSS on open the hamburger menu and remove on closing
+.nav-dark2 {
+  background: $blackTextColor;
+}
+
+// section{
+//   scroll-margin-top: 100px;
+// }

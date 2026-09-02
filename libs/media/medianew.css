@@ -1,0 +1,1051 @@
+.modal-content.mymediagallery {
+  border-radius: 14px;
+}
+
+.liImageDetails {
+  padding: 5px;
+  position: relative;
+}
+
+.toolactions {
+  display: none;
+  flex-direction: column;
+  align-items: start;
+  position: absolute;
+  bottom: 33px;
+  right: 0px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+}
+
+.toolactions a {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  z-index: 45;
+}
+
+.tools-view-and-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.tools-view-and-dots i {
+  padding: 5px;
+}
+
+.three-dots-action-triangle {
+  display: none;
+  height: 10px;
+  width: 10px;
+  position: absolute;
+  right: 8px;
+  top: -5px;
+  transform: rotate(45deg);
+  background: #f5f5f5;
+  z-index: 44;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+}
+
+.rename-file-mymediagallery .modal-header {
+  border: none;
+}
+
+.rename-file-mymediagallery .btn-close i {
+  font-weight: bold;
+}
+
+.rename-file-mymediagallery .modal-body {
+  padding: 12px;
+}
+
+.rename-file-mymediagallery .modal-footer {
+  padding: 12px;
+  border: none;
+}
+
+.btn-close.my-media-gallery-close-btn {
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-close.my-media-gallery-close-btn i {
+  font-weight: bold;
+}
+
+.modal-content.rename-file-mymediagallery {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 40px;
+  padding: 5px 10px;
+}
+
+.modal-content.rename-file-mymediagallery .btn-outline-secondary {
+  border: 1px solid #3a404a;
+}
+
+#MediaRenameModal #media-rename-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+#MediaConfirmModal .modal-body-main-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#MediaConfirmModal .modal-body-main-div i {
+  margin-left: auto;
+  padding: 16px;
+  margin-right: auto;
+  font-size: 48px;
+}
+
+#MediaConfirmModal .modal-body-main-div-text-part {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#MediaConfirmModal .modal-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CSS */
+.sort-by {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px; /* space between label and select */
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
+  font-size: 14px;
+  color: #0f2a50;
+}
+
+/* Label */
+.sort-label {
+  white-space: nowrap;
+  color: #0f2a50;
+  font-size: 16px;
+}
+
+/* Wrapper to position the caret */
+.select-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+/* The select itself */
+.select-wrap select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: #ffffff;
+  border: 1px solid #d7e6f8;
+  padding: 8px 36px 8px 14px; /* leave space on right for caret */
+  border-radius: 4px;
+  min-width: 140px;
+  color: #0f2a50;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    box-shadow 0.12s ease,
+    border-color 0.12s ease;
+  box-shadow: none;
+}
+
+/* Caret (using inline SVG as a data URI) */
+.select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 12px 12px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23394b5a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+}
+
+/* Focus style */
+.select-wrap select:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.08); /* soft blue halo */
+  border-radius: 4px;
+}
+
+/* Small responsive tweak */
+@media (max-width: 420px) {
+  .select-wrap select {
+    min-width: 80px;
+  }
+}
+
+/*Css Added by Kasim*/
+.display-panel[data-tab="ai"] .fa-ellipsis-vertical,
+.display-panel[data-tab="ai"] .three-dots-action {
+  display: none !important;
+}
+
+.search {
+  display: none !important;
+}
+
+/* === Consistent Tooltip Styling Across All Tabs === */
+/* Ensure all icons with title attributes have consistent, styled tooltips */
+#MediaModal [title]:not([title=""]) {
+  position: relative;
+}
+
+/* Native browser tooltips - consistent dark styling */
+#MediaModal .view-photo-action,
+#MediaModal .three-dots-action,
+#MediaModal .fa-eye,
+#MediaModal .fa-ellipsis-vertical {
+  cursor: pointer;
+}
+
+/* Bootstrap Tooltip Styling - Black background for consistency */
+.tooltip.media-tooltip .tooltip-inner {
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tooltip.media-tooltip .tooltip-arrow::before {
+  border-bottom-color: #000000;
+}
+
+.tooltip.media-tooltip.bs-tooltip-top .tooltip-arrow::before {
+  border-top-color: #000000;
+}
+
+.tooltip.media-tooltip.bs-tooltip-end .tooltip-arrow::before {
+  border-right-color: #000000;
+}
+
+.tooltip.media-tooltip.bs-tooltip-start .tooltip-arrow::before {
+  border-left-color: #000000;
+}
+
+.icon.file.f-video {
+  margin: 40px 100px;
+  border: 1px solid #a4a7ac;
+}
+
+#upload-search-input:focus,
+#stock-search-input:focus,
+#ai-search-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.media-modal-nav-item {
+  font-size: 15px;
+  border-radius: 4px;
+}
+
+.media-gallery-title {
+  font-size: 24px;
+}
+
+@media screen and (max-width: 991.98px) {
+  .media-gallery-title {
+    font-size: 16px;
+  }
+
+  .media-modal-nav-item {
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .left-div-mygallery {
+    width: 90px;
+    margin-right: 0px;
+  }
+
+  .left-div-mygallery .side {
+    padding: 2px;
+  }
+
+  .upload-file-btn-mediagallery {
+    font-size: 13px !important;
+    padding: 6px 8px !important;
+  }
+}
+
+#upload-search-btn,
+#ai-search-btn,
+#stock-search-btn {
+  padding-left: 24px;
+  padding-right: 24px;
+  background: var(--zigrow-primary-color);
+}
+
+.modal-footer .btn.add-selected-footer-btn {
+  background: var(--zigrow-primary-color);
+}
+
+.modal-footer .btn.add-selected-footer-btn,
+.modal-footer .btn.cancel-footer-btn {
+  font-size: 18px;
+}
+
+.upload-file-btn-mediagallery {
+  border: 1px solid #5b3df2;
+  background: #5b3df2;
+  color: #fff;
+  padding: 8px 16px;
+  margin-left: auto;
+  margin-right: 0px;
+  margin-bottom: 16px;
+}
+
+.upload-file-btn-mediagallery:hover,
+.upload-file-btn-mediagallery:active {
+  background: #5b3df2;
+  color: #fff;
+  filter: brightness(0.95);
+}
+
+#upload-search-input {
+  margin-right: 16px;
+  border-radius: 4px;
+}
+
+.filemanager .top-right {
+  padding-bottom: 0px;
+}
+
+.modal-footer .align-right {
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.right-div-mygallery {
+  /* display: flex; */
+  /* flex-direction: column; */
+  border-left: var(--bs-modal-header-border-width) solid #dee2e6;
+  width: 100%;
+}
+
+@media (max-width: 991.98px) {
+  .right-div-mygallery {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 1199.98px) {
+  .filemanager .data li {
+    width: 286px;
+  }
+
+  .modal-footer-mymedia-gallery .align-right {
+    margin: 8px 18px;
+    margin-left: auto;
+  }
+
+  .modal-footer-mymedia-gallery .align-right .add-selected-footer-btn,
+  .modal-footer-mymedia-gallery .align-right .cancel-footer-btn {
+    padding: 8px !important;
+    font-size: 13px !important;
+  }
+}
+
+.modal-footer-mymedia-gallery {
+  padding-top: 8px;
+  padding-bottom: 6px;
+}
+
+.modal-footer-mymedia-gallery .align-right {
+  display: inline-flex;
+}
+
+.top-bar-div-mymediagallery {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  margin-left: 30px;
+}
+
+.modal-footer-mymedia-gallery .align-right .add-selected-footer-btn,
+.modal-footer-mymedia-gallery .align-right .cancel-footer-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* .filemanager .data.animated {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: stretch;
+} */
+
+.filemanager .data.animated {
+  display: flex;
+  flex-wrap: wrap;
+  /* grid-template-columns: repeat(3, minmax(240px, 1fr)); */
+  /* align-items: stretch; */
+}
+
+@media (max-width: 991.98px) {
+  .mymediagallery {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+  }
+
+  .modal-header {
+    padding: 8px;
+  }
+
+  .modal-footer-mymedia-gallery .align-right .add-selected-footer-btn,
+  .modal-footer-mymedia-gallery .align-right .cancel-footer-btn {
+    padding: 4px;
+    font-size: 12px;
+  }
+
+  .upload-top-btn {
+    padding: 4px;
+    font-size: 12px;
+  }
+
+  .right-div-mygallery {
+    margin-left: 0px;
+  }
+
+  .right-div-mygallery .top-bar {
+    height: 65px;
+  }
+
+  .top-bar-div-mymediagallery {
+    padding: 12px;
+    margin-right: 10px;
+    margin-left: 4px;
+  }
+
+  .filemanager .top-right {
+    margin-left: 4px;
+    padding-top: 8px;
+    padding-bottom: 4px;
+  }
+
+  .upload-file-btn-mediagallery {
+    margin-bottom: 4px;
+  }
+
+  .mymediagallery .display-panel {
+    padding-left: 4px;
+  }
+
+  #upload-search-input,
+  #ai-search-input,
+  #stock-search-input {
+    padding: 4px;
+  }
+
+  .nav-item.media-modal-nav-item {
+    padding: 8px;
+  }
+
+  .filemanager .data li {
+    /* width: 170px; */
+    width: 148px;
+    /* height: 150px; */
+    margin: 5px;
+  }
+
+  .filemanager .data li .form-check {
+    width: 100%;
+    height: 95px !important;
+  }
+
+  .icon.file.f-pdf,
+  .icon.file.f-video {
+    margin: 25px 68px;
+    height: 40px;
+    width: 35px;
+    font-size: 14px;
+  }
+
+  .sort-label {
+    font-size: 12px;
+  }
+
+  .select-wrap select {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .filemanager .data.animated {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 505.98px) {
+  .filemanager .data {
+    display: grid;
+    width: auto;
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/*
+@media (max-width: 492.98px) {
+  .filemanager .data li {
+    width: 215px;
+  }
+}
+@media (max-width: 481.98px) {
+  .filemanager .data li {
+    width: 190px;
+  }
+}
+@media (max-width: 431.98px) {
+  .filemanager .data li {
+    width: 190px;
+  }
+} */
+
+/* .filemanager .data.animated {
+  /* margin-right: 5px; 
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 6px;
+} */
+
+.upload-search-wrapper {
+  padding-right: 0px !important;
+}
+
+.filemanager .top-right {
+  padding-right: 0px !important;
+}
+
+#upload-search-input,
+#ai-search-input,
+#stock-search-input {
+  border-radius: 4px;
+}
+
+.toolactions a {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.toolactions a i {
+  width: 14px;
+  height: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+}
+
+.toolactions a span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px !important;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  font-weight: normal;
+}
+
+.toolactions a .la-play-circle {
+  color: #ff6b6b !important;
+}
+
+.toolactions .asset-open:hover .la-play-circle {
+  color: #fff !important;
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ====== Loader Animation ====== */
+.loader-colorful {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ad46ff;
+  transform-origin: top;
+  display: grid;
+  animation: spin 1s infinite linear;
+}
+
+.loader-colorful::before,
+.loader-colorful::after {
+  content: "";
+  grid-area: 1/1;
+  border-radius: 50%;
+  background: #f6339a;
+  transform-origin: top;
+  animation: flip 1s infinite linear;
+}
+
+.loader-colorful::after {
+  background: #2b7fff;
+  --s: 180deg;
+}
+
+/* Keyframes */
+@keyframes spin {
+  0%,
+  20% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes flip {
+  50% {
+    transform: rotate(var(--s, 90deg));
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+
+/* ====== Optional Glow Effect ====== */
+.loader-colorful.glow {
+  box-shadow:
+    0 0 20px rgba(173, 70, 255, 0.6),
+    0 0 40px rgba(46, 196, 255, 0.3),
+    0 0 60px rgba(255, 105, 180, 0.2);
+}
+
+.btn-close:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.clear-upload-search-btn,
+.clear-stock-search-btn,
+.clear-ai-search-btn {
+  background: #5b3df2 !important;
+  width: 40px;
+  height: 100%;
+  color: #fff !important;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: 5px;
+  border-radius: 0 4px 4px 0;
+  font-size: 20px !important;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  padding: 0 6px;
+  font-size: 18px;
+  display: none;
+  color: #6c757d;
+  cursor: pointer;
+}
+
+.clear-stock-search-btn,
+.clear-ai-search-btn {
+  right: -1%;
+}
+
+.clear-upload-search-btn:hover,
+.clear-stock-search-btn:hover,
+.clear-ai-search-btn:hover {
+  background: #5b3df2;
+  filter: brightness(0.95);
+}
+
+.filemanager .data.animated:has(> .files:nth-child(2):nth-last-child(1)) {
+  display: flex;
+  justify-content: start;
+}
+
+/* Center the stock 'loading more' loader and sentinel across grid/flex layouts */
+.stock-loading-more,
+.stock-scroll-sentinel {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  grid-column: 1 / -1; /* span full grid width when parent uses CSS grid */
+  box-sizing: border-box;
+  padding: 0.75rem 0;
+}
+
+/* Ensure spinner inside loader is centered even if small */
+.stock-loading-more .spinner-border,
+.stock-scroll-sentinel .spinner-border {
+  margin: 0;
+}
+
+/* NOTE: Keep modal behavior consistent with Bootstrap. Avoid forcing
+  display/flex or disabling pointer-events on the modal container so
+  Bootstrap's backdrop and show/hide lifecycle remain reliable.
+  We'll only lightly style the backdrop color when visible. */
+
+#MediaImageViewModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 1065;
+  /* allow Bootstrap to manage pointer-events and display */
+  pointer-events: auto;
+}
+
+/* Add a subtle backdrop color when the modal is shown, but do NOT
+   override Bootstrap's display or positioning rules (no flex forcing). */
+#MediaImageViewModal.show {
+  background-color: rgba(0, 0, 0, 0.15);
+  height: fit-content;
+}
+
+#MediaImageViewModal .main-body {
+  max-width: 600px; /* Max width for large screens */
+  width: 100%;
+  margin: auto; /* Re-center the dialog */
+  padding: 12px;
+  border-radius: 4px;
+  pointer-events: auto;
+}
+
+#MediaImageViewModal .modal-dialog {
+  /* Don't force a flex layout here Ã¢â‚¬â€ allow Bootstrap to manage centering.
+     Keep a reasonable max-width and restore the horizontal centering. */
+  display: block;
+  margin: 5.75rem auto; /* center horizontally (Bootstrap default-like) */
+  max-width: 600px; /* match .main-body max width */
+  padding: 0;
+}
+
+#MediaImageViewModal .modal-body {
+  /* Container for the image, styled as a modern card */
+  background-color: #ffffff;
+  width: 100%;
+  flex: none;
+  border-radius: 14px 14px 0 0;
+  padding-top: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* --- Image Styling --- */
+
+#MediaImageViewModal .image-div {
+  width: 100%;
+  height: 340px;
+  display: flex;
+  padding: 5px;
+  align-items: center;
+  justify-content: center;
+  background-color: #e0e0e0; /* Fallback background for loading */
+  border-radius: 0;
+}
+
+#MediaImageViewModal .image-div img {
+  /* Make the image cover the container while maintaining aspect ratio */
+  max-width: 98%;
+  width: auto;
+  height: 100%;
+  border-radius: 0;
+  display: flex;
+}
+
+/* --- Modal Footer --- */
+
+#MediaImageViewModal .modal-footer {
+  /* Keep the footer visually distinct */
+  border-radius: 0 0 14px 14px; /* Rounded bottom corners */
+  border-top: none; /* Remove default border */
+  background: #fff;
+  width: 100% !important;
+  padding-top: 12px !important;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: 12px !important;
+}
+
+#MediaImageViewModal .text-and-close-btn {
+  display: flex;
+  justify-content: space-between; /* Space between text and button */
+  align-items: center; /* Vertically align items */
+  width: 100%;
+}
+#MediaImageViewModal .text-part p {
+  margin: 0; /* Remove default margin for paragraphs */
+  color: #555 !important; /* Light gray text for readability on dark background */
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+#MediaImageViewModal .text-part span {
+  color: #000; /* White text for emphasis on source/photo details */
+  font-weight: bold;
+}
+
+#MediaImageViewModal .text-part p span:first-child {
+  font-weight: normal; /* Make the 'Powered by'/'Photo by' less prominent */
+}
+
+/* --- Close Button Styling --- */
+
+#MediaImageViewModal .close-btn button:hover {
+  filter: brightness(90%);
+}
+
+/* --- Media Queries for Responsiveness --- */
+
+@media (max-width: 768px) {
+  #MediaImageViewModal .main-body {
+    max-width: 95%; /* Use more width on smaller screens */
+  }
+
+  #MediaImageViewModal .modal-body {
+    border-radius: 0; /* No rounded corners for full-width view */
+    box-shadow: none;
+  }
+
+  #MediaImageViewModal .modal-footer {
+    border-radius: 0;
+    padding: 10px 15px;
+  }
+
+  #MediaImageViewModal .text-and-close-btn {
+    flex-direction: column; /* Stack text and button vertically */
+    align-items: flex-start;
+  }
+
+  #MediaImageViewModal .text-part {
+    margin-bottom: 10px; /* Space between text and button */
+  }
+
+  #MediaImageViewModal .close-btn button {
+    width: 100%; /* Full width button on mobile */
+    background: #5b3df2 !important;
+  }
+
+  #MediaImageViewModal .close-btn button:hover {
+    cursor: pointer;
+    color: #fff;
+  }
+}
+
+.files .image {
+  max-width: 100%;
+}
+
+.nav-item.active {
+  background: linear-gradient(
+    90deg,
+    var(--zigrow-primary-500),
+    var(--zigrow-primary-600)
+  );
+  border-radius: 6px;
+}
+
+#MediaMetaModal .modal-content {
+  border: none;
+}
+
+.btn-close.zg-close {
+  width: 18px;
+  height: 18px;
+  color: #000;
+}
+
+#MediaMetaModal input:focus,
+#MediaMetaModal textarea:focus {
+  outline: none;
+  box-shadow: none !important;
+}
+
+.modal-title {
+  margin-bottom: 0;
+  line-height: var(--bs-modal-title-line-height);
+  color: #555;
+}
+
+#media-rename-input,
+#MediaMetaModal .form-control {
+  box-shadow: none;
+}
+
+.files-form-check {
+  background: #dee2e6;
+}
+
+.files-form-check:hover {
+  border: 1px solid #5b3df2;
+}
+
+#MediaImageViewModal .text-part p {
+  font-size: 12px;
+}
+
+@media (max-width: 469.98px) {
+  #top-panel.topbar {
+    gap: 0px;
+  }
+}
+
+@media (max-width: 675.98px) {
+  .modal-footer-mymedia-gallery .align-right {
+    max-width: 100%;
+  }
+
+  .sort-by {
+    display: inline-block;
+  }
+
+  .filemanager .nothingfound {
+    width: 90%;
+  }
+}
+
+@media (max-width: 399.98px) {
+  .sort-by .sort-label {
+    font-size: 10px;
+  }
+
+  .top-bar-div-mymediagallery {
+    gap: 0;
+  }
+}
+
+/*Css for upload msg info*/
+/* Overlay container */
+#media-upload-overlay {
+  pointer-events: none;
+  position: fixed;
+  z-index: 1065;
+  border-radius: 16px;
+  border: 2px dashed rgba(120, 113, 255, 0.35);
+  background: rgba(120, 113, 255, 0.05);
+}
+
+/* Center content */
+.media-upload-overlay-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Your actual SVG icon */
+.media-upload-overlay-svg {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  opacity: 0.95;
+}
+
+/* Title text */
+.media-upload-overlay-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Subtitle text */
+.media-upload-overlay-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.nothingfound {
+  border: none !important;
+}
+
+.nothingfound div {
+  background: url("media-ui-no-files-image.png") no-repeat center center;
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.display-panel .nothingfound[style*="display: block"] {
+  display: block !important;
+}
+
+.mymediagallery-modal .side {
+  width: 200px;
+  padding-right: 15px;
+}
+
+@media (max-width: 991px) {
+  .media-mobile-builder-modal__sidebar {
+    padding: 8px;
+    border: 1px solid #212529;
+    margin-left: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .mymediagallery-modal .side.show-mobile {
+    position: absolute;
+    bottom: -100%; /* Start hidden below the container */
+    left: 0;
+    width: 100%;
+    background: #fff;
+    z-index: 100;
+    border-top: 1px solid #dee2e6;
+    transition: bottom 0.3s ease; /* Smooth sliding animation */
+  }
+
+  /* Target the toggled class to slide it up */
+  .mymediagallery-modal .side.show-mobile.active-sidebar {
+    bottom: 0;
+  }
+}

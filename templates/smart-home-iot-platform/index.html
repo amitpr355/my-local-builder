@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AuraHome Intelligent Living</title>
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hamburgers@1.2.1/dist/hamburgers.min.css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/customutility.css" />
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-white-style sticky-top navbar-color py-3-style navbar-animate"
+        id="navbarSection" data-section>
+        <div class="container">
+            <a class="navbar-brand" href="#" data-logo="navbar">
+                <div class="img-wrapper-style">
+                    <img src="assets/images/2.png" class="img-fluid" alt="Logo">
+                </div>
+            </a>
+            <div class="d-lg-none d-flex align-items-center justify-content-lg-end">
+                <div class="hamburger hamburger--spring js-hamburger" id="hamburger-toggle">
+                    <div class="hamburger-box">
+                        <div class="hamburger-inner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse navbar-collapse justify-content-center navbar-menu-div" id="navbarMenu">
+                <ul class="navbar-nav gap-3">
+                    <li class="nav-item">
+                        <a class="btn btn-custom btn-custom2" href="#update">Refine</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-custom btn-custom2" href="#ecosystem">Network</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-custom btn-custom2" href="#testimonials">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-custom btn-custom2" href="#faq">Help</a>
+                    </li>
+                    <li class="nav-item d-lg-none">
+                        <a class="btn btn-custom">Get the App</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="d-none d-lg-block">
+                <a class="btn btn-custom">Get the App</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section py-sm-5-style" id="hero-section" data-section="hero-section">
+        <div class="container position-relative">
+            <div class="hero-image-wrapper">
+                <div class="img-wrapper-style col-12">
+                    <img src="assets/images/smart-home-technology-website-template-image-section-hero.webp"
+                        alt="App Mockup" class="img-fluid hero-main">
+                </div>
+            </div>
+
+            <div class="smart-card floating-card lamp-card">
+                <div class="title">
+                    <div class="smart-icon">
+                        <i class="bi bi-lightbulb-fill" data-icon="bi-lightbulb-fill"></i>
+                    </div>
+                    <div class="title-name">
+                        <div class="smart-title">Aura Light</div>
+                        <div class="smart-subtitle">8 units</div>
+                    </div>
+                </div>
+                <div class="smart-consume">
+                    <i class="bi bi-lightning-fill" data-icon="bi-lightbulb-fill"></i> Usage 18 kWh
+                </div>
+                <hr>
+                <div class="smart-toggle">
+                    <span>On</span>
+                    <div class="form-check form-switch m-0-style">
+                        <input class="form-check-input" type="checkbox" role="switch" checked>
+                    </div>
+                </div>
+            </div>
+
+            <div class="smart-card2 floating-card tv-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="d-flex align-items-center">
+                        <div class="smart-icon">
+                            <i class="bi bi-tv" data-icon="bi-tv"></i>
+                        </div>
+                        <div class="ms-2-style">
+                            <div class="smart-title">Periodically<br>active Media Hub</div>
+                            <div class="smart-subtitle">Daily • at 6:30 PM</div>
+                        </div>
+                    </div>
+                    <div class="unit-badge">3 units</div>
+                </div>
+
+                <hr>
+                <div class="smart-toggle">
+                    <span>On</span>
+                    <div class="form-check form-switch m-0-style">
+                        <input class="form-check-input" type="checkbox" role="switch" checked>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <a href="#" class="rounded-circle floating-btn">
+        <i class="bi bi-arrow-up" data-icon="bi-arrow-up"></i>
+    </a>
+
+    <section class="smart-hero py-sm-5-style" id="smart-hero" data-section="smart-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>
+                    Elevate your space with <br><span>Aura Intelligence</span>
+                </h1>
+                <p>
+                    Smarter systems to simply manage and optimize every feature of your<br>
+                    modern house, offering you exceptional reliability and comfort
+                </p>
+
+                <form class="email-form" action="http://127.0.0.1:8000/api/forms/submit" method="post"
+                    data-zigrow-form>
+                    <div form-question-zigrow>
+                        <input type="text" name="email" placeholder="Enter your email" required>
+                    </div>                
+                    <button type="submit">
+                        Get Started <span>&rarr;</span>
+                    </button>
+                </form>
+
+                <div class="rating">
+                    <div class="stars">
+                        <i class="bi bi-star-fill" data-icon="bi-star-fill"></i>
+                        <i class="bi bi-star-fill" data-icon="bi-star-fill"></i>
+                        <i class="bi bi-star-fill" data-icon="bi-star-fill"></i>
+                        <i class="bi bi-star-fill" data-icon="bi-star-fill"></i>
+                        <i class="bi bi-star-fill" data-icon="bi-star-fill"></i>
+                    </div>
+                    <div class="rating-info">
+                        <strong>4.9</strong>
+                        <p>5.10 million reviews</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trusted-companies py-5-style" id="trusted-companies" data-section="trusted-companies">
+        <div class="container">
+            <p class="trusted-text">
+                POWERING ELITE SMART RESIDENCES IN 80+ TERRITORIES
+            </p>
+
+            <div class="swiper trusted-swiper">
+                <div class="swiper-wrapper mb-5-style">
+                    <div class="swiper-slide">
+                        <div class="img-wrapper-style col-12">
+                            <img src="assets/images/lorem-1.png" loading="lazy" alt="BestBank">
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="img-wrapper-style col-12">
+                            <img src="assets/images/lorem-2.png" loading="lazy" alt="Nextflows">
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="img-wrapper-style col-12">
+                            <img src="assets/images/lorem-3.png" loading="lazy" alt="dataBites">
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="img-wrapper-style col-12">
+                            <img src="assets/images/lorem-4.png" loading="lazy" alt="Globalchart">
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="img-wrapper-style col-12">
+                            <img src="assets/images/lorem-5.png" loading="lazy" alt="Selfast">
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="img-wrapper-style col-12">
+                            <img src="assets/images/lorem-6.png" loading="lazy" alt="Roomates">
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <!-- <div class="row justify-content-center trusted-logos d-none d-md-flex">
+                <div class="col-6 col-md-auto">
+                    <div class="img-wrapper-style col-12">
+                        <img src="assets/images/lorem-1.png" loading="lazy" alt="BestBank">
+                    </div>
+                </div>
+                <div class="col-6 col-md-auto">
+                    <div class="img-wrapper-style col-12">
+                        <img src="assets/images/lorem-2.png" loading="lazy" alt="Nextflows">
+                    </div>
+                </div>
+                <div class="col-6 col-md-auto">
+                    <div class="img-wrapper-style col-12">
+                        <img src="assets/images/lorem-3.png" loading="lazy" alt="dataBites">
+                    </div>
+                </div>
+                <div class="col-6 col-md-auto">
+                    <div class="img-wrapper-style col-12">
+                        <img src="assets/images/lorem-4.png" loading="lazy" alt="Globalchart">
+                    </div>
+                </div>
+                <div class="col-6 col-md-auto">
+                    <div class="img-wrapper-style col-12">
+                        <img src="assets/images/lorem-5.png" loading="lazy" alt="Selfast">
+                    </div>
+                </div>
+                <div class="col-6 col-md-auto">
+                    <div class="img-wrapper-style col-12">
+                        <img src="assets/images/lorem-6.png" loading="lazy" alt="Roomates">
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </section>
+
+    <section class="video-section py-sm-5-style pb-3-style" id="video-section" data-section="video-section">
+        <div class="container">
+            <div class="img-wrapper-style col-12">
+                <img src="assets/images/technology-website-template-image-section-2.webp" alt="Main Image"
+                    class="main-image" loading="lazy">
+            </div>
+            <div class="play-button-main-div">
+                <div class="play-button-second-div">
+                    <i class="bi bi-play-fill" data-section="bi-play-fill"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="smart-tech-section" id="smart-tech-section" data-section="smart-tech-section">
+        <div class="container">
+            <div class="row smart-tech-content">
+                <div class="col-lg-5 col-md-12 left-side-div">
+                    <h2 class="each-section-heading">
+                        Design the future <br><span class="emoji">✨</span> with the magic of<br>
+                        <span class="highlight">Aura Connectivity.</span>
+                    </h2>
+                    <a href="#" class="read-more-btn">
+                        Read more <span class="arrow">→</span>
+                    </a>
+                </div>
+
+                <div class="col-lg-7 col-md-12 mt-lg-0-style mt-4-style right-side-div">
+                    <p>
+                        AuraHome SmartHub is a powerful and versatile smart home engine
+                        that perfectly unifies diverse gadgets and protocols to build an
+                        automated living world. With AuraHome SmartHub, folks can upgrade
+                        their rooms into digital landscapes, boosting safety, utility, and joy.
+                    </p>
+                    <p>
+                        AuraHome SmartHub, users can quickly supervise and adjust various parts
+                        of their environment, like bulbs, climate, locks, hardware and more,
+                        all via one streamlined dashboard. The hub provides custom workflows,
+                        power tracking data, robust defense tools, and native
+                        support for leading smart home brands and voice assistants.
+                    </p>
+
+                    <div class="info-box info-box1">
+                        <span class="label">Activations <span class="emoji">🚀</span></span>
+                        <span class="value">42.810.250 Million</span>
+                    </div>
+
+                    <div class="info-box info-box2">
+                        <span class="label">Awwwards <span class="emoji">⭐</span></span>
+                        <span class="value">120 World Achievements</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section" id="update" data-section="update">
+        <div class="container">
+            <div class="section-header">
+                <span class="update-badge">Latest Build v3.0 💎</span>
+                <h2 class="each-section-heading">
+                    <span class="highlight">New features</span> with and new<br> interface changes
+                </h2>
+            </div>
+
+            <div class="row mb-sm-5-style">
+                <div class="col-12 col-md-12 mb-4-style">
+                    <div class="background-color-only d-flex p-md-4-style">
+                        <div class="feature-card d-md-flex flex-column col-lg-6">
+                            <div class="feature-card-div">
+                                <h4 class="each-section-heading">Unified Family <br>Coordination <span
+                                        class="emoji">🤝</span></h4>
+                                <p>
+                                    Launch shared profiles that permit every resident to oversee and command
+                                    the entire house network through our mobile interface.
+                                </p>
+                                <p>
+                                    Users can grant device rights, build joined scenes, and chat inside the
+                                    system,
+                                    fostering fluid teamwork and expert house control between all family
+                                    members or housemates.
+                                </p>
+                                <a href="#" class="read-more-btn">Read more <span class="arrow">→</span></a>
+                            </div>
+                        </div>
+
+                        <div class="feature-image d-flex justify-content-center">
+                            <div class="img-wrapper-style col-12">
+                                <img src="assets/images/smart-home-technology-website-template-image-section-3.webp"
+                                    class="img-fluid" alt="Smart Home App" loading="lazy" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 main-feature">
+                    <div class="feature-card feature-card2 p-md-5-style">
+                        <h4>Advanced Voice Command</h4>
+                        <p>
+                            This module permits users to speak with their smart house using simple vocalized orders,
+                            making it much more fluid and natural to manage tools, build scenes,
+                            and get tailored suggestions.
+                        </p>
+                        <a href="#" class="read-more-btn2">Read more <span class="arrow">→</span></a>
+                    </div>
+                </div>
+                <div class="col-md-6 main-feature">
+                    <div class="feature-card feature-card2 p-md-5-style">
+                        <h4>Presence Recognition</h4>
+                        <p>
+                            The mobile tool can accurately identify when a space or zone is occupied or empty,
+                            allowing for instant tweaks to bulbs, climate, and power stats for maximum
+                            utility and savings.
+                        </p>
+                        <a href="#" class="read-more-btn2">Read more <span class="arrow">→</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-button">
+                <a href="#" class="view-all-btn">View All New Features <span class="arrow">→</span></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="ecosystem-section" id="ecosystem" data-section="ecosystem">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="each-section-heading">
+                    <span> How AuraHome built a </span>
+                    <span class="highlight">synchronized<br> </span>
+                    <div>home environment? 💎</div>
+                </h2>
+            </div>
+
+            <div class="row">
+                <div class="top-feature pt-3-style">
+                    <div class="d-flex flex-column top-feature-container flex-md-row for-only-border">
+                        <div class="col-12 col-md-8 highlight-card">
+                            <h4>Glowing Ambience</h4>
+                            <p>
+                                Vocal assistants like Alexa or Google Home can serve as the primary link
+                                for all smart hardware. They can chat with and adjust smart bulbs,
+                                sensors, gate locks, feeds, and sound gear using verbal orders,
+                                building a fluid and hands-off smart living world.
+                            </p>
+                        </div>
+
+                        <div class="col-12 col-md-4 highlight-image">
+                            <div class="img-wrapper-style">
+                                <img src="assets/images/technology-website-template-image-section-4.webp"
+                                    class="img-fluid" alt="Smart Speaker" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-features">
+                    <div class="col-12 col-md-6">
+                        <div class="feature-card me-md-3-style">
+                            <h4>Glowing Ambience</h4>
+                            <p>
+                                Vivid lighting networks, such as smart LEDs, plugs, or strips, can be integrated
+                                with other tools in the network. For instance, they can be set to activate
+                                or dim based on sensor triggers, timed scenes, or even linked with other smart
+                                units like media for immersive visual effects.
+                            </p>
+                            <div class="feature-image left-feature-image">
+                                <div class="img-wrapper-style col-12">
+                                    <img src="assets/images/smart-home-technology-website-template-image-section-5a.webp"
+                                        class="img-fluid" alt="Smart Lighting App" loading="lazy">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="feature-card ms-md-3-style">
+                            <h4>Media Integration</h4>
+                            <p>
+                                Smart TVs, players, audio and casting tools can be combined into the smart home
+                                environment for fluid digital experiences. They can link with lighting setups
+                                to build moods, be managed via vocal prompts, or be paired with other
+                                hardware for a truly cinematic residential layout.
+                            </p>
+                            <div class="feature-image right-feature-image">
+                                <div class="img-wrapper-style col-12">
+                                    <img src="assets/images/technology-website-template-image-section-5b.webp"
+                                        class="img-fluid" alt="Entertainment App" loading="lazy">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="quote-section py-sm-5-style pb-5-style" id="quote-section" data-section="quote-section">
+        <div class="container">
+            <div class="quote-content">
+                <span class="quote-mark">❝</span>
+                <span class="gradient-text">
+                    Finish daily chores with just the<br>
+                    AuraHome smart home clever<br>
+                    companion tool <span class="emoji">♥</span>
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <section class="customer-story py-sm-5-style" id="testimonials" data-section="testimonials">
+        <div class="container">
+            <h2 class="each-section-heading mb-md-5-style">
+                What is our <br><span class="highlight">customer story</span>
+            </h2>
+
+            <div class="swiper customerStorySwiper">
+                <div class="swiper-wrapper mb-5-style">
+                    <div class="swiper-slide">
+                        <div class="story-card">
+                            <h5>Vikram.</h5>
+                            <p>“I never imagined managing my space could be so fluid until I tried this smart home
+                                tool...”</p>
+                            <div class="story-image">
+                                <div class="img-wrapper-style col-12">
+                                    <img src="assets/images/2.webp" alt="Vikram" class="img-fluid" loading="lazy">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="story-card">
+                            <h5>Anil Mehta.</h5>
+                            <p>“As a busy director, I trust my smart home tool to manage several jobs while I’m out...”
+                            </p>
+                            <div class="story-image">
+                                <div class="img-wrapper-style col-12">
+                                    <img src="assets/images/5.webp" alt="Anil" class="img-fluid" loading="lazy">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="story-card">
+                            <h5>Dr. Sonal.</h5>
+                            <p>“I enjoy the simplicity and total safety that this smart home tool provides...”</p>
+                            <div class="story-image">
+                                <div class="img-wrapper-style col-12">
+                                    <img src="assets/images/7.webp" alt="Sonal" class="img-fluid" loading="lazy">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="story-card">
+                            <h5>Sunita.</h5>
+                            <p>“This smart home tool has really changed my living room into a clever and unified
+                                environment...”</p>
+                            <div class="story-image">
+                                <div class="img-wrapper-style col-12">
+                                    <img src="assets/images/8.webp" alt="Sunita" class="img-fluid" loading="lazy">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="story-card">
+                            <h5>Sunita.</h5>
+                            <p>“This smart home tool has really changed my living room into a clever and unified
+                                environment...”</p>
+                            <div class="story-image">
+                                <div class="img-wrapper-style col-12">
+                                    <img src="assets/images/8.webp" alt="Sunita" class="img-fluid" loading="lazy">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <!-- <div class="row g-4 d-none d-md-flex">
+                <div class="col-md-6 col-lg-3">
+                    <div class="story-card">
+                        <h5>Vikram.</h5>
+                        <p>“I never imagined managing my space could be so fluid until I tried this smart home tool...”
+                        </p>
+                        <div class="story-image">
+                            <div class="img-wrapper-style col-12">
+                                <img src="assets/images/2.webp" alt="Vikram" class="img-fluid" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="story-card">
+                        <h5>Anil Mehta.</h5>
+                        <p>“As a busy director, I trust my smart home tool to manage several jobs while I’m out...”</p>
+                        <div class="story-image">
+                            <div class="img-wrapper-style col-12">
+                                <img src="assets/images/5.webp" alt="Anil" class="img-fluid" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="story-card">
+                        <h5>Dr. Sonal.</h5>
+                        <p>“I enjoy the simplicity and total safety that this smart home tool provides...”</p>
+                        <div class="story-image">
+                            <div class="img-wrapper-style col-12">
+                                <img src="assets/images/7.webp" alt="Sonal" class="img-fluid" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="story-card">
+                        <h5>Sunita.</h5>
+                        <p>“This smart home tool has really changed my living room into a clever and unified
+                            environment...”</p>
+                        <div class="story-image">
+                            <div class="img-wrapper-style col-12">
+                                <img src="assets/images/8.webp" alt="Sunita" class="img-fluid" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </section>
+
+    <section class="faq-section py-5-style" id="faq" data-section="faq">
+        <div class="container">
+            <h2 class="each-section-heading mb-md-3-style mb-2-style faq-title">Frequently Asked Questions</h2>
+
+            <div class="accordion col-md-6" id="faqAccordion">
+
+                <div class="accordion-item">
+                    <h3 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            What is the core of smart home automation?
+                        </button>
+                    </h3>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p> Smart home automation cores work by linking sensors and defining
+                                specific tasks based on certain triggers like hours, motion, or
+                                external climate changes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h3 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                            What are the benefits of a smart home?
+                        </button>
+                    </h3>
+                    <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p>A smart home offers enhanced convenience, energy efficiency, and security. You can
+                                automate
+                                daily tasks,
+                                control devices remotely, and receive real-time updates. With personalized routines,
+                                smart
+                                homes improve
+                                comfort and reduce energy usage, while providing peace of mind through advanced security
+                                features.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h3 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            What devices can be part of a smart home?
+                        </button>
+                    </h3>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p>
+                                Devices such as smart lights, thermostats, cameras, locks, and appliances can be
+                                integrated
+                                into a smart home
+                                system.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h3 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            How do I control my smart home devices
+                        </button>
+                    </h3>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p>
+                                You can control your smart home devices through mobile apps, voice assistants, or
+                                automated
+                                routines.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h3 class="accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            Is my smart home secure?
+                        </button>
+                    </h3>
+                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p>
+                                Smart homes are secure when proper security measures like strong passwords, encryption,
+                                and
+                                software updates
+                                are in place.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h3 class="accordion-header" id="headingSix">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                            Can I integrate devices from different brands in my smart home?
+                        </button>
+                    </h3>
+                    <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <p>
+                                Yes, many smart home systems support multiple brands and can be integrated using
+                                compatible
+                                platforms or
+                                hubs.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="quote-section2 py-sm-5-style" id="quote-section2" data-section="quote-section2">
+        <div class="container">
+            <div class="hero-content">
+                <div class="img-wrapper-style col-12" data-logo="footer">
+                    <img src="assets/images/2.png" alt="Aura Logo" loading="lazy" class="img-fluid hero-logo">
+                </div>
+                <span class="gradient-text">
+                    Craft your smart life,
+                    <br>your style. <span class="emoji">😇</span>
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-section" id="footer-section" data-section="footer-section">
+        <div class="container">
+            <div class="row footer-top">
+                <div class="col-md-2 footer-column download-div">
+                    <h5 class="only-download-text">Download</h5>
+                    <a href="#" class="store-badge-div"><img src="assets/images/technology-website-template-footer-image-1.png"
+                            alt="App Store" class="img-fluid store-badge" loading="lazy"></a>
+                    <a href="#" class="store-badge-div"><img src="assets/images/technology-website-template-footer-image-2.png"
+                            alt="Google Play" class="img-fluid store-badge" loading="lazy"></a>
+                </div>
+                <div class="col-md-2 footer-column">
+                    <h5>Company</h5>
+                    <ul>
+                        <li><a href="#">How it works</a></li>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Become Partners</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 footer-column">
+                    <h5>Product</h5>
+                    <ul>
+                        <li><a href="#">Lighting & Plug</a></li>
+                        <li><a href="#">Smart Curtain</a></li>
+                        <li><a href="#">Climate & Energy</a></li>
+                        <li><a href="#">Security and Awareness</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 footer-column">
+                    <h5>Resource</h5>
+                    <ul>
+                        <li><a href="#">Pro Business</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Newsletter</a></li>
+                        <li><a href="#">API docs</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 footer-column">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="#">Sitemap</a></li>
+                        <li><a href="#">Changelog</a></li>
+                        <li><a href="#">Term of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 footer-column">
+                    <h5>Support</h5>
+                    <ul>
+                        <li><a href="#">Feedback</a></li>
+                        <li><a href="#">Knowledge Base</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Marketplace</a></li>
+                        <li><a href="#">Developers</a></li>
+                        <li><a href="#">Status</a></li>
+                        <li><a href="#">FAQs</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row footer-bottom">
+                <div class="col-sm-6 footer-copy">
+                    <p>© Copyright 2025 — All Rights Reserved.</p>
+                </div>
+                <div class="col-sm-6 footer-links">
+                    <a href="#">Terms and Conditions</a>
+                    <a href="#">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="js/script.js"></script>
+
+    <script>
+        (function () {
+            // Find ALL Zigrow forms
+            const forms = Array.from(document.querySelectorAll('[data-zigrow-form]'));
+            if (!forms.length) return;
+
+            // Helper: turn FormData into a plain object
+            function serializeForm(form) {
+                const fd = new FormData(form);
+                const raw = {};
+                for (const [name, value] of fd.entries()) {
+                    const el = form.elements[name];
+                    const isGroup = el && (el.length && el[0] && el[0].type === 'checkbox');
+                    if (isGroup) {
+                        if (!raw[name]) raw[name] = [];
+                        raw[name].push(value === '' ? true : value);
+                    } else {
+                        raw[name] = value;
+                    }
+                }
+                return raw;
+            }
+
+            // Helper: pick primary value for quick list view
+            function pickPrimaryValue(raw) {
+                if (raw.email && String(raw.email).trim()) return String(raw.email).trim();
+                if (raw.phone && String(raw.phone).trim()) return String(raw.phone).trim();
+                const nameCombo = [raw.firstName, raw.lastName].filter(Boolean).join(' ').trim();
+                if (raw.name && String(raw.name).trim()) return String(raw.name).trim();
+                if (nameCombo) return nameCombo;
+                if (raw.message && String(raw.message).trim()) return String(raw.message).trim();
+                return '';
+            }
+
+            forms.forEach((form) => {
+                // Ensure hidden fields are filled
+                const domainInput = form.querySelector('input[name="domain"]');
+                const pageUrlInput = form.querySelector('input[name="page_url"]');
+                if (domainInput) domainInput.value = location.host;
+                if (pageUrlInput) pageUrlInput.value = location.href;
+
+                // Create a container for messages if not already exists
+                let msgContainer = form.querySelector('.form-submit-message');
+                if (!msgContainer) {
+                    msgContainer = document.createElement('div');
+                    msgContainer.className = 'form-submit-message mt-2 text-sm';
+                    form.appendChild(msgContainer);
+                }
+
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const submitBtn = form.querySelector('[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.dataset._oldText = submitBtn.innerText;
+                        submitBtn.innerText = 'Submitting...';
+                    }
+
+                    // Clear previous message
+                    msgContainer.innerText = '';
+                    msgContainer.style.color = '';
+
+                    try {
+                        const raw = serializeForm(form);
+                        const body = new URLSearchParams();
+                        body.set('domain', (form.querySelector('input[name="domain"]')?.value || location.host));
+                        body.set('form_key', (form.querySelector('input[name="form_key"]')?.value || 'contact'));
+                        body.set('page_url', (form.querySelector('input[name="page_url"]')?.value || location.href));
+                        body.set('payload', JSON.stringify(raw));
+
+                        const primary = pickPrimaryValue(raw);
+                        if (primary) body.set('value', primary);
+
+                        if (raw._company) body.set('_company', raw._company);
+
+                        const res = await fetch(form.action, {
+                            method: 'POST',
+                            headers: { 'Accept': 'application/json' },
+                            body
+                        });
+
+                        const data = await res.json().catch(() => ({}));
+                        if (res.ok && (data.ok ?? true)) {
+                            form.reset();
+                            msgContainer.innerText = '✅ Thanks! Your request has been submitted.';
+                            msgContainer.style.color = '#28a745'; // green success
+                        } else {
+                            msgContainer.innerText = `❌ ${data.message || `Failed (HTTP ${res.status})`}`;
+                            msgContainer.style.color = '#dc3545'; // red error
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        msgContainer.innerText = '❌ Something went wrong. Please try again.';
+                        msgContainer.style.color = '#dc3545';
+                    } finally {
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerText = submitBtn.dataset._oldText || 'Send';
+                        }
+                    }
+                });
+            });
+        })();
+    </script>
+
+</body>
+
+</html>

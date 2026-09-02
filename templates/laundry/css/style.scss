@@ -1,0 +1,513 @@
+$primary-font-color: #1b1850;
+$secondary-font-color: #18181b;
+$muted-font-color: #6c757d;
+$primary-color: #ddf9f5;
+$secondary-color: #60acb8;
+
+// Utility classes
+.primary-color {
+  color: var(--secondary-colors, $primary-font-color);
+}
+
+.secondary-color {
+  color: white;
+  a {
+    color: white;
+  }
+}
+
+.primary-buttons {
+  background-color: var(--primary-colors, $primary-font-color);
+  color: white;
+  border-radius: 28px;
+  padding: 0.8rem 1.2rem;
+  outline: none;
+  border: 1px solid;
+  transition: all 0.35s ease-in-out;
+  box-shadow: 0 4px 12px rgba(var(--primary-colors, $secondary-color), 0.25);
+  position: relative;
+  text-decoration: none;
+  &:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 10px 25px rgba(var(--primary-colors, $secondary-color), 0.4);
+    color: var(--secondary-colors, $primary-font-color);
+    background: var(--primary-colors, white);
+    border-color: var(--secondary-colors, $primary-font-color);
+  }
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 6px 12px rgba(var(--primary-colors, $secondary-color), 0.25);
+  }
+}
+
+.py-6-default {
+  padding-block: 5rem;
+}
+
+// Swiper
+.swiper-pagination {
+  margin-top: 40px;
+}
+.swiper-pagination-bullet {
+  background: #ccc;
+  opacity: 1;
+}
+.swiper-pagination .swiper-pagination-bullet-active {
+  background-color: var(--primary-colors, $secondary-color);
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+body {
+  overflow-x: hidden;
+  font-family: "DM Sans", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+[data-scroll-section] {
+  scroll-margin-top: 100px;
+}
+
+[data-scroll-container] {
+  will-change: transform;
+}
+
+// Back to top button
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 999;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(
+    --primary-colors,
+    $secondary-color
+  ); /* Change to match your theme */
+  color: white;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.back-to-top:hover {
+  background-color: var(--primary-colors, $secondary-color);
+  transform: translateY(-3px);
+}
+
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tick-icon {
+  width: 6px;
+  height: 6px;
+  padding: 0.8rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--secondary-colors, $primary-font-color);
+  font-size: 18px;
+}
+
+// Navbar
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler.is-active {
+  outline: none;
+  box-shadow: none;
+  border: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none !important;
+}
+
+header,
+nav,
+.navbar {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+header,
+nav,
+.navbar {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#mainNavbar {
+  width: 100%;
+  overflow-x: hidden; /* horizontal overflow remove karega */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.navbar {
+  .navbar-brand,
+  .nav-item .nav-link {
+    color: #18181b;
+  }
+
+  .nav-link {
+    position: relative;
+    color: #333;
+    // padding: 0.5rem 0;
+    transition: all 0.3s ease;
+    // border-bottom: 1px solid brown;
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 0%;
+      height: 2px;
+      bottom: 0px;
+      left: 0;
+      background-color: #5ba4a4;
+      transition: width 0.4s ease;
+    }
+
+    &:hover {
+      color: inherit;
+      transform: scale(1.03);
+    }
+
+    &:hover::before {
+      width: 100%;
+    }
+
+    // ✅ Active class
+    &.active {
+      color: #5ba4a4;
+
+      &::before {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after,
+.hamburger-box {
+  width: 28px;
+  width: 28px !important;
+}
+
+.hamburger {
+  padding: 8px;
+}
+
+.hamburger-box {
+  height: 16px;
+}
+
+.transition-navbar {
+  transition: all 0.4s ease-in-out;
+}
+
+.sticky-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-width: 100%;
+  z-index: 9999;
+  background-color: white;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  animation: slideDown 0.4s ease-in-out forwards;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+//? SECTION
+// hero
+#hero {
+  height: 88dvh;
+
+  .container,
+  .row {
+    height: 100%;
+  }
+
+  .hero-btn {
+    margin-top: 2rem;
+  }
+}
+
+.hero-gradient {
+  // background-image: url("../image/bg/hero-section.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background: linear-gradient(
+    to left,
+    var(--primary-colors, $primary-font-color),
+    var(--territory-colors, $secondary-color)
+  );
+  color: white;
+}
+
+// section
+.service-section {
+  .service-box {
+    overflow: hidden;
+    // display: inline-block;
+    .service-img {
+      transition: all 0.5s ease;
+    }
+
+    &:hover {
+      .service-img {
+        display: block;
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+.service-icon {
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+// pricing
+.pricing-section {
+  .pricing-card {
+    background: white;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    border-radius: 1rem;
+
+    &.normal-card {
+      &:hover {
+        background: var(--primary-colors, $secondary-color);
+        * {
+          color: white;
+        }
+        .card-btn {
+          background: white;
+          color: black;
+        }
+      }
+    }
+
+    &.highlighted-card {
+      background: var(--primary-colors, $secondary-color);
+
+      * {
+        color: white;
+      }
+      .card-btn {
+        background: white;
+        color: black;
+      }
+
+      &:hover {
+        background: white;
+        .price {
+          color: var(--secondary-colors, $primary-font-color);
+        }
+        * {
+          color: $muted-font-color;
+        }
+
+        .card-btn {
+          background: var(--primary-colors, $secondary-color);
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+// testimonials
+.testimonials-section {
+  .testimonial-card {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+  }
+
+  .testimonial-quote {
+    position: relative;
+    padding: 20px 30px;
+  }
+
+  .testimonial-quote::before,
+  .testimonial-quote::after {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: #ccc;
+    font-size: 24px;
+    position: absolute;
+  }
+
+  .testimonial-quote::before {
+    content: "\f10d"; /* left quote icon */
+    top: -10px;
+    left: 0;
+  }
+
+  .testimonial-quote::after {
+    content: "\f10e"; /* right quote icon */
+    bottom: -10px;
+    right: 0;
+  }
+}
+
+// Footer Animation
+footer {
+  @media (max-width: 767.98px) {
+    *{
+      justify-content: center;
+      align-items: center;
+      // border: 1px solid red;
+      text-align: center;
+    }
+  }
+
+  .footer-link a {
+    display: inline-block;
+    position: relative;
+    transition: transform 0.3s ease, color 0.3s ease;
+    color: white;
+    &:hover {
+      transform: translateY(-3px);
+      color: black; // your theme primary
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 0;
+      height: 2px;
+      background-color: #5ba4a4;
+      transition: width 0.3s ease-in-out;
+    }
+
+    &:hover::after {
+      width: 100%;
+    }
+  }
+
+  .footer-link-social {
+    display: inline-block;
+    color: var(--secondary-colors, #212529);
+    transition: transform 0.3s ease, color 0.3s ease;
+
+    &:hover {
+      transform: scale(1.2);
+      color: var(--primary-colors, $secondary-color); // Bootstrap green
+    }
+  }
+}
+
+//? MEDIA QUERIES
+@media (width <= 1024px) {
+  #hero {
+    height: 80dvh;
+    .hero-heading {
+      font-size: 3rem;
+    }
+    .right {
+      img {
+        max-width: 200px;
+      }
+    }
+  }
+}
+
+@media (width <= 992px) {
+  .nav-link {
+    &:hover::before {
+      width: 0%;
+    }
+
+    &.active {
+      &::before {
+        width: 0;
+      }
+    }
+  }
+}
+@media (width <= 765px) {
+  #hero {
+    height: 70vh;
+  }
+}
+@media (width <= 567px) {
+  #hero {
+    height: 70dvh;
+  }
+
+  .container {
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    // margin-left: auto ;
+    // margin-right: auto ;
+    overflow-x: hidden;
+  }
+}
+
+.arrow-up-icon {
+  padding: 8px;
+  background-color: var(--territory-colors, $primary-font-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: var(--secondary-colors, $secondary-font-color);
+  margin-block: auto;
+}
+
+.arrow-up-icon i {
+  color: white;
+}
+
+.hero-btn {
+  border: 1px solid white;
+  transition: all 0.35s ease-in-out;
+  &:hover {
+    background-color: white;
+    color: var(--secondary-colors, $primary-font-color);
+  }
+}
+
+div[form-question-zigrow]{
+  margin-bottom: 1rem;
+  
+  label{
+    width: 100%;
+  }
+  input, textarea{
+    width: 100%;
+    padding: 8px;
+  }
+}
+

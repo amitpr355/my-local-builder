@@ -1,0 +1,47 @@
+[
+  {
+    "file": "index.html",
+    "page_key": "home",
+    "page_name": "Home",
+    "page_slug": "/",
+    "is_home": true,
+    "sort_order": 0,
+    "filename": "index.html"
+  },
+  {
+    "file": "about.html",
+    "page_key": "who-we-are",
+    "page_name": "Who We Are",
+    "page_slug": "/who-we-are",
+    "is_home": false,
+    "sort_order": 1,
+    "filename": "about.html"
+  },
+  {
+    "file": "listings.html",
+    "page_key": "new-listings",
+    "page_name": "New Listings",
+    "page_slug": "/new-listings",
+    "is_home": false,
+    "sort_order": 2,
+    "filename": "listings.html"
+  },
+  {
+    "file": "top-cities.html",
+    "page_key": "top-cities",
+    "page_name": "Top Cities",
+    "page_slug": "/top-cities",
+    "is_home": false,
+    "sort_order": 3,
+    "filename": "top-cities.html"
+  },
+  {
+    "file": "contact.html",
+    "page_key": "get-in-touch",
+    "page_name": "Get in Touch",
+    "page_slug": "/get-in-touch",
+    "is_home": false,
+    "sort_order": 4,
+    "filename": "contact.html"
+  }
+]
