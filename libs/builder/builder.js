@@ -15024,6 +15024,10 @@ Vvveb.FormEditor = {
   submitButton: null,
   dragIndex: null,
   dragPlaceholder: null,
+  dragGhost: null,
+  dragGhostY: 0,
+  dragGhostTargetY: 0,
+  dragGhostAnimation: null,
 
   init() {
     this.bindEvents();
@@ -15037,6 +15041,63 @@ Vvveb.FormEditor = {
       }
     });
   },
+
+  createDragGhost(row) {
+    this.removeDragGhost();
+
+    const rect = row.getBoundingClientRect();
+    const ghost = row.cloneNode(true);
+
+    ghost.classList.remove("dragging");
+    ghost.classList.add("form-drag-ghost");
+
+    ghost.style.width = `${rect.width}px`;
+    ghost.style.left = `${rect.left}px`;
+    ghost.style.top = `${rect.top}px`;
+
+    document.body.appendChild(ghost);
+
+    this.dragGhost = ghost;
+    this.dragGhostY = rect.top;
+    this.dragGhostTargetY = rect.top;
+
+    this.animateDragGhost();
+  },
+
+  animateDragGhost() {
+    if (!this.dragGhost) return;
+
+    // Smoothly move toward cursor instead of jumping directly to it
+    this.dragGhostY +=
+      (this.dragGhostTargetY - this.dragGhostY) * 0.22;
+
+    this.dragGhost.style.transform =
+      `translate3d(0, ${this.dragGhostY - parseFloat(this.dragGhost.style.top)}px, 0)`;
+
+    this.dragGhostAnimation = requestAnimationFrame(() => {
+      this.animateDragGhost();
+    });
+  },
+
+  updateDragGhost(clientY) {
+    if (!this.dragGhost) return;
+
+    const height = this.dragGhost.offsetHeight;
+
+    this.dragGhostTargetY = clientY - height / 2;
+  },
+
+  removeDragGhost() {
+    if (this.dragGhostAnimation) {
+      cancelAnimationFrame(this.dragGhostAnimation);
+      this.dragGhostAnimation = null;
+    }
+
+    this.dragGhost?.remove();
+
+    this.dragGhost = null;
+  },
+
   open(form) {
     if (!form || form.tagName !== "FORM") return;
 
@@ -15411,6 +15472,18 @@ Vvveb.FormEditor = {
 
       this.dragIndex = +row.dataset.index;
       row.classList.add("dragging");
+      this.createDragGhost(row);
+
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = "move";
+
+        const emptyImage = new Image();
+
+        emptyImage.src =
+          "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+
+        e.dataTransfer.setDragImage(emptyImage, 0, 0);
+      }
 
       // Create placeholder
       this.dragPlaceholder = document.createElement("div");
@@ -15424,14 +15497,15 @@ Vvveb.FormEditor = {
 
       e.preventDefault();
 
+      this.updateDragGhost(e.clientY);
+
       const rect = row.getBoundingClientRect();
       const shouldInsertAfter = e.clientY > rect.top + rect.height / 2;
 
-      if (shouldInsertAfter) {
-        row.after(this.dragPlaceholder);
-      } else {
-        row.before(this.dragPlaceholder);
-      }
+      this.moveDragPlaceholder(
+        row,
+        shouldInsertAfter
+      );
     });
 
     document.addEventListener("touchstart", (e) => {
@@ -15555,6 +15629,83 @@ Vvveb.FormEditor = {
     });
   },
 
+  moveDragPlaceholder(row, insertAfter) {
+    if (!row || !this.dragPlaceholder) return;
+
+    const list = document.getElementById(
+      "form-fields-list"
+    );
+
+    if (!list) return;
+
+    if (
+      insertAfter &&
+      row.nextElementSibling === this.dragPlaceholder
+    ) {
+      return;
+    }
+
+    if (
+      !insertAfter &&
+      row.previousElementSibling === this.dragPlaceholder
+    ) {
+      return;
+    }
+
+    const rows = [
+      ...list.querySelectorAll(
+        ".form-field-row:not(.dragging)"
+      )
+    ];
+
+    const oldPositions = new Map();
+
+    rows.forEach((item) => {
+      oldPositions.set(
+        item,
+        item.getBoundingClientRect().top
+      );
+    });
+
+    if (insertAfter) {
+      row.after(this.dragPlaceholder);
+    } else {
+      row.before(this.dragPlaceholder);
+    }
+
+    rows.forEach((item) => {
+      const oldTop = oldPositions.get(item);
+      const newTop =
+        item.getBoundingClientRect().top;
+
+      const difference = oldTop - newTop;
+
+      if (Math.abs(difference) < 1) return;
+
+      item.getAnimations().forEach((animation) => {
+        animation.cancel();
+      });
+
+      item.animate(
+        [
+          {
+            transform:
+              `translate3d(0, ${difference}px, 0)`
+          },
+          {
+            transform:
+              "translate3d(0, 0, 0)"
+          }
+        ],
+        {
+          duration: 260,
+          easing:
+            "cubic-bezier(0.22, 1, 0.36, 1)"
+        }
+      );
+    });
+  },
+
   addQuestion() {
     this.syncFieldsFromUI();
     this.fields.forEach((f) => (f.expanded = false));
@@ -15585,6 +15736,7 @@ Vvveb.FormEditor = {
     this.dragPlaceholder?.remove();
     this.dragPlaceholder = null;
     this.dragIndex = null;
+    this.removeDragGhost();
   },
 
   scrollToLastField() {
