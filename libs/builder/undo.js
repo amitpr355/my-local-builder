@@ -184,7 +184,8 @@ Vvveb.Undo = {
     if (scrollTarget && typeof scrollTarget.scrollIntoView === "function") {
       scrollTarget.scrollIntoView({
         behavior: "auto",
-        block: undo ? "center" : "start",
+        // block: undo ? "start" : "start",
+        block: "start",
         inline: "center"
       });
     }
